@@ -1,0 +1,11 @@
+{% extends "admin/change_form.html" %}
+{% block submit_buttons_bottom %}
+<div class="submit-row">
+    {{ block.super }}
+    {% if original and original.pk %}
+    <a href="{{ vaga_edit_url }}" class="default" style="margin-left: 10px;">
+        Ir para as vagas
+    </a>
+    {% endif %}
+</div>
+{% endblock %}

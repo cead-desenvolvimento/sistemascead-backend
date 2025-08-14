@@ -1,0 +1,9 @@
+Olá, {{ pessoa_nome }},
+
+Você solicitou a redefinição de senha em sistemascead.ufjf.br.
+
+Por favor, clique no link abaixo para escolher uma nova senha:
+
+{{ protocol }}://{{ domain }}{% url 'password_reset_confirm' uidb64=uid token=token %}
+
+Se você não solicitou essa alteração, ignore este email.

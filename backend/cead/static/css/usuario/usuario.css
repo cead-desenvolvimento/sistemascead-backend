@@ -1,0 +1,47 @@
+/* login.css - Estilos específicos para a página de login */
+
+.login-card {
+  border: none;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.login-header {
+  padding: 1.5rem;
+  text-align: center;
+}
+
+/* Ajustes específicos para o formulário de login */
+.form-control:focus {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 0.2rem rgba(174, 31, 37, 0.25);
+}
+
+/* Animação sutil para o botão de login */
+.btn-primary {
+  transition: all 0.3s ease;
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  background-color: #8e191e;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Estilo para os links de recuperação de senha */
+.text-decoration-none {
+  color: var(--primary-color);
+  transition: all 0.2s ease;
+}
+
+.text-decoration-none:hover {
+  color: #8e191e;
+  text-decoration: underline !important;
+}
+
+/* Responsividade para telas pequenas */
+@media (max-width: 576px) {
+  .card-body {
+    padding: 1.5rem !important;
+  }
+}

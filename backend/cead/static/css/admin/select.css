@@ -1,0 +1,53 @@
+/* Aplica largura máxima a selects que recebem muitos valores longos */
+select[name^="edvagacampocheckbox_set-"][name$="-ed_campo"],
+select[name^="edvagacampocombobox_set-"][name$="-ed_campo"],
+select[name^="edvagacampodatebox_set-"][name$="-ed_campo"] {
+  max-width: 300px;
+  width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Evita que o select empurre o layout */
+.inline-related td select {
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+/* Garante que inputs e selects fiquem com aparência consistente */
+.inline-related td input,
+.inline-related td select {
+  padding: 4px 6px;
+  font-size: 13px;
+  max-height: 30px;
+}
+
+/* Trunca descrições longas nos campos com elipses */
+.inline-related td {
+  max-width: 300px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Ajusta largura mínima de colunas e evita quebra feia */
+.inline-group {
+  overflow-x: auto;
+}
+
+/* Opcional: melhora responsividade para telas menores */
+@media (max-width: 1024px) {
+  .inline-related td {
+    font-size: 12px;
+  }
+  .inline-related th {
+    font-size: 12px;
+  }
+}
+/* Reduz o tamanho do textarea 'descricao' do combobox inline */
+textarea[name^="edvagacampocombobox_set-"][name$="-descricao"] {
+  max-width: 300px;
+  width: 100%;
+  box-sizing: border-box;
+}
