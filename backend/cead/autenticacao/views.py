@@ -36,7 +36,7 @@ class CustomLoginView(LoginView):
             {
                 "token": str(refresh.access_token),
                 "refresh_token": str(refresh),
-                "next_url": self.get_success_url() or "menu.html",
+                "next_url": self.get_success_url() or "index.html",
             },
         )
 

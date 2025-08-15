@@ -180,7 +180,7 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 RAIZ_ARQUIVOS_UPLOAD = "/usr/local/www/cead-static/documentos/"
 
 LOGIN_URL = "/backend/entrar/"
-LOGIN_REDIRECT_URL = "/menu.html"
+LOGIN_REDIRECT_URL = "/"
 
 # Para servir com redirect no nginx adicionando /backend
 # Precisa disso para gerar os links para download na validacao de arquivos
