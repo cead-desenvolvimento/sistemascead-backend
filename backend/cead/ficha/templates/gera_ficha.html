@@ -7,165 +7,132 @@
             html{
                 font-size: 14.5px;
             }
-
             body{
                 font-family: Helvetica, Arial, sans-serif;
                 font-weight: 200;
             }
-
             .header{
                 margin-bottom: 2rem;
             }
-
             img{
                 height: 6rem;
                 width: auto;
             }
-
             table{
                 width: 100%;
             }
-
             td{
                 font-size: 0.7rem;
                 padding-left: 0.4rem;
                 padding-top: 0.4rem;
                 padding-bottom: 0.4rem;
             }
-
             .tabelaCadastro td:first-child{
                 width: 30%;
             }
-
             .tabelaCadastro td:last-child{
                 width: 30%;
             }
-
             .tabelaEndereco td:first-child{
                 width: 18%;
             }
-
             .tabelaEndereco td:last-child{
                 width: 18%;
             }
-
             .tabelaSuperior td:first-child{
                 width: 33%;
             }
-
             .tabelaBanco td:first-child{
                 width: 20%;
             }
-
             th{
                 background-color: #eee;
                 padding: 0.35rem 0.4rem;
             }
-
             td, th{
                 border: 1px solid black;
             }
-
             .d-flex{
                 display: -webkit-box;
                 display: flex;
             }
-
             .text-align-center{
                 -webkit-box-pack: center;
                 text-align: center;
             }
-
             .space-between{
                 justify-content: space-between;
             }
-
             .num{
                 display: -webkit-box;
                 display: inline-flex;
             }
-
             .num > div{
                 margin-right: 0.75rem;
             }
-
             .tipoCurso {
                 font-size: 0.55rem;
             }
-
             /* Linha com 5 itens: cada item ~20% */
             .linha5 {
                 white-space: nowrap; /* para que fiquem na mesma linha */
                 margin-bottom: 0.3rem;
             }
-
             .linha5 .tipoCursoItem {
                 display: inline-block;
                 width: 20%;
                 vertical-align: top;
                 box-sizing: border-box;
             }
-
             .tipoCursoItem.empty {
                 visibility: hidden;
             }
-
             input{
                 vertical-align: middle;
             }
-
             input[type='checkbox']{
                 margin-right: 0.75rem;
             }
-
             span{
                 vertical-align: middle;
             }
-
             .estadoCivil {
                 display: flex;
                 flex-wrap: wrap;
                 justify-content: flex-start;
                 gap: 0.2rem;
             }
-
             .estadoCivilItem {
                 flex: 0 1 auto;
                 margin: 0.1rem 0.3rem;
                 white-space: nowrap;
             }
-
             .subtitle{
                 background-color: #eee;
                 font-size: 0.85rem;
                 text-align: left;
                 padding-left: 0.25rem;
             }
-
             .page3 td{
                 padding-top: 0.7rem;
                 padding-bottom: 0.7rem;
                 font-size: 0.9rem;
             }
-
             .assinatura{
                 text-align: center;
                 font-size: 0.85rem;
                 margin: 2rem 0;
             }
-
             .assinatura-linha-local {
                 display: block;
                 text-align: center;
                 margin-left: 50px;
             }
-
             .declaracao-nao-acumulo {
                 width: 80%;
                 margin: 0 auto;
                 padding: 20px;
             }
-
             .cabecalho {
                 display: flex;
                 justify-content: space-between;
@@ -173,77 +140,63 @@
                 margin-bottom: 20px;
                 width: 100%;
             }
-
             .data {
                 text-align: right;
                 flex-grow: 1;
             }
-
             .logo-capes {
                 width: 120px;
             }
-
             .conteudo {
                 text-align: justify;
                 margin: 0 50px; 
             }
-
             .titulo {
                 text-align: center;
                 font-size: 18px;
                 font-weight: bold;
                 margin-bottom: 20px;
             }
-
             .observacao {
                 font-size: 12px;
                 margin-top: 20px;
                 text-align: justify;
             }
-
             .carimbo{
                 font-size: 0.8rem;
                 border: solid black 1px;
                 margin-top: 2rem;
                 padding: 0.5rem;
             }
-
             .assinatura div{
                 margin-top: 1.2rem;
             }
-
             .strong{
                 font-weight: bold;
             }
-
             .mx{
                 margin: 0 7rem;
             }
-
             .w-45{
                 width: 45%;
             }
-
             .w-48{
                 width: 48%;
             }
-
             .page-break {
                 page-break-before: always;
             }
-
             .item-declaracao {
                 margin-left: 20px;
                 padding-left: 20px;
                 list-style-position: inside;
             }
-
         </style>
     </head>
     <body>
         <div class="d-flex text-align-center space-between header">
             <div>
-                <img src="file://{{ ficha_static_images_dir }}/logo-capes.jpg">
+                <img src="file://{{ ficha_static_images_dir }}/logo-capes.png">
             </div>
             <div>
                 <p>
@@ -308,7 +261,7 @@
                                 </div>
                                 <div class="tipoCursoItem">
                                     <input type="checkbox"
-                                           {% if "Lato Sensu" in ac_curso_tipo %}checked{% endif %}>
+                                           {% if "Lato Sensu" in ac_curso_tipo or "Especialização" in ac_curso_tipo %}checked{% endif %}
                                     <span>Lato Sensu</span>
                                 </div>
                                 <div class="tipoCursoItem">
@@ -778,7 +731,7 @@
             <div class="page-break"></div>
             <div class="d-flex text-align-center space-between header">
                 <div>
-                    <img src="file://{{ ficha_static_images_dir }}/logo-capes.jpg">
+                    <img src="file://{{ ficha_static_images_dir }}/logo-capes.png">
                 </div>
                 <div>
                     <p>
@@ -920,7 +873,7 @@
             <div class="page-break" style="display: block; margin-bottom: 50px;"></div>
             <div class="declaracao-nao-acumulo">
                 <div class="cabecalho">
-                    <img src="file://{{ ficha_static_images_dir }}/logo-capes.jpg"
+                    <img src="file://{{ ficha_static_images_dir }}/logo-capes.png"
                          class="logo-capes">
                     <p class="data">Em {{ hoje|date:"d/m/Y" }}.</p>
                 </div>
