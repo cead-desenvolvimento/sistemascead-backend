@@ -244,7 +244,10 @@ class FiPessoaFichaPostSerializer(serializers.ModelSerializer):
         queryset=FiFuncaoBolsista.objects.all()
     )
     ac_curso_oferta = serializers.PrimaryKeyRelatedField(
-        queryset=AcCursoOferta.objects.all()
+        queryset=AcCursoOferta.objects.all(),
+        required=False,
+        allow_null=True,
+        default=None,
     )
 
     class Meta:
@@ -307,23 +310,25 @@ class FiPessoaFichaPostSerializer(serializers.ModelSerializer):
         ed_pessoa_vaga_validacao = self.context.get("ed_pessoa_vaga_validacao")
         ed_edital = ed_pessoa_vaga_validacao.ed_vaga.ed_edital
 
-        fi_funcao_bolsista_id = data.get("fi_funcao_bolsista")
-        ac_curso_oferta_id = data.get("ac_curso_oferta")
+        fi_funcao_bolsista = data.get("fi_funcao_bolsista")
+        ac_curso_oferta = data.get("ac_curso_oferta")
 
-        # A associação edital/função/oferta veio correta?
-        try:
-            fi_edital_funcao_oferta = FiEditalFuncaoOferta.objects.get(
+        # Use filter + first (banco do legado pode ter zuada)
+        fi_edital_funcao_oferta = (
+            FiEditalFuncaoOferta.objects.filter(
                 ed_edital=ed_edital,
-                fi_funcao_bolsista_id=fi_funcao_bolsista_id,
-                ac_curso_oferta_id=ac_curso_oferta_id,
+                fi_funcao_bolsista=fi_funcao_bolsista,
+                ac_curso_oferta=ac_curso_oferta,
             )
-        except FiEditalFuncaoOferta.DoesNotExist:
+            .order_by("-id")
+            .first()
+        )
+        if not fi_edital_funcao_oferta:
             raise serializers.ValidationError(
                 {"detail": ERRO_GET_FI_EDITAL_FUNCAO_OFERTA}
             )
 
         self._fi_edital_funcao_oferta = fi_edital_funcao_oferta
-
         return data
 
     @transaction.atomic

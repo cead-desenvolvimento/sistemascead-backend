@@ -3,7 +3,7 @@ from drf_spectacular.utils import OpenApiExample, OpenApiParameter, OpenApiRespo
 from cead.serializers import CPFSerializer
 from .messages import (
     ERRO_ED_PESSOA_VAGA_VALIDACAO_GEROU_FICHA_JA_EXISTE,
-    ERRO_GET_AC_CURSO,
+    ERRO_GET_FI_EDITAL_FUNCAO_OFERTA,
     OK_CPF_HASH_VALIDADO,
 )
 from .serializers import *
@@ -51,10 +51,10 @@ DOCS_CPF_CODIGO_PESSOA_VALIDACAO_VIEW = {
             ],
         ),
         400: OpenApiResponse(
-            description=f"{ERRO_GET_AC_CURSO} OU {ERRO_ED_PESSOA_VAGA_VALIDACAO_GEROU_FICHA_JA_EXISTE}",
+            description=f"{ERRO_GET_FI_EDITAL_FUNCAO_OFERTA} OU {ERRO_ED_PESSOA_VAGA_VALIDACAO_GEROU_FICHA_JA_EXISTE}",
             examples=[
                 OpenApiExample(
-                    "Erro de curso não associado", value={"detail": ERRO_GET_AC_CURSO}
+                    "Erro de curso não associado", value={"detail": ERRO_GET_FI_EDITAL_FUNCAO_OFERTA}
                 ),
                 OpenApiExample(
                     "Erro de ficha já gerada",

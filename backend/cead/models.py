@@ -1302,7 +1302,7 @@ class FiEditalFuncaoOferta(models.Model):
         FiFuncaoBolsista, models.DO_NOTHING, verbose_name="Função"
     )
     ac_curso_oferta = models.ForeignKey(
-        AcCursoOferta, models.DO_NOTHING, verbose_name="Oferta"
+        AcCursoOferta, models.DO_NOTHING, null=True, blank=True, verbose_name="Oferta"
     )
 
     class Meta:

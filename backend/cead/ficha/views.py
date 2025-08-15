@@ -91,29 +91,47 @@ class CPFCodigoPessoaValidacaoView(APIView):
         serializer = CPFSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
-        cpf_validado = serializer.validated_data["cpf"]
-
         try:
             ed_pessoa_vaga_validacao = EdPessoaVagaValidacao.validar_codigo_pelo_cpf(
-                cpf_validado, codigo
+                serializer.validated_data["cpf"], codigo
             )
-            if not ed_pessoa_vaga_validacao.ed_vaga.ed_edital.ac_curso:
-                return Response(
-                    {"detail": ERRO_GET_AC_CURSO}, status=status.HTTP_400_BAD_REQUEST
-                )
-            if EdPessoaVagaGerouFicha.objects.filter(
-                ed_pessoa_vaga_validacao=ed_pessoa_vaga_validacao
-            ).exists():
-                return Response(
-                    {"detail": ERRO_ED_PESSOA_VAGA_VALIDACAO_GEROU_FICHA_JA_EXISTE},
-                    status=status.HTTP_400_BAD_REQUEST,
-                )
         except Exception as e:
             return Response({"detail": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+        associacao_edital_funcao_oferta_id = (
+            FiEditalFuncaoOferta.objects.filter(
+                ed_edital=ed_pessoa_vaga_validacao.ed_vaga.ed_edital
+            )
+            .order_by("-id")
+            .values_list("id", flat=True)
+            .first()
+            # Obtem o ultimo porque o sistema antigo permitia
+            # erroneamente mais de uma associacao
+        )
+
+        if not associacao_edital_funcao_oferta_id:
+            return Response(
+                {"detail": ERRO_GET_FI_EDITAL_FUNCAO_OFERTA},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
+        if EdPessoaVagaGerouFicha.objects.filter(
+            ed_pessoa_vaga_validacao=ed_pessoa_vaga_validacao
+        ).exists():
+            return Response(
+                {"detail": ERRO_ED_PESSOA_VAGA_VALIDACAO_GEROU_FICHA_JA_EXISTE},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
         request.session["ed_pessoa_vaga_validacao_id"] = ed_pessoa_vaga_validacao.id
         request.session["ed_pessoa_vaga_validacao_id_hash"] = gerar_hash(
             ed_pessoa_vaga_validacao.id
+        )
+        request.session["associacao_edital_funcao_oferta_id"] = (
+            associacao_edital_funcao_oferta_id
+        )
+        request.session["associacao_edital_funcao_oferta_id_hash"] = gerar_hash(
+            associacao_edital_funcao_oferta_id
         )
 
         return Response(
@@ -132,8 +150,21 @@ class CadastroEnderecoTelefoneBancoView(APIView):
             raise ValidationError(
                 {"detail": ERRO_SESSAO_ED_PESSOA_VAGA_VALIDACAO_ID_HASH}
             )
+        if "associacao_edital_funcao_oferta_id" not in request.session:
+            raise ValidationError(
+                {"detail": ERRO_SESSAO_ASSOCIACAO_EDITAL_FUNCAO_OFERTA_ID}
+            )
+        if "associacao_edital_funcao_oferta_id_hash" not in request.session:
+            raise ValidationError(
+                {"detail": ERRO_SESSAO_ASSOCIACAO_EDITAL_FUNCAO_OFERTA_ID_HASH}
+            )
+
         if request.session["ed_pessoa_vaga_validacao_id_hash"] != gerar_hash(
             request.session["ed_pessoa_vaga_validacao_id"]
+        ):
+            raise ValidationError({"detail": ERRO_SESSAO_INVALIDA})
+        if request.session["associacao_edital_funcao_oferta_id_hash"] != gerar_hash(
+            request.session["associacao_edital_funcao_oferta_id"]
         ):
             raise ValidationError({"detail": ERRO_SESSAO_INVALIDA})
 
@@ -143,13 +174,6 @@ class CadastroEnderecoTelefoneBancoView(APIView):
             )
         except EdPessoaVagaValidacao.DoesNotExist:
             raise ValidationError({"detail": ERRO_GET_PESSOA_VAGA_VALIDACAO})
-
-        if EdPessoaVagaGerouFicha.objects.filter(
-            ed_pessoa_vaga_validacao_id=request.session["ed_pessoa_vaga_validacao_id"]
-        ).exists():
-            raise ValidationError(
-                {"detail": ERRO_ED_PESSOA_VAGA_VALIDACAO_GEROU_FICHA_JA_EXISTE}
-            )
 
         request.ed_pessoa_vaga_validacao = ed_pessoa_vaga_validacao
 
@@ -251,7 +275,7 @@ class CadastroEnderecoTelefoneBancoView(APIView):
 
         except Exception as e:
             return Response(
-                {"detail": ERRO_CREATE_DADOS, "debug": str(e)},
+                {"detail": ERRO_CREATE_DADOS_PESSOAIS, "debug": str(e)},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
 
@@ -272,8 +296,20 @@ class CadastroFiPessoaFichaAPIView(APIView):
             raise ValidationError(
                 {"detail": ERRO_SESSAO_ED_PESSOA_VAGA_VALIDACAO_ID_HASH}
             )
+        if "associacao_edital_funcao_oferta_id" not in request.session:
+            raise ValidationError(
+                {"detail": ERRO_SESSAO_ASSOCIACAO_EDITAL_FUNCAO_OFERTA_ID}
+            )
+        if "associacao_edital_funcao_oferta_id_hash" not in request.session:
+            raise ValidationError(
+                {"detail": ERRO_SESSAO_ASSOCIACAO_EDITAL_FUNCAO_OFERTA_ID_HASH}
+            )
         if request.session["ed_pessoa_vaga_validacao_id_hash"] != gerar_hash(
             request.session["ed_pessoa_vaga_validacao_id"]
+        ):
+            raise ValidationError({"detail": ERRO_SESSAO_INVALIDA})
+        if request.session["associacao_edital_funcao_oferta_id_hash"] != gerar_hash(
+            request.session["associacao_edital_funcao_oferta_id"]
         ):
             raise ValidationError({"detail": ERRO_SESSAO_INVALIDA})
 
@@ -284,33 +320,27 @@ class CadastroFiPessoaFichaAPIView(APIView):
         except EdPessoaVagaValidacao.DoesNotExist:
             raise ValidationError({"detail": ERRO_GET_PESSOA_VAGA_VALIDACAO})
 
-        if EdPessoaVagaGerouFicha.objects.filter(
-            ed_pessoa_vaga_validacao_id=request.session["ed_pessoa_vaga_validacao_id"]
-        ).exists():
-            raise ValidationError(
-                {"detail": ERRO_ED_PESSOA_VAGA_VALIDACAO_GEROU_FICHA_JA_EXISTE}
+        try:
+            associacao_edital_funcao_oferta = FiEditalFuncaoOferta.objects.get(
+                id=request.session["associacao_edital_funcao_oferta_id"]
             )
+        except FiEditalFuncaoOferta.DoesNotExist:
+            raise ValidationError({"detail": ERRO_GET_FI_EDITAL_FUNCAO_OFERTA})
 
         request.ed_pessoa_vaga_validacao = ed_pessoa_vaga_validacao
+        request.associacao_edital_funcao_oferta = associacao_edital_funcao_oferta
 
     def get(self, request):
         ed_edital = request.ed_pessoa_vaga_validacao.ed_vaga.ed_edital
+        associacao_edital_funcao_oferta = request.associacao_edital_funcao_oferta
 
-        # Tem que pegar o ultimo porque o banco do sistema antigo permitia zuada
-        associacao_edital_funcao_oferta = (
-            FiEditalFuncaoOferta.objects.filter(ed_edital=ed_edital)
-            .order_by("-id")
-            .first()
-        )
-
-        if not associacao_edital_funcao_oferta:
-            return Response(
-                {"detail": ERRO_GET_FI_EDITAL_FUNCAO_OFERTA},
-                status=status.HTTP_404_NOT_FOUND,
-            )
-
-        ac_curso_oferta_serializer = AcCursoOfertaIdDescricaoSerializer(
-            associacao_edital_funcao_oferta.ac_curso_oferta
+        # Editais para coordenadores nao sao associados com oferta
+        ac_curso_oferta_data = (
+            AcCursoOfertaIdDescricaoSerializer(
+                associacao_edital_funcao_oferta.ac_curso_oferta
+            ).data
+            if associacao_edital_funcao_oferta.ac_curso_oferta_id is not None
+            else None
         )
         fi_funcao_bolsista_serializer = FiFuncaoBolsistaGetSerializer(
             associacao_edital_funcao_oferta.fi_funcao_bolsista
@@ -327,7 +357,7 @@ class CadastroFiPessoaFichaAPIView(APIView):
                 "ed_edital__numero_ano_edital_display": (
                     f"Edital {ed_edital.numero_ano_edital()} - {ed_edital.descricao}"
                 ),
-                "ac_curso_oferta": ac_curso_oferta_serializer.data,
+                "ac_curso_oferta": ac_curso_oferta_data,
                 "fi_funcao_bolsista": fi_funcao_bolsista_serializer.data,
                 "fi_ficha": fi_ficha_serializer.data,
             },
@@ -359,8 +389,21 @@ class GerarFichaPDFAPIView(APIView):
             raise ValidationError(
                 {"detail": ERRO_SESSAO_ED_PESSOA_VAGA_VALIDACAO_ID_HASH}
             )
+        if "associacao_edital_funcao_oferta_id" not in request.session:
+            raise ValidationError(
+                {"detail": ERRO_SESSAO_ASSOCIACAO_EDITAL_FUNCAO_OFERTA_ID}
+            )
+        if "associacao_edital_funcao_oferta_id_hash" not in request.session:
+            raise ValidationError(
+                {"detail": ERRO_SESSAO_ASSOCIACAO_EDITAL_FUNCAO_OFERTA_ID_HASH}
+            )
+
         if request.session["ed_pessoa_vaga_validacao_id_hash"] != gerar_hash(
             request.session["ed_pessoa_vaga_validacao_id"]
+        ):
+            raise ValidationError({"detail": ERRO_SESSAO_INVALIDA})
+        if request.session["associacao_edital_funcao_oferta_id_hash"] != gerar_hash(
+            request.session["associacao_edital_funcao_oferta_id"]
         ):
             raise ValidationError({"detail": ERRO_SESSAO_INVALIDA})
 
@@ -370,13 +413,6 @@ class GerarFichaPDFAPIView(APIView):
             )
         except EdPessoaVagaValidacao.DoesNotExist:
             raise ValidationError({"detail": ERRO_GET_PESSOA_VAGA_VALIDACAO})
-
-        if not EdPessoaVagaGerouFicha.objects.filter(
-            ed_pessoa_vaga_validacao_id=request.session["ed_pessoa_vaga_validacao_id"]
-        ).exists():
-            raise ValidationError(
-                {"detail": ERRO_ED_PESSOA_VAGA_VALIDACAO_GEROU_FICHA_NAO_EXISTE}
-            )
 
         request.session.flush()
         request.ed_pessoa_vaga_validacao = ed_pessoa_vaga_validacao
