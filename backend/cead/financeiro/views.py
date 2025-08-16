@@ -1,5 +1,6 @@
 from drf_spectacular.utils import extend_schema
 
+from django.db import transaction, IntegrityError
 from django.db.models import OuterRef, Subquery
 from django.utils.timezone import now
 
@@ -167,26 +168,21 @@ class AssociarEditalFuncaoFichaOfertaAPIView(APIView):
     permission_classes = [IsAuthenticated, IsAssociadorEditalFuncaoFichaOferta]
 
     def get(self, request):
-        associacoes = (
-            FiEditalFuncaoOferta.objects.select_related(
-                "ed_edital", "fi_funcao_bolsista", "ac_curso_oferta"
-            )
-            .all()
-            .order_by("-ed_edital__id")
-        )
+        associacoes = FiEditalFuncaoOferta.objects.select_related(
+            "ed_edital", "fi_funcao_bolsista", "ac_curso_oferta"
+        ).order_by("-ed_edital__id")
         serializer = FiGetEditalFuncaoOfertaSerializer(associacoes, many=True)
         return Response(serializer.data)
 
     def put(self, request):
-        id = request.data.get("id")
-        if not id:
+        if not request.data.get("id"):
             return Response(
                 {"detail": ERRO_FINANCEIRO_GET_ID_FI_EDITAL_FUNCAO_OFERTA},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
         try:
-            instance = FiEditalFuncaoOferta.objects.get(id=id)
+            instance = FiEditalFuncaoOferta.objects.get(id=request.data.get("id"))
         except FiEditalFuncaoOferta.DoesNotExist:
             return Response(
                 {"detail": ERRO_FINANCEIRO_GET_FI_EDITAL_FUNCAO_OFERTA},
@@ -196,25 +192,47 @@ class AssociarEditalFuncaoFichaOfertaAPIView(APIView):
         serializer = FiPostEditalFuncaoOfertaSerializer(
             instance, data=request.data, partial=False
         )
-        if serializer.is_valid():
+        if not serializer.is_valid():
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
             serializer.save()
-            return Response(serializer.data)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        except IntegrityError:
+            return Response(
+                {"detail": ERRO_FINANCEIRO_EDITAL_ASSOCIADO_FI_EDITAL_FUNCAO_OFERTA},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        return Response(serializer.data)
 
     def post(self, request):
         serializer = FiPostEditalFuncaoOfertaSerializer(data=request.data)
-        if serializer.is_valid():
-            instance, created = FiEditalFuncaoOferta.objects.update_or_create(
-                ed_edital_id=request.data.get("ed_edital"),
-                fi_funcao_bolsista_id=request.data.get("fi_funcao_bolsista"),
-                ac_curso_oferta_id=request.data.get("ac_curso_oferta"),
-                defaults=serializer.validated_data,
-            )
+
+        if not serializer.is_valid():
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        validated_data = serializer.validated_data
+        lookups = {
+            "ed_edital": validated_data["ed_edital"],
+            "fi_funcao_bolsista": validated_data["fi_funcao_bolsista"],
+            "ac_curso_oferta": validated_data.get("ac_curso_oferta"),  # pode ser None
+        }
+
+        try:
+            with transaction.atomic():
+                instance, created = FiEditalFuncaoOferta.objects.update_or_create(
+                    **lookups, defaults={}
+                )
+        except IntegrityError:
             return Response(
-                FiPostEditalFuncaoOfertaSerializer(instance).data,
-                status=status.HTTP_201_CREATED if created else status.HTTP_200_OK,
+                {"detail": ERRO_FINANCEIRO_EDITAL_ASSOCIADO_FI_EDITAL_FUNCAO_OFERTA},
+                status=status.HTTP_400_BAD_REQUEST,
             )
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        data = FiGetEditalFuncaoOfertaSerializer(instance).data
+        return Response(
+            data, status=status.HTTP_201_CREATED if created else status.HTTP_200_OK
+        )
 
 
 @extend_schema(**DOCS_ASSOCIAR_EDITAL_FUNCAO_FICHA_OFERTA_RETRIEVE_DESTROY_APIVIEW)

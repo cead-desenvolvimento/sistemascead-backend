@@ -14,11 +14,11 @@ ERRO_FINANCEIRO_GET_ID_FI_EDITAL_FUNCAO_OFERTA = (
 # ------------------------------
 # ERROS - FICHA E EDITAL
 # ------------------------------
-ERRO_FINANCEIRO_FICHA_NAO_ENCONTRADA = "Ficha não encontrada"
-ERRO_FINANCEIRO_GET_FI_EDITAL_FUNCAO_OFERTA = "Identificador não encontrado"
 ERRO_FINANCEIRO_EDITAL_ASSOCIADO_FI_EDITAL_FUNCAO_OFERTA = (
     "Este edital já está associado a uma função/oferta"
 )
+ERRO_FINANCEIRO_FICHA_NAO_ENCONTRADA = "Ficha não encontrada"
+ERRO_FINANCEIRO_GET_FI_EDITAL_FUNCAO_OFERTA = "Identificador não encontrado"
 
 # ------------------------------
 # ERROS - PERMISSÕES DE GRUPO

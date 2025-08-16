@@ -1296,6 +1296,22 @@ class FiFrequenciaMoodle(models.Model):
 
 
 class FiEditalFuncaoOferta(models.Model):
+    # O sistema antigo nao refletia a realidade da bolsa: todos os bolsistas
+    # possuiam relacao com oferta, o que nao e' realidade dos fatos
+    # Coordenadores gerais e adjuntos nao possuem relacao com oferta de curso
+    # A base antiga foi migrada como estava, mas aqui, em FiEditalFuncaoOferta,
+    # a modelagem esta' correta: ac_curso_oferta pode ser NULL
+    # O que acontecia no sistema antigo, provavelmente: relacionava-se o
+    # coordenador geral/adjunto com o ultimo curso dele, ou havia curso inventado
+    # na base, que nao foi migrado
+    # Um coordenador do curso X, alcado a coordenador geral, mantinha o registro
+    # de estar associado ao curso X
+    # Estou me baseando, obviamente, na portaria 309/2024 da CAPES, mas pelo que
+    # pesquisei, me parece que nenhuma universidade pensou no problema
+    #
+    # A solucao para unicidade nao e' padrao no SQL 92 e funciona apenas em PostgreSQL 15+
+    # CREATE UNIQUE INDEX fi_edital_funcao_oferta_unique ON sistemascead.fi_edital_funcao_oferta
+    # USING btree (ed_edital_id, fi_funcao_bolsista_id, ac_curso_oferta_id) NULLS NOT DISTINCT;
     id = models.BigAutoField(primary_key=True)
     ed_edital = models.ForeignKey(EdEdital, models.DO_NOTHING, verbose_name="Edital")
     fi_funcao_bolsista = models.ForeignKey(
@@ -1312,7 +1328,6 @@ class FiEditalFuncaoOferta(models.Model):
         verbose_name_plural = "(Financeiro) Associações entre editais, funções das fichas e ofertas dos cursos"
         managed = False
         db_table = "fi_edital_funcao_oferta"
-        unique_together = ("ed_edital", "fi_funcao_bolsista", "ac_curso_oferta")
 
 
 class TrTermo(models.Model):

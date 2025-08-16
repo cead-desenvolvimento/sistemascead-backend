@@ -73,13 +73,15 @@ class ListarFuncoesComFichaUABSerializer(serializers.ModelSerializer):
 
 # Precisa dos IDs para fazer a edicao, e das strings para mostrar na tela
 class FiGetEditalFuncaoOfertaSerializer(serializers.ModelSerializer):
-    edital = serializers.CharField(source="ed_edital.numero_ano_edital")
-    funcao = serializers.CharField(source="fi_funcao_bolsista.__str__")
-    oferta = serializers.CharField(source="ac_curso_oferta.__str__")
+    edital = serializers.SerializerMethodField()
+    funcao = serializers.SerializerMethodField()
+    oferta = serializers.SerializerMethodField()
 
-    ed_edital = serializers.IntegerField(source="ed_edital.id")
-    fi_funcao_bolsista = serializers.IntegerField(source="fi_funcao_bolsista.id")
-    ac_curso_oferta = serializers.IntegerField(source="ac_curso_oferta.id")
+    ed_edital = serializers.IntegerField(source="ed_edital_id")
+    fi_funcao_bolsista = serializers.IntegerField(source="fi_funcao_bolsista_id")
+    ac_curso_oferta = serializers.IntegerField(
+        source="ac_curso_oferta_id", allow_null=True
+    )
 
     class Meta:
         model = FiEditalFuncaoOferta
@@ -93,24 +95,39 @@ class FiGetEditalFuncaoOfertaSerializer(serializers.ModelSerializer):
             "oferta",
         ]
 
+    def get_edital(self, obj):
+        return obj.ed_edital.numero_ano_edital()
+
+    def get_funcao(self, obj):
+        return str(obj.fi_funcao_bolsista) if obj.fi_funcao_bolsista_id else None
+
+    def get_oferta(self, obj):
+        return str(obj.ac_curso_oferta) if obj.ac_curso_oferta_id else None
+
 
 class FiPostEditalFuncaoOfertaSerializer(serializers.ModelSerializer):
     class Meta:
         model = FiEditalFuncaoOferta
         fields = ["ed_edital", "fi_funcao_bolsista", "ac_curso_oferta"]
+        # Desabilita validadores do DRF: NULL = NULL e' indefinido no SQL92
+        validators = []
 
     def validate(self, data):
         ed_edital = data.get("ed_edital")
-        instance_id = self.instance.id if self.instance else None
+        fi_funcao_bolsista = data.get("fi_funcao_bolsista")
+        ac_curso_oferta = data.get("ac_curso_oferta")
 
-        # Verifica se ja existe outro registro com o mesmo ed_edital
-        edital_funcao_oferta = FiEditalFuncaoOferta.objects.filter(ed_edital=ed_edital)
+        qs = FiEditalFuncaoOferta.objects.filter(
+            ed_edital=ed_edital, fi_funcao_bolsista=fi_funcao_bolsista
+        )
+        # Faz a validacao da regra, como em NULLS NOT DISTINCT
+        edital_funcao_oferta_exists = (
+            qs.filter(ac_curso_oferta__isnull=True).exists()
+            if ac_curso_oferta is None
+            else qs.filter(ac_curso_oferta=ac_curso_oferta).exists()
+        )
 
-        if instance_id:
-            # PUT (edicao): ignora a propria instancia
-            edital_funcao_oferta = edital_funcao_oferta.exclude(id=instance_id)
-
-        if edital_funcao_oferta.exists():
+        if edital_funcao_oferta_exists:
             raise serializers.ValidationError(
                 ERRO_FINANCEIRO_EDITAL_ASSOCIADO_FI_EDITAL_FUNCAO_OFERTA
             )

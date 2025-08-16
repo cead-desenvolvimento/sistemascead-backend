@@ -414,10 +414,23 @@ class GerarFichaPDFAPIView(APIView):
         except EdPessoaVagaValidacao.DoesNotExist:
             raise ValidationError({"detail": ERRO_GET_PESSOA_VAGA_VALIDACAO})
 
-        request.session.flush()
+        try:
+            associacao_edital_funcao_oferta = (
+                FiEditalFuncaoOferta.objects.select_related(
+                    "ed_edital",
+                    "fi_funcao_bolsista",
+                    "ac_curso_oferta__ac_curso__ac_curso_tipo",
+                ).get(id=request.session["associacao_edital_funcao_oferta_id"])
+            )
+        except FiEditalFuncaoOferta.DoesNotExist:
+            raise ValidationError({"detail": ERRO_GET_FI_EDITAL_FUNCAO_OFERTA})
+
+        # request.session.flush()
         request.ed_pessoa_vaga_validacao = ed_pessoa_vaga_validacao
+        request.associacao_edital_funcao_oferta = associacao_edital_funcao_oferta
 
     def get(self, request):
+        associacao_edital_funcao_oferta = request.associacao_edital_funcao_oferta
         ed_pessoa_vaga_validacao = request.ed_pessoa_vaga_validacao
         cm_pessoa = request.ed_pessoa_vaga_validacao.cm_pessoa
         ed_edital = ed_pessoa_vaga_validacao.ed_vaga.ed_edital
@@ -436,9 +449,25 @@ class GerarFichaPDFAPIView(APIView):
             CmPessoaTelefone.objects.filter(cm_pessoa=cm_pessoa)[:2], many=True
         )
 
+        # Resolve a associacao curso e tipo de curso a ficha
+        # Nem sempre a ficha possui esses dados, ex.: coordenadoria geral
+        oferta = associacao_edital_funcao_oferta.ac_curso_oferta
+        ac_curso = (
+            getattr(getattr(oferta, "ac_curso", None), "nome", None) if oferta else None
+        )
+        ac_curso_tipo = (
+            getattr(
+                getattr(getattr(oferta, "ac_curso", None), "ac_curso_tipo", None),
+                "nome",
+                None,
+            )
+            if oferta
+            else None
+        )
+
         ficha = {
-            "ac_curso": ed_edital.ac_curso.nome,
-            "ac_curso_tipo": ed_edital.ac_curso.ac_curso_tipo.nome,
+            "ac_curso": ac_curso,
+            "ac_curso_tipo": ac_curso_tipo,
             "cm_pessoa": cm_pessoa_serializer.data,
             "cm_pessoa_banco": cm_pessoa_banco_serializer.data,
             "cm_pessoa_endereco": cm_pessoa_endereco_serializer.data,

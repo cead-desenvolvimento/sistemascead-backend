@@ -54,7 +54,8 @@ DOCS_CPF_CODIGO_PESSOA_VALIDACAO_VIEW = {
             description=f"{ERRO_GET_FI_EDITAL_FUNCAO_OFERTA} OU {ERRO_ED_PESSOA_VAGA_VALIDACAO_GEROU_FICHA_JA_EXISTE}",
             examples=[
                 OpenApiExample(
-                    "Erro de curso não associado", value={"detail": ERRO_GET_FI_EDITAL_FUNCAO_OFERTA}
+                    "Erro associação de edital/função/oferta",
+                    value={"detail": ERRO_GET_FI_EDITAL_FUNCAO_OFERTA},
                 ),
                 OpenApiExample(
                     "Erro de ficha já gerada",

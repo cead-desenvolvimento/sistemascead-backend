@@ -7,7 +7,9 @@ from cead.models import TrTransmissaoHorario
 def hash_transmissao(transmissao):
     horarios_qs = TrTransmissaoHorario.objects.filter(
         tr_transmissao=transmissao
-    ).order_by("id") # Para garantir que o hash nao mude se editar o horario
+    ).order_by(
+        "id"
+    )  # Para garantir que o hash nao mude se editar o horario
     horarios_str = ",".join(
         f"{h.inicio.isoformat()}-{h.fim.isoformat()}" for h in horarios_qs
     )

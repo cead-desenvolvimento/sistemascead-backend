@@ -191,6 +191,17 @@
                 padding-left: 20px;
                 list-style-position: inside;
             }
+            .fline{
+                display:block;
+                width:100%;
+                min-height:1.2em;
+            }
+            .fline-empty{
+                border-bottom:1px solid #000;
+            }
+            .fline-filled{
+                border-bottom:none;
+            }
         </style>
     </head>
     <body>
@@ -308,7 +319,11 @@
                             <div>Nome do Curso ao qual está vinculado *</div>
                         </div>
                     </td>
-                    <td colspan="3">{{ ac_curso }}</td>
+                    <td colspan="3">
+                        {% with v=ac_curso %}
+                            <span class="fline {% if v %}fline-filled{% else %}fline-empty{% endif %}">{{ v|default_if_none:"" }}</span>
+                        {% endwith %}
+                    </td>
                 </tr>
                 <tr>
                     <td>
@@ -474,11 +489,11 @@
                         </div>
                     </td>
                     <td colspan="3">
-                        {% if fi_pessoa_ficha.nome_conjuge %}
-                            {{ fi_pessoa_ficha.nome_conjuge }}
-                        {% else %}
-                            <em class="text-muted">--  --</em>
-                        {% endif %}
+                        {% with v=fi_pessoa_ficha.nome_conjuge %}
+                            <span class="fline {% if v %}fline-filled{% else %}fline-empty{% endif %}">
+                                {{ v|default_if_none:"" }}
+                            </span>
+                        {% endwith %}
                     </td>
                 </tr>
                 <tr>
@@ -489,11 +504,9 @@
                         </div>
                     </td>
                     <td colspan="3">
-                        {% if fi_pessoa_ficha.nome_pai %}
-                            {{ fi_pessoa_ficha.nome_pai }}
-                        {% else %}
-                            <em class="text-muted">--  --</em>
-                        {% endif %}
+                        {% with v=fi_pessoa_ficha.nome_pai %}
+                            <span class="fline {% if v %}fline-filled{% else %}fline-empty{% endif %}">{{ v|default_if_none:"" }}</span>
+                        {% endwith %}
                     </td>
                 </tr>
                 <tr>
@@ -535,7 +548,11 @@
                             </div>
                         </td>
                         <td colspan="7">
-                            {% if cm_pessoa_endereco.complemento %}{{ cm_pessoa_endereco.complemento }}{% endif %}
+                            {% with v=cm_pessoa_endereco.complemento %}
+                                <span class="fline {% if v %}fline-filled{% else %}fline-empty{% endif %}">
+                                    {{ v|default_if_none:"" }}
+                                </span>
+                            {% endwith %}
                         </td>
                     </tr>
                     <tr>
