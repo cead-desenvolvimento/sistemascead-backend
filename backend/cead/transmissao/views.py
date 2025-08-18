@@ -1,3 +1,4 @@
+from collections import Counter
 from datetime import datetime, timedelta, time
 
 from django.core.mail import EmailMessage
@@ -220,13 +221,6 @@ class DatasDisponiveisAPIView(APIView):
 
     @extend_schema(**DATAS_DISPONIVEIS_VIEW_DOCS["get"])
     def get(self, request):
-        espaco = TrEspacoFisico.objects.get(id=request.espaco_fisico)
-        limites = TrLimites.objects.get(pk=1)
-
-        hoje = timezone.localdate()
-        data_inicial = hoje + timedelta(days=limites.dias_de_antecedencia)
-        limite_agenda = hoje + timedelta(days=limites.dias_de_agenda_aberta)
-
         # Dias permitidos da semana (ex: ['1', '3', '5'] para seg/qua/sex)
         dias_permitidos = set(
             TrDisponibilidadeEquipe.objects.values_list("dia_semana", flat=True)
@@ -237,6 +231,13 @@ class DatasDisponiveisAPIView(APIView):
                 {"detail": ERRO_DATA_EQUIPE_INDISPONIVEL},
                 status=status.HTTP_404_NOT_FOUND,
             )
+
+        espaco = TrEspacoFisico.objects.get(id=request.espaco_fisico)
+        limites = TrLimites.objects.get(pk=1)
+
+        hoje = timezone.localdate()
+        data_inicial = hoje + timedelta(days=limites.dias_de_antecedencia)
+        limite_agenda = hoje + timedelta(days=limites.dias_de_agenda_aberta)
 
         # IDs de transmissões recusadas
         recusadas_ids = TrTransmissaoRecusada.objects.values_list(
@@ -282,8 +283,6 @@ class DatasDisponiveisAPIView(APIView):
         datas_ocupadas.update(indisponiveis)
 
         # Mapeia contagem de transmissões por mês já feitas (usando horarios válidos, sem recusadas)
-        from collections import Counter
-
         horarios_validos = (
             TrTransmissaoHorario.objects.exclude(tr_transmissao_id__in=recusadas_ids)
             .filter(

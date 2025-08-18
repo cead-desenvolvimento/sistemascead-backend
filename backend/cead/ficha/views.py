@@ -2,7 +2,6 @@ import os
 from datetime import date
 
 import pdfkit
-from django.db.models import Q
 from django.http import HttpResponse
 from django.template.loader import render_to_string
 from drf_spectacular.utils import extend_schema
@@ -113,14 +112,6 @@ class CPFCodigoPessoaValidacaoView(APIView):
             return Response(
                 {"detail": ERRO_GET_FI_EDITAL_FUNCAO_OFERTA},
                 status=status.HTTP_404_NOT_FOUND,
-            )
-
-        if EdPessoaVagaGerouFicha.objects.filter(
-            ed_pessoa_vaga_validacao=ed_pessoa_vaga_validacao
-        ).exists():
-            return Response(
-                {"detail": ERRO_ED_PESSOA_VAGA_VALIDACAO_GEROU_FICHA_JA_EXISTE},
-                status=status.HTTP_400_BAD_REQUEST,
             )
 
         request.session["ed_pessoa_vaga_validacao_id"] = ed_pessoa_vaga_validacao.id
@@ -425,7 +416,7 @@ class GerarFichaPDFAPIView(APIView):
         except FiEditalFuncaoOferta.DoesNotExist:
             raise ValidationError({"detail": ERRO_GET_FI_EDITAL_FUNCAO_OFERTA})
 
-        # request.session.flush()
+        request.session.flush()
         request.ed_pessoa_vaga_validacao = ed_pessoa_vaga_validacao
         request.associacao_edital_funcao_oferta = associacao_edital_funcao_oferta
 
