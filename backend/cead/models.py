@@ -866,10 +866,12 @@ class EdPessoaVagaCota(models.Model):
 
 class EdPessoaVagaInscricao(models.Model):
     id = models.BigAutoField(primary_key=True)
-    cm_pessoa = models.ForeignKey(CmPessoa, models.DO_NOTHING)
-    ed_vaga = models.ForeignKey("EdVaga", models.DO_NOTHING)
-    pontuacao = models.SmallIntegerField(blank=True, null=True)
-    data = models.DateTimeField()
+    cm_pessoa = models.ForeignKey(CmPessoa, models.DO_NOTHING, verbose_name="Nome")
+    ed_vaga = models.ForeignKey("EdVaga", models.DO_NOTHING, verbose_name="Vaga")
+    pontuacao = models.SmallIntegerField(
+        blank=True, null=True, verbose_name="Pontuação"
+    )
+    data = models.DateTimeField(verbose_name="Data da inscrição")
 
     class Meta:
         verbose_name = "(Editais) Pessoa inscrita"
@@ -883,6 +885,8 @@ class EdPessoaVagaInscricao(models.Model):
         return hashlib.sha256(
             f"{self.id}{self.cm_pessoa_id}{self.ed_vaga_id}{pontuacao_str}{self.data}".encode()
         ).hexdigest()
+
+    codigo_pessoavagainscricao.short_description = "Código gerado na inscrição"
 
 
 class EdPessoaVagaGerouFicha(models.Model):
@@ -925,17 +929,18 @@ class EdPessoaVagaJustificativa(models.Model):
 
 class EdPessoaVagaValidacao(models.Model):
     id = models.BigAutoField(primary_key=True)
-    cm_pessoa = models.ForeignKey(CmPessoa, models.DO_NOTHING)
+    cm_pessoa = models.ForeignKey(CmPessoa, models.DO_NOTHING, verbose_name="Nome")
     cm_pessoa_responsavel_validacao = models.ForeignKey(
         CmPessoa,
         models.DO_NOTHING,
         related_name="edpessoavagavalidacao_cm_pessoa_responsavel_validacao_set",
         blank=True,
         null=True,
+        verbose_name="Responsável pela validação",
     )
-    ed_vaga = models.ForeignKey("EdVaga", models.DO_NOTHING)
+    ed_vaga = models.ForeignKey("EdVaga", models.DO_NOTHING, verbose_name="Vaga")
     pontuacao = models.FloatField(verbose_name="Pontuação")
-    data = models.DateTimeField()
+    data = models.DateTimeField(verbose_name="Data da validação")
 
     class Meta:
         verbose_name = "(Editais) Pessoa validada"
@@ -981,6 +986,12 @@ class EdPessoaVagaValidacao(models.Model):
             f"{data_str}"
         )
         return hashlib.sha256(base_str.encode()).hexdigest()
+
+    # Apenas para mostrar no admin
+    def codigo_label(self):
+        return self.codigo
+
+    codigo_label.short_description = "Código da validação"
 
 
 class EdVaga(models.Model):

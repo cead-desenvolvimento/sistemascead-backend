@@ -660,8 +660,35 @@ class EdPessoaVagaConfirmacaoAdmin(admin.ModelAdmin):
 
 
 class EdPessoaVagaInscricaoAdmin(admin.ModelAdmin):
-    list_display = ("pessoa", "edital", "vaga", "pontuacao", "data")
+    list_display = (
+        "pessoa",
+        "edital",
+        "vaga",
+        "pontuacao",
+        "data",
+        "codigo_pessoavagainscricao",
+    )
     search_fields = ["cm_pessoa__nome"]
+    fields = ("cm_pessoa", "ed_vaga", "pontuacao", "data", "codigo_pessoavagainscricao")
+    readonly_fields = (
+        "cm_pessoa",
+        "ed_vaga",
+        "pontuacao",
+        "data",
+        "codigo_pessoavagainscricao",
+    )
+
+    def has_add_permission(self, request):
+        return False
+
+    def has_delete_permission(self, request, obj=None):
+        return False
+
+    def has_change_permission(self, request, obj=None):
+        return False
+
+    def has_view_permission(self, request, obj=None):
+        return True
 
     def pessoa(self, obj):
         if obj.cm_pessoa:
@@ -700,8 +727,37 @@ class EdPessoaVagaJustificativaAdmin(admin.ModelAdmin):
 
 
 class EdPessoaVagaValidacaoAdmin(admin.ModelAdmin):
-    list_display = ("pessoa", "validador", "edital", "vaga", "data")
+    list_display = (
+        "pessoa",
+        "validador",
+        "edital",
+        "vaga",
+        "pontuacao",
+        "data",
+        "codigo",
+    )
     search_fields = ["cm_pessoa__nome"]
+    fields = (
+        "cm_pessoa",
+        "cm_pessoa_responsavel_validacao",
+        "ed_vaga",
+        "pontuacao",
+        "data",
+        "codigo",
+    )
+    readonly_fields = fields
+
+    def has_add_permission(self, request):
+        return False
+
+    def has_delete_permission(self, request, obj=None):
+        return False
+
+    def has_change_permission(self, request, obj=None):
+        return False
+
+    def has_view_permission(self, request, obj=None):
+        return True
 
     def pessoa(self, obj):
         if obj.cm_pessoa:
@@ -721,6 +777,11 @@ class EdPessoaVagaValidacaoAdmin(admin.ModelAdmin):
     def vaga(self, obj):
         if obj.ed_vaga:
             return obj.ed_vaga
+        return "-"
+
+    def codigo(self, obj):
+        if obj.codigo:
+            return obj.codigo
         return "-"
 
 
