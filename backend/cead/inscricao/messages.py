@@ -90,6 +90,9 @@ ERRO_INSERCAO_CM_PESSOA = "Houve um erro ao tentar inserir a pessoa"
 ERRO_INSERCAO_ED_PESSOA_FORMACAO = "Houve um erro ao tentar inserir a formação"
 ERRO_INSERCAO_ED_PESSOA_VAGA_CAMPO_DATEBOX_FIM_INVALIDO = "Data de fim inválida"
 ERRO_INSERCAO_ED_PESSOA_VAGA_CAMPO_DATEBOX_INICIO_INVALIDO = "Data de início inválida"
+ERRO_INSERCAO_ED_PESSOA_VAGA_CAMPO_DATEBOX_OBJETO = (
+    "O campo datebox_da_vaga deve ser um objeto"
+)
 ERRO_INSCRICAO_DATA_FORMACAO_FIM_MAIOR_OU_IGUAL_DATA_FORMACAO_INICIO = (
     "A data de fim deve ser posterior à data de início da formação"
 )

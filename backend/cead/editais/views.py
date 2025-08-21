@@ -644,9 +644,7 @@ class ValidarVagaAPIView(APIView):
                 "ed_pessoa_vaga_campo_checkbox__ed_vaga_campo_checkbox__ed_campo",
                 "ed_pessoa_vaga_campo_checkbox__ed_vaga_campo_checkbox",
             )
-            .prefetch_related(
-                "ed_pessoa_vaga_campo_checkbox__edpessoavagacampocheckboxpontuacao_set"
-            )
+            .prefetch_related("ed_pessoa_vaga_campo_checkbox__pontuacoes")
         )
 
         for upload in checkbox_uploads:
@@ -656,7 +654,7 @@ class ValidarVagaAPIView(APIView):
             # Busca a pontuação, se existir
             pontuacao_obtida = 0
             pontuacao_obtida_obj = (
-                upload.ed_pessoa_vaga_campo_checkbox.edpessoavagacampocheckboxpontuacao_set.first()
+                upload.ed_pessoa_vaga_campo_checkbox.pontuacoes.first()
             )
             if pontuacao_obtida_obj:
                 pontuacao_obtida = pontuacao_obtida_obj.pontuacao or 0
@@ -686,9 +684,7 @@ class ValidarVagaAPIView(APIView):
                 "ed_pessoa_vaga_campo_combobox__ed_vaga_campo_combobox__ed_campo",
                 "ed_pessoa_vaga_campo_combobox__ed_vaga_campo_combobox",
             )
-            .prefetch_related(
-                "ed_pessoa_vaga_campo_combobox__edpessoavagacampocomboboxpontuacao_set"
-            )
+            .prefetch_related("ed_pessoa_vaga_campo_combobox__pontuacoes")
         )
 
         for upload in combobox_uploads:
@@ -698,7 +694,7 @@ class ValidarVagaAPIView(APIView):
             # Busca a pontuação, se existir
             pontuacao_obtida = 0
             pontuacao_obtida_obj = (
-                upload.ed_pessoa_vaga_campo_combobox.edpessoavagacampocomboboxpontuacao_set.first()
+                upload.ed_pessoa_vaga_campo_combobox.pontuacoes.first()
             )
             if pontuacao_obtida_obj:
                 pontuacao_obtida = pontuacao_obtida_obj.pontuacao or 0
@@ -729,7 +725,8 @@ class ValidarVagaAPIView(APIView):
                 "ed_pessoa_vaga_campo_datebox__ed_vaga_campo_datebox",
             )
             .prefetch_related(
-                "ed_pessoa_vaga_campo_datebox__edpessoavagacampodateboxpontuacao_set"
+                "ed_pessoa_vaga_campo_datebox__pontuacoes",
+                "ed_pessoa_vaga_campo_datebox__periodos",
             )
         )
 
@@ -740,7 +737,7 @@ class ValidarVagaAPIView(APIView):
             # Busca a pontuação, se existir
             pontuacao_obtida = 0
             pontuacao_obtida_obj = (
-                upload.ed_pessoa_vaga_campo_datebox.edpessoavagacampodateboxpontuacao_set.first()
+                upload.ed_pessoa_vaga_campo_datebox.pontuacoes.first()
             )
             if pontuacao_obtida_obj:
                 pontuacao_obtida = pontuacao_obtida_obj.pontuacao or 0
@@ -754,8 +751,11 @@ class ValidarVagaAPIView(APIView):
                         "pontuacao_obtida": pontuacao_obtida,
                         "pontuacao_maxima": upload.ed_pessoa_vaga_campo_datebox.ed_vaga_campo_datebox.pontuacao_maxima
                         or 0,
-                        "inicio": upload.ed_pessoa_vaga_campo_datebox.inicio,
-                        "fim": upload.ed_pessoa_vaga_campo_datebox.fim,
+                        "periodos": list(
+                            upload.ed_pessoa_vaga_campo_datebox.periodos.values(
+                                "inicio", "fim"
+                            )
+                        ),
                         "caminho_arquivo": upload.url_download,
                         "validado": upload.validado,
                     },

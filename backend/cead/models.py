@@ -717,8 +717,6 @@ class EdPessoaVagaCampoDatebox(models.Model):
     id = models.BigAutoField(primary_key=True)
     cm_pessoa = models.ForeignKey(CmPessoa, models.DO_NOTHING)
     ed_vaga_campo_datebox = models.ForeignKey("EdVagaCampoDatebox", models.DO_NOTHING)
-    inicio = models.DateField()
-    fim = models.DateField()
 
     class Meta:
         verbose_name = "(Editais) Marcação de datebox pela pessoa"
@@ -800,7 +798,9 @@ class EdPessoaVagaCampoDateboxUpload(models.Model):
 class EdPessoaVagaCampoCheckboxPontuacao(models.Model):
     id = models.BigAutoField(primary_key=True)
     ed_pessoa_vaga_campo_checkbox = models.ForeignKey(
-        "EdPessoaVagaCampoCheckbox", models.DO_NOTHING
+        "EdPessoaVagaCampoCheckbox",
+        models.DO_NOTHING,
+        related_name="pontuacoes",
     )
     pontuacao = models.FloatField(verbose_name="Pontuação")
 
@@ -814,7 +814,9 @@ class EdPessoaVagaCampoCheckboxPontuacao(models.Model):
 class EdPessoaVagaCampoComboboxPontuacao(models.Model):
     id = models.BigAutoField(primary_key=True)
     ed_pessoa_vaga_campo_combobox = models.ForeignKey(
-        "EdPessoaVagaCampoCombobox", models.DO_NOTHING
+        "EdPessoaVagaCampoCombobox",
+        models.DO_NOTHING,
+        related_name="pontuacoes",
     )
     pontuacao = models.FloatField(verbose_name="Pontuação")
 
@@ -828,7 +830,9 @@ class EdPessoaVagaCampoComboboxPontuacao(models.Model):
 class EdPessoaVagaCampoDateboxPontuacao(models.Model):
     id = models.BigAutoField(primary_key=True)
     ed_pessoa_vaga_campo_datebox = models.ForeignKey(
-        "EdPessoaVagaCampoDatebox", models.DO_NOTHING
+        "EdPessoaVagaCampoDatebox",
+        models.DO_NOTHING,
+        related_name="pontuacoes",
     )
     pontuacao = models.FloatField(verbose_name="Pontuação")
 
@@ -837,6 +841,25 @@ class EdPessoaVagaCampoDateboxPontuacao(models.Model):
         verbose_name_plural = "(Editais) Pontuações dos candidatos - dateboxes"
         managed = False
         db_table = "ed_pessoa_vaga_campo_datebox_pontuacao"
+
+
+class EdPessoaVagaCampoDateboxPeriodo(models.Model):
+    id = models.BigAutoField(primary_key=True)
+    ed_pessoa_vaga_campo_datebox = models.ForeignKey(
+        EdPessoaVagaCampoDatebox,
+        models.DO_NOTHING,
+        related_name="periodos",
+    )
+    inicio = models.DateField(verbose_name="Início")
+    fim = models.DateField(verbose_name="Fim")
+
+    class Meta:
+        verbose_name = "(Editais) Período (informado) do candidato - datebox"
+        verbose_name_plural = (
+            "(Editais) Períodos (informados) dos candidatos - dateboxes"
+        )
+        managed = False
+        db_table = "ed_pessoa_vaga_campo_datebox_periodo"
 
 
 class EdPessoaVagaConfirmacao(models.Model):

@@ -28,6 +28,7 @@ from cead.models import (
     EdPessoaVagaCampoCombobox,
     EdPessoaVagaCampoComboboxUpload,
     EdPessoaVagaCampoDatebox,
+    EdPessoaVagaCampoDateboxPeriodo,
     EdPessoaVagaCampoDateboxUpload,
     EdPessoaVagaCota,
     EdPessoaVagaInscricao,
@@ -84,40 +85,70 @@ def apaga_outra_inscricao_no_mesmo_edital(pessoa_id, ed_pessoa_vaga_inscricao_id
         ed_pessoa_vaga_inscricao = EdPessoaVagaInscricao.objects.get(
             id=ed_pessoa_vaga_inscricao_id
         )
-        EdPessoaVagaCampoCheckboxUpload.objects.filter(
-            ed_pessoa_vaga_campo_checkbox__cm_pessoa_id=pessoa_id,
-            ed_pessoa_vaga_campo_checkbox__ed_vaga_campo_checkbox__ed_vaga__id=ed_pessoa_vaga_inscricao.ed_vaga_id,
+        vaga_id = ed_pessoa_vaga_inscricao.ed_vaga_id
+
+        # -----------------------------
+        # 1. Apaga filhos do Datebox (Periodos e Uploads)
+        # -----------------------------
+        EdPessoaVagaCampoDateboxPeriodo.objects.filter(
+            ed_pessoa_vaga_campo_datebox__cm_pessoa_id=pessoa_id,
+            ed_pessoa_vaga_campo_datebox__ed_vaga_campo_datebox__ed_vaga_id=vaga_id,
         ).delete()
-        EdPessoaVagaCampoComboboxUpload.objects.filter(
-            ed_pessoa_vaga_campo_combobox__cm_pessoa_id=pessoa_id,
-            ed_pessoa_vaga_campo_combobox__ed_vaga_campo_combobox__ed_vaga__id=ed_pessoa_vaga_inscricao.ed_vaga_id,
-        ).delete()
+
         EdPessoaVagaCampoDateboxUpload.objects.filter(
             ed_pessoa_vaga_campo_datebox__cm_pessoa_id=pessoa_id,
-            ed_pessoa_vaga_campo_datebox__ed_vaga_campo_datebox__ed_vaga__id=ed_pessoa_vaga_inscricao.ed_vaga_id,
+            ed_pessoa_vaga_campo_datebox__ed_vaga_campo_datebox__ed_vaga_id=vaga_id,
         ).delete()
-        EdPessoaVagaCampoCheckbox.objects.filter(
-            cm_pessoa_id=pessoa_id,
-            ed_vaga_campo_checkbox__ed_vaga__id=ed_pessoa_vaga_inscricao.ed_vaga_id,
+
+        # -----------------------------
+        # 2. Apaga filhos de Combobox e Checkbox (Uploads)
+        # -----------------------------
+        EdPessoaVagaCampoCheckboxUpload.objects.filter(
+            ed_pessoa_vaga_campo_checkbox__cm_pessoa_id=pessoa_id,
+            ed_pessoa_vaga_campo_checkbox__ed_vaga_campo_checkbox__ed_vaga_id=vaga_id,
         ).delete()
-        EdPessoaVagaCampoCombobox.objects.filter(
-            cm_pessoa_id=pessoa_id,
-            ed_vaga_campo_combobox__ed_vaga__id=ed_pessoa_vaga_inscricao.ed_vaga_id,
+
+        EdPessoaVagaCampoComboboxUpload.objects.filter(
+            ed_pessoa_vaga_campo_combobox__cm_pessoa_id=pessoa_id,
+            ed_pessoa_vaga_campo_combobox__ed_vaga_campo_combobox__ed_vaga_id=vaga_id,
         ).delete()
+
+        # -----------------------------
+        # 3. Apaga os registros principais dos campos
+        # -----------------------------
         EdPessoaVagaCampoDatebox.objects.filter(
             cm_pessoa_id=pessoa_id,
-            ed_vaga_campo_datebox__ed_vaga__id=ed_pessoa_vaga_inscricao.ed_vaga_id,
+            ed_vaga_campo_datebox__ed_vaga_id=vaga_id,
         ).delete()
+
+        EdPessoaVagaCampoCheckbox.objects.filter(
+            cm_pessoa_id=pessoa_id,
+            ed_vaga_campo_checkbox__ed_vaga_id=vaga_id,
+        ).delete()
+
+        EdPessoaVagaCampoCombobox.objects.filter(
+            cm_pessoa_id=pessoa_id,
+            ed_vaga_campo_combobox__ed_vaga_id=vaga_id,
+        ).delete()
+
+        # -----------------------------
+        # 4. Apaga a inscrição em si
+        # -----------------------------
         ed_pessoa_vaga_inscricao.delete()
 
+        # -----------------------------
+        # 5. Apaga arquivos do upload local (se existirem)
+        # -----------------------------
         pasta_a_apagar = os.path.join(
             RAIZ_ARQUIVOS_UPLOAD,
-            f"{pessoa_id}_{ed_pessoa_vaga_inscricao.ed_vaga_id}",
+            f"{pessoa_id}_{vaga_id}",
         )
         if os.path.exists(pasta_a_apagar):
             shutil.rmtree(pasta_a_apagar)
+
     except EdPessoaVagaInscricao.DoesNotExist:
         pass
+
     except Exception as e:
         return Response(
             {"detail": f"{ERRO_APAGAR_INSCRICAO_CONCORRENTE}: {str(e)}"},
@@ -1035,70 +1066,121 @@ class PessoaVagaCampoView(APIView):
 
         ## Dateboxes
         # Captura o JSON enviado e garante que seja um dicionário
-        dateboxes_da_vaga_dict = request.data.get("datebox_da_vaga", {})
+        dateboxes_da_vaga_dict = request.data.get("datebox_da_vaga", {}) or {}
+
+        if not isinstance(dateboxes_da_vaga_dict, dict):
+            return Response(
+                {"detail": ERRO_INSERCAO_ED_PESSOA_VAGA_CAMPO_DATEBOX_OBJETO},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
         # Proteção extra: filtrar apenas os IDs válidos do banco
         dateboxes_validos = set(dateboxes_da_vaga.values_list("id", flat=True))
         dateboxes_da_vaga_dict = {
-            int(datebox_id): date_data
-            for datebox_id, date_data in dateboxes_da_vaga_dict.items()
+            int(datebox_id): periodos
+            for datebox_id, periodos in dateboxes_da_vaga_dict.items()
             if int(datebox_id) in dateboxes_validos
         }
 
-        # Garantir que os obrigatórios estejam presentes
+        # Garante que os obrigatórios estejam presentes
         for datebox_obrigatorio_vaga in dateboxes_da_vaga.filter(
             obrigatorio=True
         ).values_list("id", flat=True):
             if datebox_obrigatorio_vaga not in dateboxes_da_vaga_dict:
-                dateboxes_da_vaga_dict[datebox_obrigatorio_vaga] = (
-                    {}
-                )  # Adiciona vazio para ser tratado depois
+                # Adiciona vazio para forçar validação
+                dateboxes_da_vaga_dict[datebox_obrigatorio_vaga] = [{}]
 
         # Processamento dos dateboxes
-        for id_datebox_vaga, date_data in dateboxes_da_vaga_dict.items():
+        for id_datebox_data, periodos in dateboxes_da_vaga_dict.items():
+            if not isinstance(periodos, list):
+                periodos = [periodos]
+
             try:
-                date_inicio = (
-                    datetime.strptime(date_data.get("inicio"), "%Y-%m-%d").date()
-                    if date_data.get("inicio")
-                    else None
-                )
-                date_fim = (
-                    datetime.strptime(date_data.get("fim"), "%Y-%m-%d").date()
-                    if date_data.get("fim")
-                    else None
-                )
+                datebox_obj = EdVagaCampoDatebox.objects.get(id=id_datebox_data)
 
-                if date_inicio is None:
-                    raise Exception(
-                        ERRO_INSERCAO_ED_PESSOA_VAGA_CAMPO_DATEBOX_INICIO_INVALIDO
+                ed_pessoa_vaga_campo_datebox_obj, _ = (
+                    EdPessoaVagaCampoDatebox.objects.get_or_create(
+                        cm_pessoa=request.candidato,
+                        ed_vaga_campo_datebox_id=id_datebox_data,
                     )
-                if date_fim is None:
-                    raise Exception(
-                        ERRO_INSERCAO_ED_PESSOA_VAGA_CAMPO_DATEBOX_FIM_INVALIDO
+                )
+
+                # 1. Obtém todos os períodos relacionados ao campo, para
+                # não ter que apagar em caso das datas não terem mudado
+
+                # Qual o problema? A pessoa entra com a data A até B, e depois edita
+                # de A até C, então preciso saber o que mudou para apagar o antigo
+
+                # Poderia apagar tudo antes e salvar de novo, mas não é elegante
+                periodos_existentes = list(
+                    EdPessoaVagaCampoDateboxPeriodo.objects.filter(
+                        ed_pessoa_vaga_campo_datebox=ed_pessoa_vaga_campo_datebox_obj
                     )
-                if date_fim <= date_inicio:
-                    raise Exception(
-                        ERRO_INSCRICAO_DATA_FORMACAO_FIM_MAIOR_OU_IGUAL_DATA_FORMACAO_INICIO
+                )
+
+                # 2. Converte para set de tuplas (inicio, fim)
+                periodos_existentes_set = {
+                    (p.inicio, p.fim) for p in periodos_existentes
+                }
+
+                # 3. Prepara os novos períodos a partir do POST
+                periodos_recebidos_set = set()
+                periodos_recebidos_info = []
+
+                for periodo in periodos:
+                    date_inicio = (
+                        datetime.strptime(periodo.get("inicio"), "%Y-%m-%d").date()
+                        if periodo.get("inicio")
+                        else None
+                    )
+                    date_fim = (
+                        datetime.strptime(periodo.get("fim"), "%Y-%m-%d").date()
+                        if periodo.get("fim")
+                        else None
                     )
 
-                datebox_obj = EdVagaCampoDatebox.objects.get(id=id_datebox_vaga)
-                periodo_pontuado = int(
-                    (date_fim - date_inicio).days
-                    / datebox_obj.multiplicador_fracao_pontuacao
-                )
-                pontuacao_final = min(
-                    periodo_pontuado * datebox_obj.fracao_pontuacao,
-                    datebox_obj.pontuacao_maxima,
+                    if date_inicio is None:
+                        raise Exception(
+                            ERRO_INSERCAO_ED_PESSOA_VAGA_CAMPO_DATEBOX_INICIO_INVALIDO
+                        )
+                    if date_fim is None:
+                        raise Exception(
+                            ERRO_INSERCAO_ED_PESSOA_VAGA_CAMPO_DATEBOX_FIM_INVALIDO
+                        )
+                    if date_fim <= date_inicio:
+                        raise Exception(
+                            ERRO_INSCRICAO_DATA_FORMACAO_FIM_MAIOR_OU_IGUAL_DATA_FORMACAO_INICIO
+                        )
+
+                    periodos_recebidos_set.add((date_inicio, date_fim))
+                    periodos_recebidos_info.append((date_inicio, date_fim))
+
+                # 4. Apaga os que não foram enviados
+                for p in periodos_existentes:
+                    if (p.inicio, p.fim) not in periodos_recebidos_set:
+                        p.delete()
+
+                # 5. Cria os novos
+                for inicio, fim in periodos_recebidos_info:
+                    if (inicio, fim) not in periodos_existentes_set:
+                        EdPessoaVagaCampoDateboxPeriodo.objects.create(
+                            ed_pessoa_vaga_campo_datebox=ed_pessoa_vaga_campo_datebox_obj,
+                            inicio=inicio,
+                            fim=fim,
+                        )
+
+                # 6. Pontuação acumulada
+                pontuacao_total_por_datebox = sum(
+                    int(
+                        (fim - inicio).days / datebox_obj.multiplicador_fracao_pontuacao
+                    )
+                    * datebox_obj.fracao_pontuacao
+                    for inicio, fim in periodos_recebidos_info
                 )
 
-                # Criar ou atualizar a entrada no banco de dados
-                obj, created = EdPessoaVagaCampoDatebox.objects.update_or_create(
-                    cm_pessoa=request.candidato,
-                    ed_vaga_campo_datebox_id=id_datebox_vaga,
-                    defaults={"inicio": date_inicio, "fim": date_fim},
+                pontuacao_candidato += min(
+                    pontuacao_total_por_datebox, datebox_obj.pontuacao_maxima
                 )
-
-                pontuacao_candidato += pontuacao_final
 
             except Exception as e:
                 return Response(
@@ -1156,6 +1238,10 @@ class PessoaVagaCampoView(APIView):
             - set(array_temporario_id_datebox_vaga)
         )
         EdPessoaVagaCampoDateboxUpload.objects.filter(
+            ed_pessoa_vaga_campo_datebox__cm_pessoa=request.candidato,
+            ed_pessoa_vaga_campo_datebox__ed_vaga_campo_datebox_id__in=dateboxes_nao_marcados_agora,
+        ).delete()
+        EdPessoaVagaCampoDateboxPeriodo.objects.filter(
             ed_pessoa_vaga_campo_datebox__cm_pessoa=request.candidato,
             ed_pessoa_vaga_campo_datebox__ed_vaga_campo_datebox_id__in=dateboxes_nao_marcados_agora,
         ).delete()
@@ -1385,7 +1471,8 @@ class AnexarArquivosView(APIView):
         # Datebox
         dateboxes_da_pessoa = EdPessoaVagaCampoDatebox.objects.filter(
             cm_pessoa=request.candidato, ed_vaga_campo_datebox__ed_vaga=request.vaga
-        )
+        ).prefetch_related("periodos")
+
         dateboxes = []
         for datebox_da_pessoa in dateboxes_da_pessoa:
             datebox_da_pessoa_com_upload = (
@@ -1394,12 +1481,13 @@ class AnexarArquivosView(APIView):
                 ).first()
             )
 
+            periodos = list(datebox_da_pessoa.periodos.values("inicio", "fim"))
+
             dateboxes.append(
                 {
                     "ed_vaga_campo_datebox_id": datebox_da_pessoa.ed_vaga_campo_datebox.id,
                     "nome_campo": datebox_da_pessoa.ed_vaga_campo_datebox.ed_campo.descricao,
-                    "inicio": datebox_da_pessoa.inicio,
-                    "fim": datebox_da_pessoa.fim,
+                    "periodos": periodos,
                     "arquivo": (
                         datebox_da_pessoa_com_upload.caminho_arquivo
                         if datebox_da_pessoa_com_upload
@@ -1718,6 +1806,15 @@ class FinalizarInscricaoView(APIView):
                 ed_pessoa_vaga_campo_datebox__ed_vaga_campo_datebox__id=datebox_id,
             ).exists():
                 arquivos_faltantes.append(f"datebox_{datebox_id}")
+
+        # Garante, por segurança, que tem pelo menos um período preenchido
+        for datebox in ed_pessoa_vaga_campos["dateboxes"]:
+            if not EdPessoaVagaCampoDateboxPeriodo.objects.filter(
+                ed_pessoa_vaga_campo_datebox=datebox,
+                inicio__isnull=False,
+                fim__isnull=False,
+            ).exists():
+                arquivos_faltantes.append(f"datebox_{datebox.ed_vaga_campo_datebox.id}")
 
         if arquivos_faltantes:
             raise ValidationError(

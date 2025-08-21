@@ -754,6 +754,20 @@ class Migration(migrations.Migration):
             },
         ),
         migrations.CreateModel(
+            name="EdPessoaVagaCampoDateboxPeriodo",
+            fields=[
+                ("id", models.BigAutoField(primary_key=True, serialize=False)),
+                ("inicio", models.DateField()),
+                ("fim", models.DateField()),
+            ],
+            options={
+                "verbose_name": "(Editais) Período (informado) do candidato - datebox",
+                "verbose_name_plural": "Períodos (informados) dos candidatos - dateboxes",
+                "db_table": "ed_pessoa_vaga_campo_datebox",
+                "managed": False,
+            },
+        ),
+        migrations.CreateModel(
             name="EdPessoaVagaCampoDateboxPontuacao",
             fields=[
                 ("id", models.BigAutoField(primary_key=True, serialize=False)),

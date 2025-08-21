@@ -21,7 +21,6 @@ urlpatterns = [
         views.VerificarCodigoView.as_view(),
         name="verificar_codigo_email",
     ),
-    # path("validar_email/", views.ValidarEmailView.as_view(), name="validar_email"),
     path("cota/", views.AssociarPessoaVagaCotaView.as_view(), name="cota"),  # get/post
     path(
         "cota/<int:cota_id>/",

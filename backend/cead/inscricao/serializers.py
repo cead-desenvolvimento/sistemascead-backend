@@ -156,9 +156,16 @@ class ComboboxPessoaSerializer(serializers.ModelSerializer):
 
 
 class DateboxPessoaSerializer(serializers.ModelSerializer):
+    periodos = serializers.SerializerMethodField()
+
     class Meta:
         model = EdPessoaVagaCampoDatebox
-        fields = ["ed_vaga_campo_datebox_id", "inicio", "fim"]
+        fields = ["ed_vaga_campo_datebox_id", "periodos"]
+
+    def get_periodos(self, obj):
+        return [
+            {"inicio": p.inicio, "fim": p.fim} for p in obj.periodos.order_by("inicio")
+        ]
 
 
 class UploadArquivoCheckboxSerializer(serializers.ModelSerializer):
