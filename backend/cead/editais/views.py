@@ -529,19 +529,8 @@ class ValidarVagaAPIView(APIView):
         # 2.2 Pontuações
         pontuacoes_dict = self.get_pontuacoes(vaga, pessoa_ids)
 
-        # 2.3 Dados para descrições
-        checkbox_descricoes = self.get_checkbox_descricoes(vaga)
-        combobox_descricoes = self.get_combobox_descricoes(vaga)
-        datebox_descricoes = self.get_datebox_descricoes(vaga)
-
-        # 2.4 Uploads
-        uploads_pontuacoes_dict = self.get_uploads_pontuacoes(
-            vaga,
-            pessoa_ids,
-            checkbox_descricoes,
-            combobox_descricoes,
-            datebox_descricoes,
-        )
+        # 2.3 Uploads
+        uploads_pontuacoes_dict = self.get_uploads_pontuacoes(vaga, pessoa_ids)
 
         # 3. Montar resultado usando os dicionários
         return [
@@ -628,13 +617,25 @@ class ValidarVagaAPIView(APIView):
 
         return pontuacoes
 
-    def get_uploads_pontuacoes(
-        self, vaga, pessoa_ids, checkbox_desc, combobox_desc, datebox_desc
-    ):
-        """Busca todos os uploads de uma vez"""
+    def get_uploads_pontuacoes(self, vaga, pessoa_ids):
+        """Busca todos os uploads de uma vez, já com descrições padronizadas."""
         uploads_por_pessoa = {pessoa_id: [] for pessoa_id in pessoa_ids}
 
-        # Checkbox uploads - UMA query
+        def fmt_num(v):
+            try:
+                v = float(v)
+                return str(int(v)) if v.is_integer() else f"{v:.1f}".replace(".", ",")
+            except Exception:
+                return str(v)
+
+        def plural_ponto(v):
+            try:
+                v = float(v)
+                return "ponto" if (v == 1 or (v.is_integer() and int(v) == 1)) else "pontos"
+            except Exception:
+                return "pontos"
+
+        # -------- Checkbox uploads --------
         checkbox_uploads = (
             EdPessoaVagaCampoCheckboxUpload.objects.filter(
                 ed_pessoa_vaga_campo_checkbox__ed_vaga_campo_checkbox__ed_vaga=vaga,
@@ -649,32 +650,40 @@ class ValidarVagaAPIView(APIView):
 
         for upload in checkbox_uploads:
             pessoa_id = upload.ed_pessoa_vaga_campo_checkbox.cm_pessoa_id
-            campo_id = upload.ed_pessoa_vaga_campo_checkbox.ed_vaga_campo_checkbox.id
-
-            # Busca a pontuação, se existir
             pontuacao_obtida = 0
-            pontuacao_obtida_obj = (
-                upload.ed_pessoa_vaga_campo_checkbox.pontuacoes.first()
-            )
-            if pontuacao_obtida_obj:
-                pontuacao_obtida = pontuacao_obtida_obj.pontuacao or 0
+            pontuacao_obj = upload.ed_pessoa_vaga_campo_checkbox.pontuacoes.first()
+            if pontuacao_obj:
+                pontuacao_obtida = pontuacao_obj.pontuacao or 0
+
+            campo = upload.ed_pessoa_vaga_campo_checkbox.ed_vaga_campo_checkbox
+            descricao = campo.ed_campo.descricao
+            pmax = campo.pontuacao or 0
+            if pmax > 0:
+                descricao += f" ({fmt_num(pmax)} {plural_ponto(pmax)})"
 
             uploads_por_pessoa[pessoa_id].append(
                 {
                     "pk": upload.id,
                     "fields": {
                         "tipo": "checkbox",
-                        "descricao": f"{upload.ed_pessoa_vaga_campo_checkbox.ed_vaga_campo_checkbox.ed_campo.descricao} {checkbox_desc.get(campo_id, '')}",
+                        "descricao": descricao,
                         "pontuacao_obtida": pontuacao_obtida,
-                        "pontuacao_do_campo": upload.ed_pessoa_vaga_campo_checkbox.ed_vaga_campo_checkbox.pontuacao
-                        or 0,
+                        "pontuacao_do_campo": pmax,  # usado no front como max do input
                         "caminho_arquivo": upload.url_download,
                         "validado": upload.validado,
                     },
                 }
             )
 
-        # Combobox uploads - UMA query
+        # -------- Combobox uploads --------
+        # máximo do GRUPO por (vaga + campo): uma agregação só
+        maiores_por_campo = (
+            EdVagaCampoCombobox.objects.filter(ed_vaga=vaga)
+            .values("ed_campo")
+            .annotate(maior=Max("pontuacao"))
+        )
+        max_por_campo = {m["ed_campo"]: m["maior"] for m in maiores_por_campo}
+
         combobox_uploads = (
             EdPessoaVagaCampoComboboxUpload.objects.filter(
                 ed_pessoa_vaga_campo_combobox__cm_pessoa_id__in=pessoa_ids,
@@ -689,32 +698,37 @@ class ValidarVagaAPIView(APIView):
 
         for upload in combobox_uploads:
             pessoa_id = upload.ed_pessoa_vaga_campo_combobox.cm_pessoa_id
-            campo_id = upload.ed_pessoa_vaga_campo_combobox.ed_vaga_campo_combobox.id
-
-            # Busca a pontuação, se existir
             pontuacao_obtida = 0
-            pontuacao_obtida_obj = (
-                upload.ed_pessoa_vaga_campo_combobox.pontuacoes.first()
-            )
-            if pontuacao_obtida_obj:
-                pontuacao_obtida = pontuacao_obtida_obj.pontuacao or 0
+            pontuacao_obj = upload.ed_pessoa_vaga_campo_combobox.pontuacoes.first()
+            if pontuacao_obj:
+                pontuacao_obtida = pontuacao_obj.pontuacao or 0
+
+            campo = upload.ed_pessoa_vaga_campo_combobox.ed_vaga_campo_combobox
+            descricao = campo.ed_campo.descricao
+
+            # máximo do grupo (vaga + campo), NÃO o valor da opção
+            pmax_grupo = max_por_campo.get(campo.ed_campo_id, 0) or 0
+            if pmax_grupo > 0:
+                descricao += f" ({fmt_num(pmax_grupo)} {plural_ponto(pmax_grupo)})"
+
+            # mas o input no front continua limitado ao valor da opção escolhida:
+            pmax_da_opcao = campo.pontuacao or 0
 
             uploads_por_pessoa[pessoa_id].append(
                 {
                     "pk": upload.id,
                     "fields": {
                         "tipo": "combobox",
-                        "descricao": f"{upload.ed_pessoa_vaga_campo_combobox.ed_vaga_campo_combobox.ed_campo.descricao} {combobox_desc.get(campo_id, '')}",
+                        "descricao": descricao,
                         "pontuacao_obtida": pontuacao_obtida,
-                        "pontuacao_do_campo": upload.ed_pessoa_vaga_campo_combobox.ed_vaga_campo_combobox.pontuacao
-                        or 0,
+                        "pontuacao_do_campo": pmax_da_opcao,  # mantém limite correto do input
                         "caminho_arquivo": upload.url_download,
                         "validado": upload.validado,
                     },
                 }
             )
 
-        # Datebox uploads - UMA query
+        # -------- Datebox uploads --------
         datebox_uploads = (
             EdPessoaVagaCampoDateboxUpload.objects.filter(
                 ed_pessoa_vaga_campo_datebox__cm_pessoa_id__in=pessoa_ids,
@@ -732,29 +746,34 @@ class ValidarVagaAPIView(APIView):
 
         for upload in datebox_uploads:
             pessoa_id = upload.ed_pessoa_vaga_campo_datebox.cm_pessoa_id
-            campo_id = upload.ed_pessoa_vaga_campo_datebox.ed_vaga_campo_datebox.id
-
-            # Busca a pontuação, se existir
             pontuacao_obtida = 0
-            pontuacao_obtida_obj = (
-                upload.ed_pessoa_vaga_campo_datebox.pontuacoes.first()
-            )
-            if pontuacao_obtida_obj:
-                pontuacao_obtida = pontuacao_obtida_obj.pontuacao or 0
+            pontuacao_obj = upload.ed_pessoa_vaga_campo_datebox.pontuacoes.first()
+            if pontuacao_obj:
+                pontuacao_obtida = pontuacao_obj.pontuacao or 0
+
+            campo = upload.ed_pessoa_vaga_campo_datebox.ed_vaga_campo_datebox
+            pmax = campo.pontuacao_maxima or 0
+            descricao = f"{campo.ed_campo.descricao}"
+            if pmax > 0:
+                descricao += f" ({fmt_num(pmax)} {plural_ponto(pmax)})"
+
+            periodos = [
+                f"{p['inicio']} a {p['fim']}"
+                for p in upload.ed_pessoa_vaga_campo_datebox.periodos.values("inicio", "fim")
+            ]
+            if periodos:
+                descricao += "\n(" + ", ".join(periodos) + ")"
 
             uploads_por_pessoa[pessoa_id].append(
                 {
                     "pk": upload.id,
                     "fields": {
                         "tipo": "datebox",
-                        "descricao": f"{upload.ed_pessoa_vaga_campo_datebox.ed_vaga_campo_datebox.ed_campo.descricao} {datebox_desc.get(campo_id, '')}",
+                        "descricao": descricao,
                         "pontuacao_obtida": pontuacao_obtida,
-                        "pontuacao_maxima": upload.ed_pessoa_vaga_campo_datebox.ed_vaga_campo_datebox.pontuacao_maxima
-                        or 0,
+                        "pontuacao_maxima": pmax,
                         "periodos": list(
-                            upload.ed_pessoa_vaga_campo_datebox.periodos.values(
-                                "inicio", "fim"
-                            )
+                            upload.ed_pessoa_vaga_campo_datebox.periodos.values("inicio", "fim")
                         ),
                         "caminho_arquivo": upload.url_download,
                         "validado": upload.validado,
@@ -763,61 +782,6 @@ class ValidarVagaAPIView(APIView):
             )
 
         return uploads_por_pessoa
-
-    def get_checkbox_descricoes(self, vaga):
-        """Busca descrições dos checkboxes UMA vez por vaga"""
-        return {
-            checkbox["id"]: (
-                f"({int(checkbox['pontuacao']) if checkbox['pontuacao'] == int(checkbox['pontuacao']) else checkbox['pontuacao']:.1f}".replace(
-                    ".", ","
-                )
-                + f" ponto{'s' if int(checkbox['pontuacao']) != 1 else ''})"
-            )
-            for checkbox in EdVagaCampoCheckbox.objects.filter(
-                ed_vaga=vaga, pontuacao__isnull=False
-            ).values("id", "pontuacao")
-        }
-
-    def get_combobox_descricoes(self, vaga):
-        """Busca descrições dos comboboxes UMA vez por vaga"""
-        comboboxes = EdVagaCampoCombobox.objects.filter(
-            ed_vaga=vaga, pontuacao__isnull=False
-        ).values("id", "pontuacao", "ed_campo")
-
-        # Buscar maiores pontuações por campo
-        maiores_pontuacoes = {}
-        for combo in comboboxes:
-            campo_id = combo["ed_campo"]
-            if campo_id not in maiores_pontuacoes:
-                maiores_pontuacoes[campo_id] = EdVagaCampoCombobox.objects.filter(
-                    ed_vaga=vaga, ed_campo=campo_id
-                ).aggregate(maior=Max("pontuacao"))["maior"]
-
-        return {
-            combo["id"]: (
-                f"(marcou {combo['pontuacao']:.1f}".replace(".", ",")
-                + f" de {int(maiores_pontuacoes[combo['ed_campo']]) if maiores_pontuacoes[combo['ed_campo']] == int(maiores_pontuacoes[combo['ed_campo']]) else maiores_pontuacoes[combo['ed_campo']]:.1f}".replace(
-                    ".", ","
-                )
-                + f" ponto{'s' if int(maiores_pontuacoes[combo['ed_campo']]) != 1 else ''})"
-            )
-            for combo in comboboxes
-        }
-
-    def get_datebox_descricoes(self, vaga):
-        """Busca descrições dos dateboxes UMA vez por vaga"""
-        return {
-            datebox["id"]: (
-                f"({int(datebox['fracao_pontuacao']) if datebox['fracao_pontuacao'] == int(datebox['fracao_pontuacao']) else datebox['fracao_pontuacao']:.1f}".replace(
-                    ".", ","
-                )
-                + f" ponto{'s' if int(datebox['fracao_pontuacao']) != 1 else ''} a cada "
-                + f"{datebox['multiplicador_fracao_pontuacao']} dias)"
-            )
-            for datebox in EdVagaCampoDatebox.objects.filter(ed_vaga=vaga).values(
-                "id", "fracao_pontuacao", "multiplicador_fracao_pontuacao"
-            )
-        }
 
     ### POST
     def post(self, request, vaga_id):
