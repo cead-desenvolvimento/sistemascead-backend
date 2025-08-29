@@ -1,0 +1,1010 @@
+{% load static %}
+<html>
+    <head lang="pt">
+        <meta charset="utf-8">
+        <title></title>
+        <style>
+            html{
+                font-size: 14.5px;
+            }
+            body{
+                font-family: Helvetica, Arial, sans-serif;
+                font-weight: 200;
+            }
+            .header{
+                margin-bottom: 2rem;
+            }
+            img{
+                height: 6rem;
+                width: auto;
+            }
+            table{
+                width: 100%;
+            }
+            td{
+                font-size: 0.7rem;
+                padding-left: 0.4rem;
+                padding-top: 0.4rem;
+                padding-bottom: 0.4rem;
+            }
+            .tabelaCadastro td:first-child{
+                width: 30%;
+            }
+            .tabelaCadastro td:last-child{
+                width: 30%;
+            }
+            .tabelaEndereco td:first-child{
+                width: 18%;
+            }
+            .tabelaEndereco td:last-child{
+                width: 18%;
+            }
+            .tabelaSuperior td:first-child{
+                width: 33%;
+            }
+            .tabelaBanco td:first-child{
+                width: 20%;
+            }
+            th{
+                background-color: #eee;
+                padding: 0.35rem 0.4rem;
+            }
+            td, th{
+                border: 1px solid black;
+            }
+            .d-flex{
+                display: -webkit-box;
+                display: flex;
+            }
+            .text-align-center{
+                -webkit-box-pack: center;
+                text-align: center;
+            }
+            .space-between{
+                justify-content: space-between;
+            }
+            .num{
+                display: -webkit-box;
+                display: inline-flex;
+            }
+            .num > div{
+                margin-right: 0.75rem;
+            }
+            .tipoCurso {
+                font-size: 0.55rem;
+            }
+            /* Linha com 5 itens: cada item ~20% */
+            .linha5 {
+                white-space: nowrap; /* para que fiquem na mesma linha */
+                margin-bottom: 0.3rem;
+            }
+            .linha5 .tipoCursoItem {
+                display: inline-block;
+                width: 20%;
+                vertical-align: top;
+                box-sizing: border-box;
+            }
+            .tipoCursoItem.empty {
+                visibility: hidden;
+            }
+            input{
+                vertical-align: middle;
+            }
+            input[type='checkbox']{
+                margin-right: 0.75rem;
+            }
+            span{
+                vertical-align: middle;
+            }
+            .estadoCivil {
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: flex-start;
+                gap: 0.2rem;
+            }
+            .estadoCivilItem {
+                flex: 0 1 auto;
+                margin: 0.1rem 0.3rem;
+                white-space: nowrap;
+            }
+            .subtitle{
+                background-color: #eee;
+                font-size: 0.85rem;
+                text-align: left;
+                padding-left: 0.25rem;
+            }
+            .page3 td{
+                padding-top: 0.7rem;
+                padding-bottom: 0.7rem;
+                font-size: 0.9rem;
+            }
+            .assinatura{
+                text-align: center;
+                font-size: 0.85rem;
+                margin: 2rem 0;
+            }
+            .assinatura-linha-local {
+                display: block;
+                text-align: center;
+                margin-left: 50px;
+            }
+            .declaracao-nao-acumulo {
+                width: 80%;
+                margin: 0 auto;
+                padding: 20px;
+            }
+            .cabecalho {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 20px;
+                width: 100%;
+            }
+            .data {
+                text-align: right;
+                flex-grow: 1;
+            }
+            .logo-capes {
+                width: 120px;
+            }
+            .conteudo {
+                text-align: justify;
+                margin: 0 50px; 
+            }
+            .titulo {
+                text-align: center;
+                font-size: 18px;
+                font-weight: bold;
+                margin-bottom: 20px;
+            }
+            .observacao {
+                font-size: 12px;
+                margin-top: 20px;
+                text-align: justify;
+            }
+            .carimbo{
+                font-size: 0.8rem;
+                border: solid black 1px;
+                margin-top: 2rem;
+                padding: 0.5rem;
+            }
+            .assinatura div{
+                margin-top: 1.2rem;
+            }
+            .strong{
+                font-weight: bold;
+            }
+            .mx{
+                margin: 0 7rem;
+            }
+            .w-45{
+                width: 45%;
+            }
+            .w-48{
+                width: 48%;
+            }
+            .page-break {
+                page-break-before: always;
+            }
+            .item-declaracao {
+                margin-left: 20px;
+                padding-left: 20px;
+                list-style-position: inside;
+            }
+            .fline{
+                display:block;
+                width:100%;
+                min-height:1.2em;
+            }
+            .fline-empty{
+                border-bottom:1px solid #000;
+            }
+            .fline-filled{
+                border-bottom:none;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="d-flex text-align-center space-between header">
+            <div>
+                <img src="file://{{ ficha_static_images_dir }}/logo-capes.png">
+            </div>
+            <div>
+                <p>
+                    FORMULÁRIO DE CADASTRAMENTO DE BOLSISTAS DA
+                    <br />
+                    UNIVERSIDADE ABERTA DO BRASIL
+                </p>
+                <p>PORTARIA CAPES Nº 309/2024</p>
+            </div>
+            <div>
+                <img src="file://{{ ficha_static_images_dir }}/logo-uab.png">
+            </div>
+        </div>
+        <table class="tabelaCadastro" cellspacing="0">
+            <thead>
+                <tr>
+                    <th colspan="4">Ficha de Cadastramento / Termo de Compromisso do Bolsista</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>
+                        <div class="num">
+                            <div>1.</div>
+                            <div>Data do cadastramento *</div>
+                        </div>
+                    </td>
+                    <td colspan="3">{{ hoje|date:"d/m/Y" }}</td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="num">
+                            <div>2.</div>
+                            <div>
+                                Nome da instituição ao qual está
+                                <br />
+                                vinculado (SIGLA + NOME) *
+                            </div>
+                        </div>
+                    </td>
+                    <td colspan="3">UFJF - Universidade Federal de Juiz de Fora</td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="num">
+                            <div>3.</div>
+                            <div>Tipo do Curso ao qual está vinculado *</div>
+                        </div>
+                    </td>
+                    <td colspan="3">
+                        <div class="tipoCurso">
+                            <div class="linha5">
+                                <div class="tipoCursoItem">
+                                    <input type="checkbox"
+                                           {% if "Aperfeiçoamento" in ac_curso_tipo %}checked{% endif %}>
+                                    <span>Aperfeiçoamento</span>
+                                </div>
+                                <div class="tipoCursoItem">
+                                    <input type="checkbox"
+                                           {% if "Bacharelado" in ac_curso_tipo %}checked{% endif %}>
+                                    <span>Bacharelado</span>
+                                </div>
+                                <div class="tipoCursoItem">
+                                    <input type="checkbox"
+                                           {% if "Lato Sensu" in ac_curso_tipo or "Especialização" in ac_curso_tipo %}checked{% endif %}
+                                    <span>Lato Sensu</span>
+                                </div>
+                                <div class="tipoCursoItem">
+                                    <input type="checkbox"
+                                           {% if "Licenciatura" in ac_curso_tipo %}checked{% endif %}>
+                                    <span>Licenciatura</span>
+                                </div>
+                                <div class="tipoCursoItem">
+                                    <input type="checkbox"
+                                           {% if "Extensão" in ac_curso_tipo %}checked{% endif %}>
+                                    <span>Extensão</span>
+                                </div>
+                            </div>
+                            <div class="linha5">
+                                <div class="tipoCursoItem">
+                                    <input type="checkbox"
+                                           {% if "Sequencial" in ac_curso_tipo %}checked{% endif %}>
+                                    <span>Sequencial</span>
+                                </div>
+                                <div class="tipoCursoItem">
+                                    <input type="checkbox"
+                                           {% if "Tecnólogo" in ac_curso_tipo %}checked{% endif %}>
+                                    <span>Tecnólogo</span>
+                                </div>
+                                <div class="tipoCursoItem">
+                                    <input type="checkbox"
+                                           {% if "Mestrado" in ac_curso_tipo %}checked{% endif %}>
+                                    <span>Mestrado</span>
+                                </div>
+                                <div class="tipoCursoItem">
+                                    <input type="checkbox"
+                                           {% if "Doutorado" in ac_curso_tipo %}checked{% endif %}>
+                                    <span>Doutorado</span>
+                                </div>
+                                <div class="tipoCursoItem empty"></div>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="num">
+                            <div>4.</div>
+                            <div>Nome do Curso ao qual está vinculado *</div>
+                        </div>
+                    </td>
+                    <td colspan="3">
+                        {% with v=ac_curso %}
+                            <span class="fline {% if v %}fline-filled{% else %}fline-empty{% endif %}">{{ v|default_if_none:"" }}</span>
+                        {% endwith %}
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="num">
+                            <div>5.</div>
+                            <div>Função no Programa - Tipo de Bolsa *</div>
+                        </div>
+                    </td>
+                    <td colspan="3">
+                        <strong>{{ fi_pessoa_ficha.fi_funcao_bolsista.funcao }}</strong>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="num">
+                            <div>6.</div>
+                            <div>Número do CPF *</div>
+                        </div>
+                    </td>
+                    <td colspan="3">{{ cm_pessoa.cpf_com_pontos_e_traco }}</td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="num">
+                            <div>7.</div>
+                            <div>Nome Completo *</div>
+                        </div>
+                    </td>
+                    <td colspan="3">{{ cm_pessoa.nome }}</td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="num">
+                            <div>8.</div>
+                            <div>Profissão *</div>
+                        </div>
+                    </td>
+                    <td colspan="3">{{ fi_pessoa_ficha.profissao }}</td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="num">
+                            <div>9.</div>
+                            <div>Sexo *</div>
+                        </div>
+                    </td>
+                    <td>
+                        <input type="checkbox"
+                               {% if fi_pessoa_ficha.sexo == "Masculino" %}checked{% endif %}>
+                        <span>M</span>
+                        <input type="checkbox"
+                               {% if fi_pessoa_ficha.sexo == "Feminino" %}checked{% endif %}>
+                        <span>F</span>
+                    </td>
+                    <td>
+                        <div class="num">
+                            <div>10.</div>
+                            <div>Data de Nascimento *</div>
+                        </div>
+                    </td>
+                    <td>{{ data_nascimento|date:"d/m/Y" }}</td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="num">
+                            <div>11.</div>
+                            <div>Nº documento de Identificação *</div>
+                        </div>
+                    </td>
+                    <td>{{ fi_pessoa_ficha.numero_documento }}</td>
+                    <td>
+                        <div class="num">
+                            <div>12.</div>
+                            <div>Tipo documento de identificação *</div>
+                        </div>
+                    </td>
+                    <td>{{ fi_pessoa_ficha.tipo_documento }}</td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="num">
+                            <div>13.</div>
+                            <div>Data de emissão do documento *</div>
+                        </div>
+                    </td>
+                    <td>{{ data_emissao_documento|date:"d/m/Y" }}</td>
+                    <td>
+                        <div class="num">
+                            <div>14.</div>
+                            <div>Órgão Expeditor do documento *</div>
+                        </div>
+                    </td>
+                    <td>{{ fi_pessoa_ficha.orgao_expedidor }}</td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="num">
+                            <div>15.</div>
+                            <div>Unidade Federativa Nascimento *</div>
+                        </div>
+                    </td>
+                    <td>{{ cm_pessoa_endereco.cm_municipio.cm_uf.sigla }}</td>
+                    <td>
+                        <div class="num">
+                            <div>16.</div>
+                            <div>Município Local Nascimento *</div>
+                        </div>
+                    </td>
+                    <td>{{ cm_pessoa_endereco.cm_municipio.municipio }}</td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="num">
+                            <div>17.</div>
+                            <div>Estado Civil *</div>
+                        </div>
+                    </td>
+                    <td colspan="3">
+                        <div class="estadoCivil">
+                            <label class="estadoCivilItem">
+                                <input type="checkbox"
+                                       {% if fi_pessoa_ficha.estado_civil == "Solteiro(a)" %}checked{% endif %}
+                                       name="estado_civil"
+                                       value="s">
+                                Solteiro(a)
+                            </label>
+                            <label class="estadoCivilItem">
+                                <input type="checkbox"
+                                       {% if fi_pessoa_ficha.estado_civil == "União Estável" %}checked{% endif %}
+                                       name="estado_civil"
+                                       value="u">
+                                União Estável
+                            </label>
+                            <label class="estadoCivilItem">
+                                <input type="checkbox"
+                                       {% if fi_pessoa_ficha.estado_civil == "Casado(a)" %}checked{% endif %}
+                                       name="estado_civil"
+                                       value="c">
+                                Casado(a)
+                            </label>
+                            <label class="estadoCivilItem">
+                                <input type="checkbox"
+                                       {% if fi_pessoa_ficha.estado_civil == "Divorciado(a)" %}checked{% endif %}
+                                       name="estado_civil"
+                                       value="d">
+                                Divorciado(a)
+                            </label>
+                            <label class="estadoCivilItem">
+                                <input type="checkbox"
+                                       {% if fi_pessoa_ficha.estado_civil == "Viúvo(a)" %}checked{% endif %}
+                                       name="estado_civil"
+                                       value="v">
+                                Viúvo(a)
+                            </label>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="num">
+                            <div>18.</div>
+                            <div>Nome cônjuge</div>
+                        </div>
+                    </td>
+                    <td colspan="3">
+                        {% with v=fi_pessoa_ficha.nome_conjuge %}
+                            <span class="fline {% if v %}fline-filled{% else %}fline-empty{% endif %}">
+                                {{ v|default_if_none:"" }}
+                            </span>
+                        {% endwith %}
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="num">
+                            <div>19.</div>
+                            <div>Nome do Pai</div>
+                        </div>
+                    </td>
+                    <td colspan="3">
+                        {% with v=fi_pessoa_ficha.nome_pai %}
+                            <span class="fline {% if v %}fline-filled{% else %}fline-empty{% endif %}">{{ v|default_if_none:"" }}</span>
+                        {% endwith %}
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="num">
+                            <div>20.</div>
+                            <div>Nome da Mãe *</div>
+                        </div>
+                    </td>
+                    <td colspan="3">
+                        {% if fi_pessoa_ficha.nome_mae %}{{ fi_pessoa_ficha.nome_mae }}{% endif %}
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <table class="tabelaEndereco" cellspacing="0">
+            <thead>
+                <tr>
+                    <th colspan="10" class="subtitle">
+                        <strong>Endereço para Contato<strong>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td colspan="3">
+                            <div class="num">
+                                <div>21.</div>
+                                <div>Endereço Residencial *</div>
+                            </div>
+                        </td>
+                        <td colspan="7">{{ cm_pessoa_endereco.logradouro }}</td>
+                    </tr>
+                    <tr>
+                        <td colspan="3">
+                            <div class="num">
+                                <div>22.</div>
+                                <div>Complemento do endereço</div>
+                            </div>
+                        </td>
+                        <td colspan="7">
+                            {% with v=cm_pessoa_endereco.complemento %}
+                                <span class="fline {% if v %}fline-filled{% else %}fline-empty{% endif %}">
+                                    {{ v|default_if_none:"" }}
+                                </span>
+                            {% endwith %}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="num">
+                                <div>23.</div>
+                                <div>Número</div>
+                            </div>
+                        </td>
+                        <td colspan="2">{{ cm_pessoa_endereco.numero }}</td>
+                        <td>
+                            <div class="num">
+                                <div>24.</div>
+                                <div>Bairro</div>
+                            </div>
+                        </td>
+                        <td colspan="3">{{ cm_pessoa_endereco.bairro }}</td>
+                        <td>
+                            <div class="num">
+                                <div>25.</div>
+                                <div>CEP *</div>
+                            </div>
+                        </td>
+                        <td colspan="2">{{ cm_pessoa_endereco.cep_formatado }}</td>
+                    </tr>
+                    <tr>
+                        <td colspan="3">
+                            <div class="num">
+                                <div>26.</div>
+                                <div>Unidade Federativa *</div>
+                            </div>
+                        </td>
+                        <td colspan="3">{{ cm_pessoa_endereco.cm_municipio.cm_uf.sigla }}</td>
+                        <td>
+                            <div class="num">
+                                <div>27.</div>
+                                <div>Município *</div>
+                            </div>
+                        </td>
+                        <td colspan="4">{{ cm_pessoa_endereco.cm_municipio.municipio }}</td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="num">
+                                <div>28.</div>
+                                <div>Código DDD *</div>
+                            </div>
+                        </td>
+                        <td colspan="2">
+                            {% if telefones|length > 0 %}{{ telefones.0.ddd }}{% endif %}
+                        </td>
+                        <td colspan="2">
+                            <div class="num">
+                                <div>29.</div>
+                                <div>Telefone 1 *</div>
+                            </div>
+                        </td>
+                        <td>
+                            {% if telefones|length > 0 %}{{ telefones.0.numero }}{% endif %}
+                        </td>
+                        <td colspan="3">
+                            <div class="num">
+                                <div>30.</div>
+                                <div>Telefone 2</div>
+                            </div>
+                        </td>
+                        <td>
+                            {% if telefones|length > 1 %}{{ telefones.1.numero }}{% endif %}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="3">
+                            <div class="num">
+                                <div>31.</div>
+                                <div>E-mail de contato *</div>
+                            </div>
+                        </td>
+                        <td colspan="7">{{ cm_pessoa.email }}</td>
+                    </tr>
+                </tbody>
+            </table>
+            <table class="tabelaSuperior" cellspacing="0">
+                <thead>
+                    <tr>
+                        <th colspan="2" class="subtitle">Dados da Formação em Nível Superior</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>
+                            <div class="num">
+                                <div>32.</div>
+                                <div>Área do último Curso Superior Concluído *</div>
+                            </div>
+                        </td>
+                        <td>
+                            {% if fi_pessoa_ficha.area_ultimo_curso_superior == "Exatas" %}
+                                Exatas
+                            {% elif fi_pessoa_ficha.area_ultimo_curso_superior == "Biológicas" %}
+                                Biológicas
+                            {% elif fi_pessoa_ficha.area_ultimo_curso_superior == "Humanas" %}
+                                Humanas
+                            {% endif %}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="num">
+                                <div>33.</div>
+                                <div>Último curso de titulação *</div>
+                            </div>
+                        </td>
+                        <td>{{ fi_pessoa_ficha.ultimo_curso_titulacao }}</td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="num">
+                                <div>34.</div>
+                                <div>Nome da Instituição de Titulação *</div>
+                            </div>
+                        </td>
+                        <td>{{ fi_pessoa_ficha.instituicao_titulacao }}</td>
+                    </tr>
+                </tbody>
+            </table>
+            <table cellspacing="0" class="tabelaBanco">
+                <thead>
+                    <tr>
+                        <th colspan="2" class="subtitle">Informações Bancárias</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>
+                            <div class="num">
+                                <div>35.</div>
+                                <div>Banco *</div>
+                            </div>
+                        </td>
+                        <td>{{ cm_pessoa_banco.codigo_banco }} - {{ cm_pessoa_banco.nome_banco }}</td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="num">
+                                <div>36.</div>
+                                <div>Agência *</div>
+                            </div>
+                        </td>
+                        <td>
+                            {{ cm_pessoa_banco.agencia }}
+                            {% if cm_pessoa_banco.digito_agencia %}-{{ cm_pessoa_banco.digito_agencia }}{% endif %}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="num">
+                                <div>37.</div>
+                                <div>Conta Corrente *</div>
+                            </div>
+                        </td>
+                        <td>{{ cm_pessoa_banco.conta }} {{ cm_pessoa_banco.digito_verificador_conta }}</td>
+                    </tr>
+                </tbody>
+            </table>
+            <table class="tabelaOrgao" cellspacing="0">
+                <thead>
+                    <tr>
+                        <th class="subtitle" colspan="2">ÓRGÃO RESPONSÁVEL PELO PROGRAMA</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>
+                            <strong>Denominação</strong>
+                            <br />
+                            DIRETORIA DE EDUCAÇÃO A DISTÂNCIA
+                        </td>
+                        <td>
+                            <strong>Sigla</strong>
+                            <br />
+                            DED/CAPES
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">
+                            <strong>Endereço</strong>
+                            <br />
+                            SBN Quadra 02 Bloco L Lote 6, 8º andar - CEP: 70040-020, Brasília - DF
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <div class="page-break"></div>
+            <div class="d-flex text-align-center space-between header">
+                <div>
+                    <img src="file://{{ ficha_static_images_dir }}/logo-capes.png">
+                </div>
+                <div>
+                    <p>
+                        FORMULÁRIO DE CADASTRAMENTO DE BOLSISTAS DA
+                        <br />
+                        UNIVERSIDADE ABERTA DO BRASIL
+                    </p>
+                    <p>PORTARIA CAPES Nº 309/2024</p>
+                </div>
+                <div>
+                    <img src="file://{{ ficha_static_images_dir }}/logo-uab.png">
+                </div>
+            </div>
+            <table cellspacing="0">
+                <thead>
+                    <tr>
+                        <th class="subtitle">Atribuições do Bolsista</th>
+                    </tr>
+                </thead>
+                <tbody class="page3">
+                    <tr>
+                        <td>
+                            <ul>
+                                <li>
+                                    Comprovar desempenho satisfatório, consoantes às normas definidas pela entidade de ensino, este Termo de Compromisso e demais normas da CAPES.
+                                </li>
+                                <li>
+                                    Não acumular a percepção da bolsa, se excetuando aquelas autorizações expressas presentes nas portarias vigentes da Capes.
+                                </li>
+                                <li>Informar à CAPES, por meio de seus sistemas eletrônicos, mudanças de endereço residencial ou eletrônico.</li>
+                                <li>
+                                    Restituir o investimento apurado pela CAPES, a título de bolsas, atualizado nos termos estabelecidos pela legislação aplicável, se identificado: pagamento indevido; acúmulo indevido de bolsas; revogação ou rescisão da concessão da bolsa, em face de infração às obrigações assumidas; e inexatidão das informações fornecidas.
+                                </li>
+                            </ul>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <table cellspacing="0">
+                <thead>
+                    <tr>
+                        <th class="subtitle">Dos produtos</th>
+                    </tr>
+                </thead>
+                <tbody class="page3">
+                    <tr>
+                        <td>
+                            <p>
+                                Com relação aos produtos, por mim elaborados, exclusivamente ou em coautoria, em atividades exercidas em decorrência da percepção de parcelas desta bolsa:
+                            </p>
+                            <p>
+                                <strong>Uma das opções abaixo deverá ser assinalada de acordo com a licença selecionada:</strong>
+                            </p>
+                            <p>
+                                <strong>(a) ( &nbsp; )</strong>
+                                Autorizo sem qualquer restrição, o licenciamento aberto do produto pela instituição de Ensino ou pela CAPES, por meio da licença Creative commons ou similar. Desde que atribuam o devido crédito pela criação original, em conformidade com as orientações de DED/CAPES em vigor.
+                                <br />
+                                <strong>(b) ( &nbsp; )</strong>
+                                Informo que o tipo de licença será informado em momento oportuno e caso não informado autorizo a licença CC-BY-AS.
+                                <br />
+                                <strong>(c) ( &nbsp; )</strong>
+                                CC-BY-NC-SA: esta licença permite que outros remixem, adaptem e criem a partir do seu trabalho para fins não comerciais, desde que atribuam o devido crédito e que licenciem as novas criações sob termos idênticos.
+                                <br />
+                            </p>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <table cellspacing="0">
+                <thead>
+                    <tr>
+                        <th class="subtitle">Declaração</th>
+                    </tr>
+                </thead>
+                <tbody class="page3">
+                    <tr>
+                        <td>
+                            <p>Pelo presente termo, atesta ciência das competências associadas à modalidade de bolsa conforme se seguem:</p>
+                            {% with letras="abcdefghijklmnopqrstuvwxyz" %}
+                                {% for item_declaracao in itens_declaracao %}
+                                    <p class="item-declaracao">{{ letras|slice:forloop.counter|last }}. {{ item_declaracao }}</p>
+                                {% endfor %}
+                            {% endwith %}
+                            <p>
+                                A inobservância dos requisitos citados acima, e/ou se praticada qualquer fraude pelo(a) bolsista, implicará(ão) no cancelamento da bolsa, com a restituição integral e imediata dos recursos, de acordo com os índices previstos em lei competente.
+                            </p>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <div class="d-flex space-between">
+                <div class="assinatura w-48">
+                    <div class="d-flex">
+                        <div class="assinatura-linha-local">
+                            ___________________________________________,
+                            <br>
+                            Local
+                        </div>
+                        <div>
+                            <!-- &nbsp;_____/_____/_____.<br />&nbsp;Data -->
+                            {{ hoje|date:"d/m/Y" }}&nbsp;
+                            <br />
+                            Data
+                        </div>
+                    </div>
+                    <div>
+                        <div>
+                            ____________________________________________________________
+                            <br />
+                            Assinatura do Bolsista
+                        </div>
+                    </div>
+                    <div>
+                        <div>
+                            ____________________________________________________________
+                            <br />
+                            Assinatura do Coordenador UAB da IPES
+                        </div>
+                    </div>
+                </div>
+                {% if fi_pessoa_ficha.fi_funcao_bolsista.funcao in "Tutor,Professor Formador,Professor Conteudista,Coordenador de Tutoria,Assistente Pedagógico" %}
+                    <div class="carimbo w-48">
+                        <p>
+                            Estou ciente das informações presentes neste formulário e informo que
+                            {% if sexo == "M" %}
+                                este bolsista foi selecionado
+                            {% elif sexo == "F" %}
+                                esta bolsista foi selecionada
+                            {% endif %}
+                            através de Processo Seletivo Regulamentar – Edital nº {{ ed_edital }} – para exercício das atividades na(s) oferta(s) vigente(s), respeitado o prazo do referido Edital.
+                        </p>
+                        <p>Juiz de Fora, {{ hoje|date:"d/m/Y" }}.</p>
+                        <p>Assinatura do(a) Coordenador(a): __________________________</p>
+                        <p>Data da vinculação: _____/_____/______.</p>
+                        <p>Carimbo e Assinatura do Coordenador</p>
+                    </div>
+                {% endif %}
+            </div>
+            <div class="page-break" style="display: block; margin-bottom: 50px;"></div>
+            <div class="declaracao-nao-acumulo">
+                <div class="cabecalho">
+                    <img src="file://{{ ficha_static_images_dir }}/logo-capes.png"
+                         class="logo-capes">
+                    <p class="data">Em {{ hoje|date:"d/m/Y" }}.</p>
+                </div>
+                <div class="conteudo">
+                    <h2 class="titulo">Declaração de Pagamento de Bolsas UAB</h2>
+                    <p>
+                        Eu, <strong>{{ cm_pessoa.nome }}</strong>, CPF: <strong>{{ cm_pessoa.cpf_com_pontos_e_traco }}</strong>, bolsista da modalidade                     <strong>{{ fi_pessoa_ficha.fi_funcao_bolsista.funcao }}</strong> do Sistema UAB, declaro que não possuo outros pagamentos de bolsas em desacordo com a legislação vigente.
+                    </p>
+                    <div class="assinatura">
+                        <p>____________________________________________________</p>
+                        <p>Nome completo do bolsista</p>
+                    </div>
+                    <p class="observacao">
+                        <strong>Observação:</strong> a assinatura do bolsista deverá ter sua firma reconhecida em cartório ou por meio de fé pública.
+                    </p>
+                </div>
+            </div>
+            {% if "Tutor" in fi_pessoa_ficha.fi_funcao_bolsista.funcao %}
+                <div class="page-break" style="display: block; margin-bottom: 50px;"></div>
+                <table cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th class="subtitle">Termo de Compromisso</th>
+                        </tr>
+                    </thead>
+                    <tbody class="page3">
+                        <tr>
+                            <td>
+                                <p>
+                                    Eu, {{ cm_pessoa.nome }},
+                                    {% if fi_pessoa_ficha.cm_municipio %}
+                                        {% if fi_pessoa_ficha.sexo == "Masculino" %}
+                                            brasileiro,
+                                        {% elif fi_pessoa_ficha.sexo == "Feminino" %}
+                                            brasileira,
+                                        {% endif %}
+                                    {% endif %}
+                                    {% if fi_pessoa_ficha.estado_civil == "Solteiro(a)" %}
+                                        {% if fi_pessoa_ficha.sexo == "Masculino" %}
+                                            solteiro,
+                                        {% elif fi_pessoa_ficha.sexo == "Feminino" %}
+                                            solteira,
+                                        {% endif %}
+                                    {% elif fi_pessoa_ficha.estado_civil == "União Estável" %}
+                                        união estável,
+                                    {% elif fi_pessoa_ficha.estado_civil == "Casado(a)" %}
+                                        {% if fi_pessoa_ficha.sexo == "Masculino" %}
+                                            casado,
+                                        {% elif fi_pessoa_ficha.sexo == "Feminino" %}
+                                            casada,
+                                        {% endif %}
+                                    {% elif fi_pessoa_ficha.estado_civil == "Divorciado(a)" %}
+                                        {% if fi_pessoa_ficha.sexo == "Masculino" %}
+                                            divorciado,
+                                        {% elif fi_pessoa_ficha.sexo == "Feminino" %}
+                                            divorciada,
+                                        {% endif %}
+                                    {% elif fi_pessoa_ficha.estado_civil == "Viúvo(a)" %}
+                                        {% if fi_pessoa_ficha.sexo == "Masculino" %}
+                                            viúvo,
+                                        {% elif fi_pessoa_ficha.sexo == "Feminino" %}
+                                            viúva,
+                                        {% endif %}
+                                    {% endif %}
+                                    {% if fi_pessoa_ficha.sexo == "Masculino" %}
+                                        inscrito
+                                    {% elif fi_pessoa_ficha.sexo == "Feminino" %}
+                                        inscrita
+                                    {% endif %}
+                                    no CPF sob o nº {{ cm_pessoa.cpf_com_pontos_e_traco }} e no {{ fi_pessoa_ficha.tipo_documento }} {{ fi_pessoa_ficha.numero_documento }},
+                                    tenho ciência das obrigações inerentes à qualidade de Tutor (Presencial ou a Distância) do Curso {{ ac_curso.nome }} da Educação a Distância (EAD)
+                                    da Universidade Federal de Juiz de Fora (UFJF) e, nesse sentido, COMPROMETO-ME a respeitar as seguintes cláusulas:
+                                </p>
+                                <ul>
+                                    <li>
+                                        Apresentar disponibilidade de 20h semanais para o desenvolvimento das minhas atividades, de acordo com as necessidades e demandas do curso no qual atuo;
+                                    </li>
+                                    <li>Realizar a mediação pedagógica das disciplinas nas quais atuo, sob a coordenação dos respectivos Professores;</li>
+                                    <li>Acompanhar as atividades discentes, conforme o cronograma do curso e da disciplina;</li>
+                                    <li>Apoiar a equipe pedagógica do curso no desenvolvimento das atividades docentes;</li>
+                                    <li>
+                                        Manter regularidade de acesso ao Ambiente Virtual de Aprendizagem (AVA) e responder às solicitações dos alunos no prazo máximo de 24 horas;
+                                    </li>
+                                    <li>
+                                        Ter disponibilidade para viajar aos Polos, quando solicitado pela Coordenação do Curso, especialmente às sextas-feiras, sábados e domingos, ter ciência que todas as viagens a serviço da EAD originam-se da cidade de Juiz de Fora via ônibus intermunicipais/interestaduais de linha;
+                                    </li>
+                                    <li>Apoiar a Coordenação do Curso nas atividades presenciais nos Polos;</li>
+                                    <li>
+                                        Participar das atividades de capacitação e atualização promovidas pelo CEAD/UFJF ou pela Coordenação do curso no qual atuo.
+                                    </li>
+                                </ul>
+                                O Tutor deverá cumprir o estabelecido nas Portarias CAPES 33/2023 e 309/2024, Instrução Normativa GAB n° 1 de 1 de outubro de 2024 e respectivas
+                                regulamentações e alterações, que definem as orientações e diretrizes para a concessão de bolsas da Universidade Aberta do Brasil (UAB).
+                                <br />
+                                O Tutor receberá bolsa mensal paga pela CAPES relativa ao período de sua atuação no valor de 1.100,00 (hum mil e cem reais).
+                                <br />
+                                O Tutor fará jus à bolsa, enquanto atuar, pelo período de até 5 (cinco) anos, a partir da publicação do resultado final e adstrita à existência
+                                de oferta do curso. A interrupção da referida bolsa poderá ocorrer a qualquer momento, por iniciativa do Tutor desde que a justificativa seja
+                                apresentada por escrito, ou do Coordenador do curso, levando-se em conta o desempenho, adaptabilidade e cumprimento das funções por parte do tutor.
+                                <br />
+                                <p>____________________, ______ de _______________ de ______.</p>
+                                <p>
+                                    Assinatura
+                                    {% if fi_pessoa_ficha.sexo == "M" %}
+                                        do tutor: _________________________________
+                                    {% elif fi_pessoa_ficha.sexo == "F" %}
+                                        da tutora: _________________________________
+                                    {% endif %}
+                                    _________________________________
+                                </p>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            {% endif %}
+        </body>
+    </html>

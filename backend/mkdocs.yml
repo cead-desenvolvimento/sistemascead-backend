@@ -1,0 +1,41 @@
+site_name: Documentação CEAD
+site_description: Manual dos módulos do sistemas CEAD/UFJF
+theme:
+  name: material
+  language: pt-BR
+
+nav:
+  - Início: index.md
+  - Equipe CEAD:
+      - Acesso: equipe_cead/acesso.md
+      - Acadêmico:
+          - Funcionalidades: equipe_cead/academico/funcionalidades.md
+          - Editais: equipe_cead/academico/editais.md
+      - Financeiro:
+          - Funcionalidades: equipe_cead/financeiro/funcionalidades.md
+      - Tecnologia:
+          - Transmissão: equipe_cead/tecnologia/transmissao.md
+  - Editais:
+      - editais/README.md
+  - Ficha UAB:
+      - ficha/README.md
+  - Financeiro:
+      - financeiro/README.md
+  - Inscrição:
+      - inscricao/README.md
+  - Lançamento de Frequência:
+      - lanca_frequencia/README.md
+  - Moodle:
+      - moodle/README.md
+  - Transmissão:
+      - transmissao/README.md
+  - Wordpress (Integração):
+      - wordpress/README.md
+
+markdown_extensions:
+  - toc:
+      permalink: true
+  - tables
+  - admonition
+  - footnotes
+  - codehilite

@@ -1,0 +1,29 @@
+{% extends "admin/base_site.html" %}
+
+{% block content %}
+<div class="content">
+    <p>Tem certeza de que deseja importar os feriados nacionais para o ano atual?</p>
+
+    <table class="listing">
+        <thead>
+            <tr>
+                <th>Data</th>
+                <th>Nome</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for feriado in feriados %}
+            <tr>
+                <td>{{ feriado.date }}</td>
+                <td>{{ feriado.name }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <form method="post" style="margin-top: 20px;">{% csrf_token %}
+        <input type="submit" class="default" value="Confirmar">
+        <a href=".." class="button cancel-link">Cancelar</a>
+    </form>
+</div>
+{% endblock %}

@@ -1,0 +1,118 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Redefinir Senha</title>
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css" />
+  <link rel="stylesheet" href="{% static 'css/usuario/principal.css' %}" />
+  <link rel="stylesheet" href="{% static 'css/usuario/usuario.css' %}" />
+</head>
+<body>
+  <div class="container py-5">
+    <div class="row justify-content-center">
+      <div class="col-lg-6 col-md-7">
+        <div class="card shadow-sm">
+          <div class="card-header login-header text-white text-center py-4">
+            <h3 class="mb-0">
+              <i class="bi bi-envelope-lock me-2"></i>Redefinir Senha
+            </h3>
+          </div>
+
+          <div class="card-body p-4">
+            {# Mensagens do Django #}
+            {% if messages %}
+              {% for message in messages %}
+                <div class="alert {% if message.tags == 'success' %}alert-success{% elif message.tags == 'error' %}alert-danger{% else %}alert-info{% endif %} mb-3" role="alert">
+                  {% if message.tags == 'success' %}
+                    <i class="bi bi-check-circle me-1"></i>
+                  {% elif message.tags == 'error' %}
+                    <i class="bi bi-exclamation-triangle me-1"></i>
+                  {% else %}
+                    <i class="bi bi-info-circle me-1"></i>
+                  {% endif %}
+                  {{ message }}
+                </div>
+              {% endfor %}
+            {% endif %}
+
+            {# Erros não-categorizados (fallback) #}
+            {% if form.non_field_errors %}
+              <div class="alert alert-danger mb-3" role="alert">
+                {% for e in form.non_field_errors %}{{ e }}{% if not forloop.last %}<br>{% endif %}{% endfor %}
+              </div>
+            {% endif %}
+
+            <form method="post" novalidate>
+              {% csrf_token %}
+
+              <div class="mb-3">
+                <label for="id_email" class="form-label fw-bold">
+                  <i class="bi bi-envelope me-1"></i>Seu e-mail
+                </label>
+                <div class="input-group input-group-lg">
+                  <span class="input-group-text" id="email-addon">
+                    <i class="bi bi-envelope-fill"></i>
+                  </span>
+                  <input
+                    type="email"
+                    name="email"
+                    id="id_email"
+                    class="form-control{% if form.email.errors %} is-invalid{% endif %}"
+                    placeholder="seu@email.com"
+                    autocomplete="email"
+                    aria-describedby="email-addon"
+                    required
+                    value="{{ form.email.value|default_if_none:'' }}"
+                  />
+                </div>
+                {% if form.email.errors %}
+                  <div class="invalid-feedback d-block mt-1">
+                    {% for error in form.email.errors %}
+                      <div><i class="bi bi-exclamation-circle me-1"></i>{{ error }}</div>
+                    {% endfor %}
+                  </div>
+                {% endif %}
+              </div>
+
+              <div class="d-grid mt-4">
+                <button type="submit" class="btn btn-danger btn-lg" id="btn-enviar">
+                  <span class="spinner-border spinner-border-sm me-2 d-none" role="status" aria-hidden="true"></span>
+                  <span id="btn-text">Enviar instruções</span>
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <div class="text-center mt-3">
+          <a href="/" class="text-decoration-none">
+            <i class="bi bi-arrow-left me-1"></i>Voltar para o menu
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // UX: spinner e desabilitar botão durante o submit
+    (function () {
+      const form = document.querySelector('form[method="post"]');
+      const btn = document.getElementById('btn-enviar');
+      const spinner = btn.querySelector('.spinner-border');
+      const btnText = document.getElementById('btn-text');
+
+      if (form) {
+        form.addEventListener('submit', function () {
+          btn.disabled = true;
+          spinner.classList.remove('d-none');
+          btnText.textContent = 'Enviando...';
+        }, { passive: true });
+      }
+    })();
+  </script>
+</body>
+</html>

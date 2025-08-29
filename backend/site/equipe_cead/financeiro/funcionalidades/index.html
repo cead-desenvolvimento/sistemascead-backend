@@ -1,0 +1,1547 @@
+
+<!doctype html>
+<html lang="pt" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Manual dos módulos do sistemas CEAD/UFJF">
+      
+      
+      
+      
+        <link rel="prev" href="../../academico/editais/">
+      
+      
+        <link rel="next" href="../../tecnologia/transmissao/">
+      
+      
+      <link rel="icon" href="../../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.18">
+    
+    
+      
+        <title>Funcionalidades - Documentação CEAD</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.7e37652d.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#guia-para-usuarios-do-grupo-financeiro-administradores" class="md-skip">
+          Pular para conteúdo
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Cabeçalho">
+    <a href="../../.." title="Documentação CEAD" class="md-header__button md-logo" aria-label="Documentação CEAD" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Documentação CEAD
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Funcionalidades
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Buscar" placeholder="Buscar" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Pesquisar">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Limpar" aria-label="Limpar" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Inicializando busca
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navegação" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="Documentação CEAD" class="md-nav__button md-logo" aria-label="Documentação CEAD" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Documentação CEAD
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Início
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Equipe CEAD
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            Equipe CEAD
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../acesso/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Acesso
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_2" id="__nav_2_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Acadêmico
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_2">
+            <span class="md-nav__icon md-icon"></span>
+            Acadêmico
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../academico/funcionalidades/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Funcionalidades
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../academico/editais/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Editais
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_3" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_2_3" id="__nav_2_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Financeiro
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2_3">
+            <span class="md-nav__icon md-icon"></span>
+            Financeiro
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    Funcionalidades
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    Funcionalidades
+    
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Índice">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Índice
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#telas-administrativas" class="md-nav__link">
+    <span class="md-ellipsis">
+      Telas administrativas
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Telas administrativas">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#associacao-edital-funcao-da-ficha-oferta" class="md-nav__link">
+    <span class="md-ellipsis">
+      Associação edital — função da ficha — oferta
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#atividades-gerais-do-financeiro-com-o-cadastro-dos-bolsistas" class="md-nav__link">
+    <span class="md-ellipsis">
+      Atividades gerais do Financeiro com o cadastro dos bolsistas
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#lancamento-de-frequencia" class="md-nav__link">
+    <span class="md-ellipsis">
+      Lançamento de frequência
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#lancamento-de-frequencia-disciplinas" class="md-nav__link">
+    <span class="md-ellipsis">
+      Lançamento de frequência — disciplinas
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#lancamento-de-frequencia-relatorio" class="md-nav__link">
+    <span class="md-ellipsis">
+      Lançamento de frequência — relatório
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#relatorio-acesso-de-bolsistas-ao-moodle" class="md-nav__link">
+    <span class="md-ellipsis">
+      Relatório — acesso de bolsistas ao Moodle
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#painel-administrativo" class="md-nav__link">
+    <span class="md-ellipsis">
+      Painel administrativo
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Painel administrativo">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#acesso-ao-painel-administrativo" class="md-nav__link">
+    <span class="md-ellipsis">
+      Acesso ao painel administrativo
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#painel-administrativo-visao-geral" class="md-nav__link">
+    <span class="md-ellipsis">
+      Painel administrativo: visão geral
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Painel administrativo: visão geral">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#modelos-de-maior-interesse" class="md-nav__link">
+    <span class="md-ellipsis">
+      Modelos de maior interesse
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#modelos-com-permissao-apenas-de-visualizacao" class="md-nav__link">
+    <span class="md-ellipsis">
+      Modelos com permissão apenas de visualização
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_4" id="__nav_2_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Tecnologia
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_4">
+            <span class="md-nav__icon md-icon"></span>
+            Tecnologia
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tecnologia/transmissao/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Transmissão
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Editais
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            Editais
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../editais/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    App: Editais
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Ficha UAB
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            Ficha UAB
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ficha/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    App: Ficha UAB
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Financeiro
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            Financeiro
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../financeiro/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    App: Financeiro - Vínculos de Bolsistas
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Inscrição
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            Inscrição
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../inscricao/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    App: Inscrição Pública em Editais
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
+        
+          
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Lançamento de Frequência
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            Lançamento de Frequência
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../lanca_frequencia/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    App: Frequência de Bolsistas
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" >
+        
+          
+          <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Moodle
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8">
+            <span class="md-nav__icon md-icon"></span>
+            Moodle
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../moodle/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    App: Relatórios de Acesso Moodle
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9" >
+        
+          
+          <label class="md-nav__link" for="__nav_9" id="__nav_9_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Transmissão
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_9">
+            <span class="md-nav__icon md-icon"></span>
+            Transmissão
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../transmissao/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    App: Solicitação de Transmissão
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_10" >
+        
+          
+          <label class="md-nav__link" for="__nav_10" id="__nav_10_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    Wordpress (Integração)
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_10_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_10">
+            <span class="md-nav__icon md-icon"></span>
+            Wordpress (Integração)
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../wordpress/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    App: Integração Wordpress – Polos e Cursos
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Índice">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Índice
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#telas-administrativas" class="md-nav__link">
+    <span class="md-ellipsis">
+      Telas administrativas
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Telas administrativas">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#associacao-edital-funcao-da-ficha-oferta" class="md-nav__link">
+    <span class="md-ellipsis">
+      Associação edital — função da ficha — oferta
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#atividades-gerais-do-financeiro-com-o-cadastro-dos-bolsistas" class="md-nav__link">
+    <span class="md-ellipsis">
+      Atividades gerais do Financeiro com o cadastro dos bolsistas
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#lancamento-de-frequencia" class="md-nav__link">
+    <span class="md-ellipsis">
+      Lançamento de frequência
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#lancamento-de-frequencia-disciplinas" class="md-nav__link">
+    <span class="md-ellipsis">
+      Lançamento de frequência — disciplinas
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#lancamento-de-frequencia-relatorio" class="md-nav__link">
+    <span class="md-ellipsis">
+      Lançamento de frequência — relatório
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#relatorio-acesso-de-bolsistas-ao-moodle" class="md-nav__link">
+    <span class="md-ellipsis">
+      Relatório — acesso de bolsistas ao Moodle
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#painel-administrativo" class="md-nav__link">
+    <span class="md-ellipsis">
+      Painel administrativo
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Painel administrativo">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#acesso-ao-painel-administrativo" class="md-nav__link">
+    <span class="md-ellipsis">
+      Acesso ao painel administrativo
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#painel-administrativo-visao-geral" class="md-nav__link">
+    <span class="md-ellipsis">
+      Painel administrativo: visão geral
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Painel administrativo: visão geral">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#modelos-de-maior-interesse" class="md-nav__link">
+    <span class="md-ellipsis">
+      Modelos de maior interesse
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#modelos-com-permissao-apenas-de-visualizacao" class="md-nav__link">
+    <span class="md-ellipsis">
+      Modelos com permissão apenas de visualização
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="guia-para-usuarios-do-grupo-financeiro-administradores">Guia para usuários do grupo <strong>Financeiro - administradores</strong><a class="headerlink" href="#guia-para-usuarios-do-grupo-financeiro-administradores" title="Permanent link">&para;</a></h1>
+<p>As tarefas no sistema são divididas em dois grupos:
+- Telas administrativas;
+- Painel administrativo.</p>
+<hr />
+<h2 id="telas-administrativas">Telas administrativas<a class="headerlink" href="#telas-administrativas" title="Permanent link">&para;</a></h2>
+<p>As ''telas administrativas'' reúnem as funcionalidades mais comuns utilizadas pela equipe.</p>
+<h3 id="associacao-edital-funcao-da-ficha-oferta">Associação edital — função da ficha — oferta<a class="headerlink" href="#associacao-edital-funcao-da-ficha-oferta" title="Permanent link">&para;</a></h3>
+<p>Permite associar um edital a uma função da ficha e a uma oferta. Esse vínculo é fundamental para a geração de ficha do candidato. A tela foi criada para evitar cadastros errados de ficha e confusão nos bolsistas. Com ela, o bolsista poderá gerar somente a ficha designada a ele.</p>
+<h3 id="atividades-gerais-do-financeiro-com-o-cadastro-dos-bolsistas">Atividades gerais do Financeiro com o cadastro dos bolsistas<a class="headerlink" href="#atividades-gerais-do-financeiro-com-o-cadastro-dos-bolsistas" title="Permanent link">&para;</a></h3>
+<p>Interface para visualizar, editar e gerenciar as fichas dos bolsistas, além de permitir o acompanhamento de sua situação. As datas de início e fim de vínculo do bolsista que a equipe definir farão a ativação/inativação do vínculo do bolsista. É possível também visualizar quais cursos possuem bolsistas ativos.</p>
+<p>A tela foi pensada para facilitar o fluxo de ativação/inativação do bolsista, após a percepção de que o sistema antigo faz com que o vínculo seja complexo e nem sempre inativado a contento, por problemas no relacionamento dos dados como eram.</p>
+<h3 id="lancamento-de-frequencia">Lançamento de frequência<a class="headerlink" href="#lancamento-de-frequencia" title="Permanent link">&para;</a></h3>
+<p>Tela para lançamento da frequência mensal dos bolsistas. Para lançar frequência, a pessoa deve:</p>
+<ul>
+<li>Ser coordenador de curso (cadastro do curso painel administrativo);</li>
+<li>Estar no grupo ''lançadores de frequência''</li>
+<li>Possuir senha para acesso ao sistema.</li>
+</ul>
+<h3 id="lancamento-de-frequencia-disciplinas">Lançamento de frequência — disciplinas<a class="headerlink" href="#lancamento-de-frequencia-disciplinas" title="Permanent link">&para;</a></h3>
+<p>Permite o cadastro e inativação das disciplinas associadas ao curso, para que o coordenador as veja no lançamento de frequência.</p>
+<blockquote>
+<p><strong>Mudar o nome da disciplina faz com que todo o histórico de lançamento mude! Utilize a edição com cautela.</strong></p>
+</blockquote>
+<h3 id="lancamento-de-frequencia-relatorio">Lançamento de frequência — relatório<a class="headerlink" href="#lancamento-de-frequencia-relatorio" title="Permanent link">&para;</a></h3>
+<p>Exibe um relatório geral das frequências lançadas, com possibilidade de filtragem por curso.</p>
+<h3 id="relatorio-acesso-de-bolsistas-ao-moodle">Relatório — acesso de bolsistas ao Moodle<a class="headerlink" href="#relatorio-acesso-de-bolsistas-ao-moodle" title="Permanent link">&para;</a></h3>
+<p>Gera um relatório com os registros de acesso dos bolsistas ao ambiente virtual Moodle.</p>
+<hr />
+<h2 id="painel-administrativo">Painel administrativo<a class="headerlink" href="#painel-administrativo" title="Permanent link">&para;</a></h2>
+<p>Apenas usuários com <em>status</em> de ''membro da equipe'' possuem acesso ao painel administrativo, que é utilizado para o gerenciamento de dados essenciais. ''Membro da equipe'' refere-se ao tipo de cadastro do usuário feito pelo suporte. Todos os dados das ''telas administrativas'' podem ser visualizados e modificados pelo painel. Conforme já mencionado, as telas são para facilitar a manipulação dos dados.</p>
+<h3 id="acesso-ao-painel-administrativo">Acesso ao painel administrativo<a class="headerlink" href="#acesso-ao-painel-administrativo" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Clicar no botão ''Admin'' quando logado <a href="https://sistemascead.ufjf.br/">https://sistemascead.ufjf.br/</a>;</li>
+<li>Ir até <a href="https://sistemascead.ufjf.br/backend/admin/">https://sistemascead.ufjf.br/backend/admin/</a>.</li>
+</ul>
+<hr />
+<h2 id="painel-administrativo-visao-geral">Painel administrativo: visão geral<a class="headerlink" href="#painel-administrativo-visao-geral" title="Permanent link">&para;</a></h2>
+<p>A equipe financeira também possui acesso limitado ao painel administrativo Django, com permissão para adicionar e modificar modelos essenciais à sua rotina.</p>
+<h3 id="modelos-de-maior-interesse">Modelos de maior interesse<a class="headerlink" href="#modelos-de-maior-interesse" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Módulo</th>
+<th>Ação disponível</th>
+<th>Descrição</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>(Financeiro) Fichas</td>
+<td>Adicionar, Modificar</td>
+<td>Gerenciamento dos dados das fichas dos bolsistas</td>
+</tr>
+<tr>
+<td>(Financeiro) Frequências</td>
+<td>Adicionar, Modificar</td>
+<td>Os dados de lançamento de frequência dos coordenadores</td>
+</tr>
+<tr>
+<td>(Financeiro) Frequências — disciplinas</td>
+<td>Adicionar, Modificar</td>
+<td>A relação de disciplinas lançadas na frequência</td>
+</tr>
+<tr>
+<td>(Financeiro) Funções dos bolsistas</td>
+<td>Adicionar, Modificar</td>
+<td>Define a função do bolsista no sistema (ex.: tutor, coordenador, etc.)</td>
+</tr>
+<tr>
+<td>(Financeiro) Períodos de lançamento</td>
+<td>Adicionar, Modificar</td>
+<td>Períodos válidos para o lançamento de frequência</td>
+</tr>
+</tbody>
+</table>
+<h3 id="modelos-com-permissao-apenas-de-visualizacao">Modelos com permissão apenas de visualização<a class="headerlink" href="#modelos-com-permissao-apenas-de-visualizacao" title="Permanent link">&para;</a></h3>
+<p>Além dos modelos acima, diversos outros estarão visíveis no painel, mas não precisam (nem devem) ser alterados diretamente. Esses modelos são usados como base por outras funcionalidades.</p>
+<p>Exemplos:</p>
+<ul>
+<li>Editais e seus vínculos;</li>
+<li>Dados das pessoas;</li>
+<li>Cotas e marcações; </li>
+<li>Cursos e ofertas;</li>
+<li>etc.</li>
+</ul>
+<p>Em regra esses dados são tratados por outras equipes ou por usuários externos.</p>
+<hr />
+<h1 id="recomendacoes-gerais">Recomendações gerais<a class="headerlink" href="#recomendacoes-gerais" title="Permanent link">&para;</a></h1>
+<ul>
+<li>Certifique-se de que os vínculos entre <strong>edital, função e oferta</strong> estejam cadastrados antes da data fim de validação dos candidatos, para que os aprovados possam criar a ficha;</li>
+<li>Utilize os relatórios para verificar inconsistências;</li>
+<li>Evite alterar diretamente modelos no Django admin sem orientação prévia;</li>
+<li>Sempre que possível, utilize as telas específicas para evitar erros.</li>
+</ul>
+<p>Para mais detalhes sobre permissões ou ajustes, entre em contato com a equipe de suporte técnico.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      <script id="__config" type="application/json">{"base": "../../..", "features": [], "search": "../../../assets/javascripts/workers/search.973d3a69.min.js", "tags": null, "translations": {"clipboard.copied": "Copiado para \u00e1rea de transfer\u00eancia", "clipboard.copy": "Copiar para \u00e1rea de transfer\u00eancia", "search.result.more.one": "mais 1 nesta p\u00e1gina", "search.result.more.other": "# mais nesta p\u00e1gina", "search.result.none": "Nenhum documento encontrado", "search.result.one": "1 documento encontrado", "search.result.other": "# documentos encontrados", "search.result.placeholder": "Digite para iniciar a busca", "search.result.term.missing": "Ausente", "select.version": "Selecione a vers\u00e3o"}, "version": null}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.92b07e13.min.js"></script>
+      
+    
+  </body>
+</html>

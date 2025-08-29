@@ -1,0 +1,58 @@
+:root {
+  /* Suas cores da logo (usando o vermelho como dominante) */
+  --primary-color: #ae1f25; /* Vermelho institucional */
+  --secondary-color: #fdb913; /* Amarelo apenas para destaques */
+
+  /* Cores neutras para equilibrar */
+  --dark-neutral: #2c3e50; /* Azul escuro para textos */
+  --medium-neutral: #6c757d; /* Cinza para elementos secundários */
+  --light-bg: #f8f9fa; /* Fundo branco suave */
+
+  /* Cores de apoio */
+  --success-color: #28a745; /* Verde para confirmações */
+  --info-color: #17a2b8; /* Azul para informações */
+}
+
+body {
+  background-color: var(--light-bg);
+  color: var(--dark-neutral);
+  font-family: "Segoe UI", Roboto, sans-serif;
+}
+
+/* Header - Usando apenas o vermelho */
+.login-header {
+  background: var(
+    --primary-color
+  ); /* Gradiente removido para ser mais sóbrio */
+  color: white;
+}
+
+/* Botão primário - Vermelho */
+.btn-primary {
+  background-color: var(--primary-color);
+  border: none;
+}
+
+/* Botão hover - Escurece o vermelho */
+.btn-primary:hover {
+  background-color: #8e191e;
+}
+
+/* Destaques pontuais com o amarelo (use com moderação!) */
+.btn-warning,
+.alert-warning {
+  background-color: var(--secondary-color);
+  color: var(--dark-neutral);
+}
+
+/* Tabelas e cards - Neutros */
+.table-container {
+  background: white;
+  border: 1px solid rgba(44, 62, 80, 0.1);
+}
+
+/* Links e ícones de ação - Vermelho */
+a,
+.action-icon {
+  color: var(--primary-color);
+}
