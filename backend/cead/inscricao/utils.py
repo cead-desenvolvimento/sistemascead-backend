@@ -1,12 +1,10 @@
-import ghostscript
 import os
 import subprocess
 import uuid
+import shutil
 
-from PIL import Image
 from PyPDF2 import PdfReader
-
-from .messages import ERRO_ARQUIVO_INVALIDO, ERRO_ARQUIVO_SENHA
+from .messages import ERRO_ARQUIVO_INVALIDO, ERRO_ARQUIVO_SENHA, ERRO_GS_NAO_ENCONTRADO
 
 
 def redimensionar_imagem(image_path, output_path, max_size=(1600, 900)):
@@ -22,12 +20,16 @@ def comprimir_pdf(input_path, output_path):
             if reader.is_encrypted:
                 raise ValueError(ERRO_ARQUIVO_SENHA)
 
-        # O gs nao consegue escrever no arquivo em uso,
-        # Entao cria outro e depois move para o nome original
+        gs_path = shutil.which("gs") or "/usr/local/bin/gs"
+        if not os.path.exists(gs_path):
+            raise ValueError(ERRO_GS_NAO_ENCONTRADO)
+
+        # O gs não consegue escrever no arquivo em uso,
+        # então cria outro e depois move para o nome original
         temp_output_path = f"{output_path}_{uuid.uuid4().hex}.pdf"
 
         args = [
-            "gs",
+            gs_path,
             "-sDEVICE=pdfwrite",
             "-dCompatibilityLevel=1.4",
             "-dPDFSETTINGS=/ebook",
@@ -40,5 +42,6 @@ def comprimir_pdf(input_path, output_path):
 
         subprocess.run(args, check=True)
         os.replace(temp_output_path, output_path)
+
     except Exception as e:
         raise ValueError(f"{ERRO_ARQUIVO_INVALIDO}: {str(e)}")

@@ -53,6 +53,7 @@ ERRO_CRIACAO_PASTA_UPLOAD = "Erro na criação da pasta de upload de arquivos"
 ERRO_FALTA_ARQUIVO = (
     "Há campos marcados para envio de arquivos que não estão na base de dados"
 )
+ERRO_GS_NAO_ENCONTRADO = "Executável gs não encontrado"
 ERRO_POST_ARQUIVOS = "Erro no POST dos arquivos"
 
 # ------------------------------
