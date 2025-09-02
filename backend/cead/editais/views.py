@@ -1234,12 +1234,12 @@ class RelatorioDoEditalAPIView(APIView):
                     ),
                     "responsavel_validacao_ou_justificativa": responsavel,
                     "data_inscricao": (
-                        tz.localtime(inscricao.data).strftime("%d/%m/%Y %H:%M")
+                        timezone.localtime(inscricao.data).strftime("%d/%m/%Y %H:%M")
                         if inscricao and inscricao.data
                         else "-"
                     ),
                     "data_validacao": (
-                        tz.localtime(validacao.data).strftime("%d/%m/%Y %H:%M")
+                        timezone.localtime(validacao.data).strftime("%d/%m/%Y %H:%M")
                         if validacao and validacao.data
                         else "-"
                     ),
@@ -1324,12 +1324,12 @@ class RelatorioDaVagaAPIView(APIView):
                 ),
                 "responsavel_validacao_ou_justificativa": responsavel,
                 "data_inscricao": (
-                    tz.localtime(inscricao.data).strftime("%d/%m/%Y %H:%M")
+                    timezone.localtime(inscricao.data).strftime("%d/%m/%Y %H:%M")
                     if inscricao and inscricao.data
                     else "-"
                 ),
                 "data_validacao": (
-                    tz.localtime(validacao.data).strftime("%d/%m/%Y %H:%M")
+                    timezone.localtime(validacao.data).strftime("%d/%m/%Y %H:%M")
                     if validacao and validacao.data
                     else "-"
                 ),
