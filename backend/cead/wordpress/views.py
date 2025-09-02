@@ -1,6 +1,7 @@
 from datetime import date
 
-from django.db.models import Q
+# from django.db.models import Q
+from django.db.models.functions import Lower
 from drf_spectacular.utils import extend_schema
 from rest_framework import status
 from rest_framework.decorators import api_view
@@ -101,12 +102,22 @@ def get_polos_informacoes(request):
     # Garante que e' uma lista, mesmo que venha como string unica
     polos = polos if isinstance(polos, list) else [polos]
 
-    conditions = Q()
-    for nome in polos:
-        conditions |= Q(nome__iexact=nome)
+    ## Muito lento
+    # conditions = Q()
+    # for nome in polos:
+    #     conditions |= Q(nome__iexact=nome)
+
+    # queryset = (
+    #     AcPolo.objects.filter(conditions, ativo=True)
+    #     .select_related("cm_municipio__cm_uf")
+    #     .order_by("cm_municipio__cm_uf__sigla", "nome")
+    # )
+
+    polos_normalizados = [nome.lower() for nome in polos]
 
     queryset = (
-        AcPolo.objects.filter(conditions, ativo=True)
+        AcPolo.objects.annotate(nome_lower=Lower("nome"))
+        .filter(ativo=True, nome_lower__in=polos_normalizados)
         .select_related("cm_municipio__cm_uf")
         .order_by("cm_municipio__cm_uf__sigla", "nome")
     )
