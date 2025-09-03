@@ -7,7 +7,7 @@ AXES_FAILURE_LIMIT = 5
 AXES_COOLOFF_TIME = timedelta(hours=1)
 
 # Definir como o IP do cliente é obtido
-AXES_CLIENT_IP_CALLABLE = "axes.helpers.get_client_ip_address"
+AXES_CLIENT_IP_CALLABLE = "cead.utils.axes_utils.get_real_ip"
 
 # Travar só por usuário (não mistura IP + user)
 AXES_LOCKOUT_PARAMETERS = ["username"]
