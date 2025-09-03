@@ -172,6 +172,8 @@ class LancaFrequenciaAPIView(APIView):
                 cm_pessoa=ficha.cm_pessoa,
                 cm_pessoa_coordenador=request.cm_pessoa_coordenador,
                 fi_datafrequencia=request.datafrequencia_mes_atual,
+                ac_curso_oferta=ficha.ac_curso_oferta,
+                fi_funcao_bolsista=ficha.fi_funcao_bolsista,
                 data=timezone.now(),
             )
 
