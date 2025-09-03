@@ -1,17 +1,17 @@
-# Número de tentativas de login falhas permitidas
-AXES_FAILURE_LIMIT = 5 
-# Tempo de bloqueio em horas
-AXES_COOLOFF_TIME = 1
-# Bloquear apenas por usuário (não por IP compartilhado)
-AXES_ONLY_USER_FAILURES = True
-AXES_LOCK_OUT_BY_COMBINATION_USER_AND_IP = False
+from datetime import timedelta
+from axes.helpers import get_client_ip_address
 
-# Ordem de precedência dos headers para identificar o IP real
-AXES_META_PRECEDENCE_ORDER = [
-    'HTTP_X_FORWARDED_FOR',  # repassado pelo Nginx
-    'HTTP_X_REAL_IP',        # fallback
-    'REMOTE_ADDR',           # último recurso
-]
+# Limite de tentativas
+AXES_FAILURE_LIMIT = 5
+
+# Tempo de bloqueio
+AXES_COOLOFF_TIME = timedelta(hours=1)
+
+# Definir como o IP do cliente é obtido
+AXES_CLIENT_IP_CALLABLE = get_client_ip_address
+
+# Travar só por usuário (não mistura IP + user)
+AXES_LOCKOUT_PARAMETERS = ['username']
 
 # Whitelist
 AXES_NEVER_LOCKOUT_WHITELIST = True
