@@ -24,7 +24,7 @@ urlpatterns = [
         name="get_polos_ativos_do_curso",
     ),
     path("polos/", views.get_polos, name="get_polos"),
-    path("polos/quantidade/", views.get_polos_quantidade, name="get_polos_quantidade"),
+    path("polos/ids/", views.get_polos_ids, name="get_polos_ids"),
     path(
         "polo/com-oferta-ativa/<str:nome_polo>/",
         views.get_polo_nome_com_oferta_ativa,

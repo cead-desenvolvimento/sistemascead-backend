@@ -125,10 +125,11 @@ def get_polos_informacoes(request):
     return Response(AcPoloInformacoesSerializer(queryset, many=True).data)
 
 
-@extend_schema(**DOCS_GET_POLOS_QUANTIDADE)
+@extend_schema(**DOCS_GET_POLOS_IDS)
 @api_view(["GET"])
-def get_polos_quantidade(request):
-    return Response({"polos_quantidade": AcPolo.objects.count()})
+def get_polos_ids(request):
+    ids = list(AcPolo.objects.values_list("id", flat=True))
+    return Response({"polos_ids": ids})
 
 
 @extend_schema(**DOCS_GET_POLOS_ATIVOS_DO_CURSO)

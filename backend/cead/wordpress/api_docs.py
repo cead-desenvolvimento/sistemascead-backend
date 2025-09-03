@@ -214,17 +214,17 @@ DOCS_GET_POLOS_INFORMACOES = {
     },
 }
 
-DOCS_GET_POLOS_QUANTIDADE = {
-    "summary": "Quantidade total de polos cadastrados",
-    "description": "Retorna a contagem total de polos cadastrados no sistema.",
+DOCS_GET_POLOS_IDS = {
+    "summary": "Lista de IDs de polos cadastrados",
+    "description": "Retorna a lista completa com os IDs de todos os polos cadastrados no sistema.",
     "tags": ["Wordpress"],
     "responses": {
         200: OpenApiResponse(
-            description="Quantidade de polos retornada.",
+            description="Lista de IDs de polos retornada.",
             examples=[
                 OpenApiExample(
                     "Exemplo resposta",
-                    value={"polos_quantidade": 12},
+                    value={"polos_ids": [2727, 2728, 2785]},
                 )
             ],
         ),
