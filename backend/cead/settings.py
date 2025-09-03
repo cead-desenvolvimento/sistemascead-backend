@@ -13,7 +13,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 import os
 import environ
 
-from .axes import *
+# from .axes import *
 from .db import *
 from .email import *
 from .cors import *
