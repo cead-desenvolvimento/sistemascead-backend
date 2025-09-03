@@ -7,8 +7,9 @@ Seu objetivo principal é centralizar e automatizar o recebimento e validação 
 
 ## Observações
 A ficha só pode ser gerada se:
+
 - O edital em que o candidato foi aprovado tenha um curso associado;
-- Exista associação do edital com a oferta do curso e o tipo de vínculo do bolsista.
+- Exista associação do edital com o tipo de vínculo do bolsista (a oferta do curso é opcional, já que coordenadores gerais não possuem associação com curso).
 
 ## Funcionalidades Principais
 
@@ -21,15 +22,20 @@ A ficha só pode ser gerada se:
 
 ## Fluxo de Uso
 
-1. **Acesso do candidato** via link enviado por e-mail (contendo o código).
-2. **Validação do código e CPF.**  
-   - Se válido, sessiona a permissão para continuar o fluxo.
-3. **Preenchimento de endereço, telefones e dados bancários.**
-   - Informações salvas no banco e validadas.
-4. **Preenchimento da ficha funcional.**
-   - Dados pessoais, formação, função, etc.
-5. **Geração do PDF da ficha**.
-   - Download automático do PDF com todas as informações do candidato.
+1. **Acesso do candidato**  
+   O envio do e-mail para o candidato é realizado pela equipe do CEAD por meio de recurso acessível no menu principal do sistema.
+
+2. **Validação do código e CPF**  
+   Se válido, sessiona a permissão para continuar o fluxo.
+
+3. **Preenchimento de endereço, telefones e dados bancários**  
+   Informações salvas no banco e validadas.
+
+4. **Preenchimento da ficha funcional**  
+   Dados pessoais, formação, função, etc.
+
+5. **Geração do PDF da ficha**  
+   Download automático do PDF com todas as informações do candidato.
 
 ## Principais Endpoints (Views)
 

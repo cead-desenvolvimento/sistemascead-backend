@@ -18,7 +18,7 @@
       
       
       <link rel="icon" href="../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.15">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.18">
     
     
       
@@ -26,7 +26,7 @@
       
     
     
-      <link rel="stylesheet" href="../assets/stylesheets/main.342714a4.min.css">
+      <link rel="stylesheet" href="../assets/stylesheets/main.7e37652d.min.css">
       
       
 
@@ -1288,9 +1288,11 @@
 <p>Este app implementa o <strong>preenchimento público da ficha de inscrição de candidatos</strong> em processos seletivos, garantindo que apenas pessoas autorizadas acessem e preencham suas informações pessoais, endereço, telefone, dados bancários e ficha funcional.<br />
 Seu objetivo principal é centralizar e automatizar o recebimento e validação desses dados, integrando etapas essenciais de coleta com segurança (acesso via código enviado por e-mail), e o PDF gerado está de acordo com as exigências da Portaria 309/2024 CAPES/MEC.</p>
 <h2 id="observacoes">Observações<a class="headerlink" href="#observacoes" title="Permanent link">&para;</a></h2>
-<p>A ficha só pode ser gerada se:
-- O edital em que o candidato foi aprovado tenha um curso associado;
-- Exista associação do edital com a oferta do curso e o tipo de vínculo do bolsista.</p>
+<p>A ficha só pode ser gerada se:</p>
+<ul>
+<li>O edital em que o candidato foi aprovado tenha um curso associado;</li>
+<li>Exista associação do edital com o tipo de vínculo do bolsista (a oferta do curso é opcional, já que coordenadores gerais não possuem associação com curso).</li>
+</ul>
 <h2 id="funcionalidades-principais">Funcionalidades Principais<a class="headerlink" href="#funcionalidades-principais" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong>Validação de código e CPF:</strong> Apenas o candidato que recebeu o código por e-mail pode acessar a ficha.</li>
@@ -1302,15 +1304,26 @@ Seu objetivo principal é centralizar e automatizar o recebimento e validação 
 </ul>
 <h2 id="fluxo-de-uso">Fluxo de Uso<a class="headerlink" href="#fluxo-de-uso" title="Permanent link">&para;</a></h2>
 <ol>
-<li><strong>Acesso do candidato</strong> via link enviado por e-mail (contendo o código).</li>
-<li><strong>Validação do código e CPF.</strong>  </li>
-<li>Se válido, sessiona a permissão para continuar o fluxo.</li>
-<li><strong>Preenchimento de endereço, telefones e dados bancários.</strong></li>
-<li>Informações salvas no banco e validadas.</li>
-<li><strong>Preenchimento da ficha funcional.</strong></li>
-<li>Dados pessoais, formação, função, etc.</li>
-<li><strong>Geração do PDF da ficha</strong>.</li>
-<li>Download automático do PDF com todas as informações do candidato.</li>
+<li>
+<p><strong>Acesso do candidato</strong><br />
+   O envio do e-mail para o candidato é realizado pela equipe do CEAD por meio de recurso acessível no menu principal do sistema.</p>
+</li>
+<li>
+<p><strong>Validação do código e CPF</strong><br />
+   Se válido, sessiona a permissão para continuar o fluxo.</p>
+</li>
+<li>
+<p><strong>Preenchimento de endereço, telefones e dados bancários</strong><br />
+   Informações salvas no banco e validadas.</p>
+</li>
+<li>
+<p><strong>Preenchimento da ficha funcional</strong><br />
+   Dados pessoais, formação, função, etc.</p>
+</li>
+<li>
+<p><strong>Geração do PDF da ficha</strong><br />
+   Download automático do PDF com todas as informações do candidato.</p>
+</li>
 </ol>
 <h2 id="principais-endpoints-views">Principais Endpoints (Views)<a class="headerlink" href="#principais-endpoints-views" title="Permanent link">&para;</a></h2>
 <ul>
@@ -1409,10 +1422,10 @@ Seu objetivo principal é centralizar e automatizar o recebimento e validação 
     
     
       
-      <script id="__config" type="application/json">{"base": "..", "features": [], "search": "../assets/javascripts/workers/search.d50fe291.min.js", "tags": null, "translations": {"clipboard.copied": "Copiado para \u00e1rea de transfer\u00eancia", "clipboard.copy": "Copiar para \u00e1rea de transfer\u00eancia", "search.result.more.one": "mais 1 nesta p\u00e1gina", "search.result.more.other": "# mais nesta p\u00e1gina", "search.result.none": "Nenhum documento encontrado", "search.result.one": "1 documento encontrado", "search.result.other": "# documentos encontrados", "search.result.placeholder": "Digite para iniciar a busca", "search.result.term.missing": "Ausente", "select.version": "Selecione a vers\u00e3o"}, "version": null}</script>
+      <script id="__config" type="application/json">{"base": "..", "features": [], "search": "../assets/javascripts/workers/search.973d3a69.min.js", "tags": null, "translations": {"clipboard.copied": "Copiado para \u00e1rea de transfer\u00eancia", "clipboard.copy": "Copiar para \u00e1rea de transfer\u00eancia", "search.result.more.one": "mais 1 nesta p\u00e1gina", "search.result.more.other": "# mais nesta p\u00e1gina", "search.result.none": "Nenhum documento encontrado", "search.result.one": "1 documento encontrado", "search.result.other": "# documentos encontrados", "search.result.placeholder": "Digite para iniciar a busca", "search.result.term.missing": "Ausente", "select.version": "Selecione a vers\u00e3o"}, "version": null}</script>
     
     
-      <script src="../assets/javascripts/bundle.56ea9cef.min.js"></script>
+      <script src="../assets/javascripts/bundle.92b07e13.min.js"></script>
       
     
   </body>
