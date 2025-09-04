@@ -1,10 +1,10 @@
 from datetime import timedelta
 
 # Limite de tentativas
-AXES_FAILURE_LIMIT = 5
+AXES_FAILURE_LIMIT = 25
 
 # Tempo de bloqueio
-AXES_COOLOFF_TIME = timedelta(hours=1)
+AXES_COOLOFF_TIME = timedelta(minutes=15)
 
 # Definir como o IP do cliente é obtido
 AXES_CLIENT_IP_CALLABLE = "cead.utils.axes_utils.get_real_ip"
