@@ -30,6 +30,7 @@ class IsEmissorMensagemCriacaoFicha(BasePermission):
                 name__in=[
                     "Emissores de mensagem para criação de ficha",
                     "Acadêmico - administradores",
+                    "Financeiro - administradores",
                 ]
             ).exists()
         ):
@@ -44,7 +45,10 @@ class IsValidadorDeEditais(BasePermission):
         if (
             request.user
             and request.user.groups.filter(
-                name__in=["Validadores de editais", "Acadêmico - administradores"]
+                name__in=[
+                    "Validadores de editais",
+                    "Acadêmico - administradores",
+                ]
             ).exists()
         ):
             return True
@@ -61,6 +65,7 @@ class IsAssociadorEditalPessoa(BasePermission):
                 name__in=[
                     "Associadores de editais e pessoas",
                     "Acadêmico - administradores",
+                    "Financeiro - administradores",
                 ]
             ).exists()
         ):
@@ -78,6 +83,7 @@ class IsVisualizadordeRelatorioDeEditais(BasePermission):
                 name__in=[
                     "Visualizadores de relatório de editais",
                     "Acadêmico - administradores",
+                    "Financeiro - administradores",
                 ]
             ).exists()
         ):

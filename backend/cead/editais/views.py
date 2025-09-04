@@ -254,7 +254,9 @@ class ListarEditaisEmissoresMensagemFichaAPIView(APIView):
         agora = timezone.now()
 
         # Filtro = editais depois da validacao e antes da validade
-        if request.user.groups.filter(name="Acadêmico - administradores").exists():
+        if request.user.groups.filter(
+            name__in=["Acadêmico - administradores", "Financeiro - administradores"]
+        ).exists():
             editais = EdEdital.objects.filter(
                 data_fim_validacao__lte=agora, data_validade__gte=agora
             ).order_by("-id")
@@ -286,7 +288,9 @@ class ListarEditaisRelatoriosAPIView(APIView):
     permission_classes = [IsAuthenticated, IsVisualizadordeRelatorioDeEditais]
 
     def get(self, request):
-        if request.user.groups.filter(name="Acadêmico - administradores").exists():
+        if request.user.groups.filter(
+            name__in=["Acadêmico - administradores", "Financeiro - administradores"]
+        ).exists():
             editais = EdEdital.objects.all().order_by("-id")
         else:
             pessoa = CmPessoa.objects.get(cpf=request.user.username)
