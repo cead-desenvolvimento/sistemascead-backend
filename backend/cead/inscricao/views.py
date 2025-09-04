@@ -39,7 +39,7 @@ from cead.models import (
     EdVagaCota,
 )
 from cead.settings import EMAIL_HOST_USER, RAIZ_ARQUIVOS_UPLOAD
-from cead.utils import gerar_hash, remove_caracteres_especiais
+from cead.utils import cortar_nome_arquivo, gerar_hash
 from cead.messages import (
     EMAIL_ASSINATURA,
     EMAIL_DUVIDAS_PARA_O_SUPORTE,
@@ -1573,9 +1573,11 @@ class AnexarArquivosView(APIView):
 
                     # Monta a string do nome do arquivo e seu caminho relativo
                     caminho_relativo = os.path.join(
-                        str(request.candidato.id) + "_" + str(request.vaga.id),
-                        remove_caracteres_especiais(descricao_campo)
-                        + os.path.splitext(arquivo.name)[1].lower(),
+                        f"{request.candidato.id}_{request.vaga.id}",
+                        cortar_nome_arquivo(
+                            descricao_campo,
+                            os.path.splitext(arquivo.name)[1].lower(),
+                        ),
                     )
                     caminho = os.path.join(RAIZ_ARQUIVOS_UPLOAD, caminho_relativo)
 

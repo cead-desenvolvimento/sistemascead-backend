@@ -53,12 +53,34 @@ def maiusculas_nomes(string):
     return " ".join(strings_part)
 
 
-# De Konstantin Dmitrievich Levin para konstantin_dmitrievich_levin
-def remove_caracteres_especiais(src):
-    return regex.sub(
-        r"\s+",
-        "_",
-        regex.sub(
-            r"[^a-zA-Z0-9\s]", "", unicodedata.normalize("NFD", src.strip().lower())
-        ),
-    )
+def remove_caracteres_especiais(src: str) -> str:
+    """
+    De Konstantin Dmitrievich Levin para konstantin_dmitrievich_levin
+    Exatamente como no sistema antigo, para compatibilidade dos arquivos migrados
+    """
+    # remove acentos
+    src = unicodedata.normalize("NFD", src.strip().lower())
+    src = src.encode("ascii", "ignore").decode("ascii")
+
+    # troca espaços por underscore
+    src = regex.sub(r"\s+", "_", src)
+
+    # mantém letras, números, underscore, hífen, ponto e parênteses
+    src = regex.sub(r"[^a-z0-9_.()\-\s]", "_", src)
+
+    # compacta underscores repetidos e tira underscores das pontas
+    src = regex.sub(r"_+", "_", src).strip("_")
+
+    return src
+
+
+def cortar_nome_arquivo(descricao: str, extensao: str) -> str:
+    """
+    Corta o nome para não ultrapassar o limite de caracteres.
+    Mantém a extensão no final.
+    Exatamente como no sistema antigo, para compatibilidade dos arquivos migrados
+    """
+    nome = remove_caracteres_especiais(descricao)
+    if len(nome) > 250:
+        nome = nome[:240]
+    return nome + extensao.lower()

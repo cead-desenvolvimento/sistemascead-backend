@@ -13,7 +13,7 @@ def redimensionar_imagem(image_path, output_path, max_size=(1600, 900)):
     img.save(output_path)
 
 
-def comprimir_pdf(input_path, output_path):
+def comprimir_pdf(input_path: str, output_path: str):
     try:
         with open(input_path, "rb") as f:
             reader = PdfReader(f)
@@ -26,7 +26,9 @@ def comprimir_pdf(input_path, output_path):
 
         # O gs não consegue escrever no arquivo em uso,
         # então cria outro e depois move para o nome original
-        temp_output_path = f"{output_path}_{uuid.uuid4().hex}.pdf"
+        temp_output_path = os.path.join(
+            os.path.dirname(output_path), f"{uuid.uuid4().hex}.pdf"
+        )
 
         args = [
             gs_path,
