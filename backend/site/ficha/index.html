@@ -683,9 +683,9 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#observacoes" class="md-nav__link">
+  <a href="#importante" class="md-nav__link">
     <span class="md-ellipsis">
-      Observações
+      Importante
     </span>
   </a>
   
@@ -1205,9 +1205,9 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#observacoes" class="md-nav__link">
+  <a href="#importante" class="md-nav__link">
     <span class="md-ellipsis">
-      Observações
+      Importante
     </span>
   </a>
   
@@ -1287,11 +1287,10 @@
 <h2 id="visao-geral">Visão Geral<a class="headerlink" href="#visao-geral" title="Permanent link">&para;</a></h2>
 <p>Este app implementa o <strong>preenchimento público da ficha de inscrição de candidatos</strong> em processos seletivos, garantindo que apenas pessoas autorizadas acessem e preencham suas informações pessoais, endereço, telefone, dados bancários e ficha funcional.<br />
 Seu objetivo principal é centralizar e automatizar o recebimento e validação desses dados, integrando etapas essenciais de coleta com segurança (acesso via código enviado por e-mail), e o PDF gerado está de acordo com as exigências da Portaria 309/2024 CAPES/MEC.</p>
-<h2 id="observacoes">Observações<a class="headerlink" href="#observacoes" title="Permanent link">&para;</a></h2>
-<p>A ficha só pode ser gerada se:</p>
+<h2 id="importante">Importante<a class="headerlink" href="#importante" title="Permanent link">&para;</a></h2>
+<p>A geração da ficha somente é permitida quando houver associação do edital ao tipo de vínculo do bolsista.</p>
 <ul>
-<li>O edital em que o candidato foi aprovado tenha um curso associado;</li>
-<li>Exista associação do edital com o tipo de vínculo do bolsista (a oferta do curso é opcional, já que coordenadores gerais não possuem associação com curso).</li>
+<li>A associação à oferta do curso é opcional, pois coordenadores gerais não possuem vínculo direto com cursos.</li>
 </ul>
 <h2 id="funcionalidades-principais">Funcionalidades Principais<a class="headerlink" href="#funcionalidades-principais" title="Permanent link">&para;</a></h2>
 <ul>
@@ -1330,32 +1329,32 @@ Seu objetivo principal é centralizar e automatizar o recebimento e validação 
 <li>
 <p><strong>Validação de código/CPF</strong><br />
 <code>POST /backend/ficha/validar-codigo/{codigo}/</code><br />
-  Recebe o código e CPF, valida o acesso e inicia a sessão do candidato.</p>
+    Recebe o código e CPF, valida o acesso e inicia a sessão do candidato.</p>
 </li>
 <li>
 <p><strong>Cadastro de endereço, telefones e banco</strong><br />
 <code>GET/POST /backend/ficha/endereco-telefone-banco/</code><br />
-  Consulta ou salva os dados informados pelo candidato.</p>
+    Consulta ou salva os dados informados pelo candidato.</p>
 </li>
 <li>
 <p><strong>Cadastro/consulta da ficha funcional</strong><br />
 <code>GET/POST /backend/ficha/preencher/</code><br />
-  Consulta os dados já preenchidos ou salva novos dados da ficha do candidato.</p>
+    Consulta os dados já preenchidos ou salva novos dados da ficha do candidato.</p>
 </li>
 <li>
 <p><strong>Geração do PDF</strong><br />
 <code>GET /backend/ficha/pdf/</code><br />
-  Gera e retorna o PDF com todas as informações cadastradas.</p>
+    Gera e retorna o PDF com todas as informações cadastradas.</p>
 </li>
 </ul>
 <h2 id="permissoes-e-seguranca">Permissões e Segurança<a class="headerlink" href="#permissoes-e-seguranca" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong>Validação de sessão a cada etapa</strong><br />
-  Só acessa a etapa se tiver código e hash válidos na sessão.</li>
+    Só acessa a etapa se tiver código e hash válidos na sessão.</li>
 <li><strong>Bloqueio de múltiplos envios</strong><br />
-  Só é possível gerar a ficha uma vez; após isso, o acesso é bloqueado até nova liberação.</li>
+    Só é possível gerar a ficha uma vez; após isso, o acesso é bloqueado até nova liberação.</li>
 <li><strong>Isolamento total entre candidatos</strong><br />
-  Cada candidato só acessa e preenche sua própria ficha.</li>
+    Cada candidato só acessa e preenche sua própria ficha.</li>
 </ul>
 <h2 id="publico-alvo">Público-alvo<a class="headerlink" href="#publico-alvo" title="Permanent link">&para;</a></h2>
 <ul>
