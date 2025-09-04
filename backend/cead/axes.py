@@ -1,4 +1,6 @@
 from datetime import timedelta
+from cead.utils.axes_utils import get_real_ip
+
 
 # Limite de tentativas
 AXES_FAILURE_LIMIT = 25
@@ -7,7 +9,7 @@ AXES_FAILURE_LIMIT = 25
 AXES_COOLOFF_TIME = timedelta(minutes=15)
 
 # Definir como o IP do cliente é obtido
-AXES_CLIENT_IP_CALLABLE = "cead.utils.axes_utils.get_real_ip"
+AXES_CLIENT_IP_CALLABLE = get_real_ip
 
 # Travar só por usuário (não mistura IP + user)
 AXES_LOCKOUT_PARAMETERS = ["username"]
