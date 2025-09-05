@@ -1,6 +1,7 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="pt-br">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -11,6 +12,7 @@
   <link rel="stylesheet" href="{% static 'css/usuario/principal.css' %}" />
   <link rel="stylesheet" href="{% static 'css/usuario/usuario.css' %}" />
 </head>
+
 <body>
   <div class="container py-4">
     <div class="row justify-content-center">
@@ -25,25 +27,27 @@
           <div class="card-body p-4">
             {# Mensagens do Django #}
             {% if messages %}
-              {% for message in messages %}
-                <div class="alert {% if message.tags == 'success' %}alert-success{% elif message.tags == 'error' %}alert-danger{% else %}alert-info{% endif %} mb-3" role="alert">
-                  {% if message.tags == 'success' %}
-                    <i class="bi bi-check-circle me-1"></i>
-                  {% elif message.tags == 'error' %}
-                    <i class="bi bi-exclamation-triangle me-1"></i>
-                  {% else %}
-                    <i class="bi bi-info-circle me-1"></i>
-                  {% endif %}
-                  {{ message }}
-                </div>
-              {% endfor %}
+            {% for message in messages %}
+            <div
+              class="alert {% if message.tags == 'success' %}alert-success{% elif message.tags == 'error' %}alert-danger{% else %}alert-info{% endif %} mb-3"
+              role="alert">
+              {% if message.tags == 'success' %}
+              <i class="bi bi-check-circle me-1"></i>
+              {% elif message.tags == 'error' %}
+              <i class="bi bi-exclamation-triangle me-1"></i>
+              {% else %}
+              <i class="bi bi-info-circle me-1"></i>
+              {% endif %}
+              {{ message }}
+            </div>
+            {% endfor %}
             {% endif %}
 
             {# Erros não-categorizados (fallback) #}
             {% if form.non_field_errors %}
-              <div class="alert alert-danger mb-3" role="alert">
-                {% for e in form.non_field_errors %}{{ e }}{% if not forloop.last %}<br>{% endif %}{% endfor %}
-              </div>
+            <div class="alert alert-danger mb-3" role="alert">
+              {% for e in form.non_field_errors %}{{ e }}{% if not forloop.last %}<br>{% endif %}{% endfor %}
+            </div>
             {% endif %}
 
             <form method="post" novalidate>
@@ -58,25 +62,19 @@
                   <span class="input-group-text" id="old-addon">
                     <i class="bi bi-shield-lock-fill"></i>
                   </span>
-                  <input
-                    type="password"
-                    name="{{ form.old_password.name }}"
-                    id="id_old_password"
+                  <input type="password" name="{{ form.old_password.name }}" id="id_old_password"
                     class="form-control{% if form.old_password.errors %} is-invalid{% endif %}"
-                    autocomplete="current-password"
-                    aria-describedby="old-addon old-toggle"
-                    required
-                  />
+                    autocomplete="current-password" aria-describedby="old-addon old-toggle" required />
                   <button class="btn btn-outline-secondary" type="button" id="old-toggle" aria-label="Mostrar senha">
                     <i class="bi bi-eye"></i>
                   </button>
                 </div>
                 {% if form.old_password.errors %}
-                  <div class="invalid-feedback d-block mt-1">
-                    {% for error in form.old_password.errors %}
-                      <div><i class="bi bi-exclamation-circle me-1"></i>{{ error }}</div>
-                    {% endfor %}
-                  </div>
+                <div class="invalid-feedback d-block mt-1">
+                  {% for error in form.old_password.errors %}
+                  <div><i class="bi bi-exclamation-circle me-1"></i>{{ error }}</div>
+                  {% endfor %}
+                </div>
                 {% endif %}
               </div>
 
@@ -89,32 +87,26 @@
                   <span class="input-group-text" id="np1-addon">
                     <i class="bi bi-lock-fill"></i>
                   </span>
-                  <input
-                    type="password"
-                    name="{{ form.new_password1.name }}"
-                    id="id_new_password1"
+                  <input type="password" name="{{ form.new_password1.name }}" id="id_new_password1"
                     class="form-control{% if form.new_password1.errors %} is-invalid{% endif %}"
-                    autocomplete="new-password"
-                    aria-describedby="np1-addon np1-toggle"
-                    required
-                  />
+                    autocomplete="new-password" aria-describedby="np1-addon np1-toggle" required />
                   <button class="btn btn-outline-secondary" type="button" id="np1-toggle" aria-label="Mostrar senha">
                     <i class="bi bi-eye"></i>
                   </button>
                 </div>
 
                 {% if form.new_password1.errors %}
-                  <div class="invalid-feedback d-block mt-1">
-                    {% for error in form.new_password1.errors %}
-                      <div><i class="bi bi-exclamation-circle me-1"></i>{{ error }}</div>
-                    {% endfor %}
-                  </div>
+                <div class="invalid-feedback d-block mt-1">
+                  {% for error in form.new_password1.errors %}
+                  <div><i class="bi bi-exclamation-circle me-1"></i>{{ error }}</div>
+                  {% endfor %}
+                </div>
                 {% endif %}
 
                 {% if form.new_password1.help_text %}
-                  <div class="form-text mt-2">
-                    <i class="bi bi-info-circle me-1"></i>{{ form.new_password1.help_text|safe }}
-                  </div>
+                <div class="form-text mt-2">
+                  <i class="bi bi-info-circle me-1"></i>{{ form.new_password1.help_text|safe }}
+                </div>
                 {% endif %}
               </div>
 
@@ -127,26 +119,20 @@
                   <span class="input-group-text" id="np2-addon">
                     <i class="bi bi-lock-fill"></i>
                   </span>
-                  <input
-                    type="password"
-                    name="{{ form.new_password2.name }}"
-                    id="id_new_password2"
+                  <input type="password" name="{{ form.new_password2.name }}" id="id_new_password2"
                     class="form-control{% if form.new_password2.errors %} is-invalid{% endif %}"
-                    autocomplete="new-password"
-                    aria-describedby="np2-addon np2-toggle"
-                    required
-                  />
+                    autocomplete="new-password" aria-describedby="np2-addon np2-toggle" required />
                   <button class="btn btn-outline-secondary" type="button" id="np2-toggle" aria-label="Mostrar senha">
                     <i class="bi bi-eye"></i>
                   </button>
                 </div>
 
                 {% if form.new_password2.errors %}
-                  <div class="invalid-feedback d-block mt-1">
-                    {% for error in form.new_password2.errors %}
-                      <div><i class="bi bi-exclamation-circle me-1"></i>{{ error }}</div>
-                    {% endfor %}
-                  </div>
+                <div class="invalid-feedback d-block mt-1">
+                  {% for error in form.new_password2.errors %}
+                  <div><i class="bi bi-exclamation-circle me-1"></i>{{ error }}</div>
+                  {% endfor %}
+                </div>
                 {% endif %}
               </div>
 
@@ -205,4 +191,5 @@
     })();
   </script>
 </body>
+
 </html>

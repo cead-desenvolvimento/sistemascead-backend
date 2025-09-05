@@ -342,30 +342,40 @@ class RelatorioAdministrativoLancamentoAPIView(APIView):
     def get(self, request, fi_datafrequencia_id):
         cursos_com_frequencias_lancadas = []
 
-        for curso_com_frequencia_lancada in request.cursos_com_frequencias_lancadas:
-            # 1) lista de pessoas lançadas no curso/período
-            pessoas_lancadas_ids = FiFrequencia.objects.filter(
-                fi_datafrequencia=request.datafrequencia,
-                ac_curso_oferta__ac_curso=curso_com_frequencia_lancada,
-                cm_pessoa_coordenador=curso_com_frequencia_lancada.cm_pessoa_coordenador,
-            ).values_list("cm_pessoa_id", flat=True)
-
-            # 2) fichas correspondentes apenas a essas pessoas
-            fichas_queryset = (
-                FiPessoaFicha.objects.filter(
-                    cm_pessoa_id__in=pessoas_lancadas_ids,
-                    ac_curso_oferta__ac_curso=curso_com_frequencia_lancada,
+        for curso in request.cursos_com_frequencias_lancadas:
+            # Coordenadores que lançaram nesse curso no período selecionado (histórico!)
+            coord_ids = (
+                FiFrequencia.objects.filter(
+                    fi_datafrequencia=request.datafrequencia,
+                    ac_curso_oferta__ac_curso=curso,
                 )
-                .order_by("cm_pessoa", "-id")
-                .distinct("cm_pessoa")
-                .select_related("cm_pessoa", "ac_curso_oferta")
+                .values_list("cm_pessoa_coordenador_id", flat=True)
+                .distinct()
             )
+
+            for coord_id in coord_ids:
+                # Pessoas lançadas por ESSE coordenador nesse curso e período
+                pessoas_ids = FiFrequencia.objects.filter(
+                    fi_datafrequencia=request.datafrequencia,
+                    ac_curso_oferta__ac_curso=curso,
+                    cm_pessoa_coordenador_id=coord_id,
+                ).values_list("cm_pessoa_id", flat=True)
+
+                fichas_queryset = (
+                    FiPessoaFicha.objects.filter(
+                        cm_pessoa_id__in=pessoas_ids,
+                        ac_curso_oferta__ac_curso=curso,
+                    )
+                    .order_by("cm_pessoa", "-id")
+                    .distinct("cm_pessoa")
+                    .select_related("cm_pessoa", "ac_curso_oferta")
+                )
 
             dados_do_curso = {
                 "coordenador": CmPessoaNomeSerializer(
-                    curso_com_frequencia_lancada.cm_pessoa_coordenador
+                    CmPessoa.objects.get(id=coord_id)
                 ).data,
-                "curso": curso_com_frequencia_lancada,
+                "curso": curso,
             }
 
             cursos_com_frequencias_lancadas.append(
@@ -399,9 +409,7 @@ class ListarCursosComDisciplinasAPIView(APIView):
     def get(self, request):
         return Response(
             AcCursoIdNomeSerializer(
-                AcCurso.objects.filter(acdisciplina__isnull=False)
-                .distinct()
-                .order_by("nome"),
+                AcCurso.objects.filter(ativo=True).order_by("nome"),
                 many=True,
             ).data,
             status=status.HTTP_200_OK,

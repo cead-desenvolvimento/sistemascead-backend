@@ -1,6 +1,7 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="pt-br">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -11,6 +12,7 @@
   <link rel="stylesheet" href="{% static 'css/usuario/principal.css' %}" />
   <link rel="stylesheet" href="{% static 'css/usuario/usuario.css' %}" />
 </head>
+
 <body>
   <div class="container py-5">
     <div class="row justify-content-center">
@@ -25,25 +27,27 @@
           <div class="card-body p-4">
             {# Mensagens do Django #}
             {% if messages %}
-              {% for message in messages %}
-                <div class="alert {% if message.tags == 'success' %}alert-success{% elif message.tags == 'error' %}alert-danger{% else %}alert-info{% endif %} mb-3" role="alert">
-                  {% if message.tags == 'success' %}
-                    <i class="bi bi-check-circle me-1"></i>
-                  {% elif message.tags == 'error' %}
-                    <i class="bi bi-exclamation-triangle me-1"></i>
-                  {% else %}
-                    <i class="bi bi-info-circle me-1"></i>
-                  {% endif %}
-                  {{ message }}
-                </div>
-              {% endfor %}
+            {% for message in messages %}
+            <div
+              class="alert {% if message.tags == 'success' %}alert-success{% elif message.tags == 'error' %}alert-danger{% else %}alert-info{% endif %} mb-3"
+              role="alert">
+              {% if message.tags == 'success' %}
+              <i class="bi bi-check-circle me-1"></i>
+              {% elif message.tags == 'error' %}
+              <i class="bi bi-exclamation-triangle me-1"></i>
+              {% else %}
+              <i class="bi bi-info-circle me-1"></i>
+              {% endif %}
+              {{ message }}
+            </div>
+            {% endfor %}
             {% endif %}
 
             {# Erros não-categorizados (fallback) #}
             {% if form.non_field_errors %}
-              <div class="alert alert-danger mb-3" role="alert">
-                {% for e in form.non_field_errors %}{{ e }}{% if not forloop.last %}<br>{% endif %}{% endfor %}
-              </div>
+            <div class="alert alert-danger mb-3" role="alert">
+              {% for e in form.non_field_errors %}{{ e }}{% if not forloop.last %}<br>{% endif %}{% endfor %}
+            </div>
             {% endif %}
 
             <form method="post" novalidate>
@@ -57,24 +61,17 @@
                   <span class="input-group-text" id="email-addon">
                     <i class="bi bi-envelope-fill"></i>
                   </span>
-                  <input
-                    type="email"
-                    name="email"
-                    id="id_email"
-                    class="form-control{% if form.email.errors %} is-invalid{% endif %}"
-                    placeholder="seu@email.com"
-                    autocomplete="email"
-                    aria-describedby="email-addon"
-                    required
-                    value="{{ form.email.value|default_if_none:'' }}"
-                  />
+                  <input type="email" name="email" id="id_email"
+                    class="form-control{% if form.email.errors %} is-invalid{% endif %}" placeholder="seu@email.com"
+                    autocomplete="email" aria-describedby="email-addon" required
+                    value="{{ form.email.value|default_if_none:'' }}" />
                 </div>
                 {% if form.email.errors %}
-                  <div class="invalid-feedback d-block mt-1">
-                    {% for error in form.email.errors %}
-                      <div><i class="bi bi-exclamation-circle me-1"></i>{{ error }}</div>
-                    {% endfor %}
-                  </div>
+                <div class="invalid-feedback d-block mt-1">
+                  {% for error in form.email.errors %}
+                  <div><i class="bi bi-exclamation-circle me-1"></i>{{ error }}</div>
+                  {% endfor %}
+                </div>
                 {% endif %}
               </div>
 
@@ -115,4 +112,5 @@
     })();
   </script>
 </body>
+
 </html>

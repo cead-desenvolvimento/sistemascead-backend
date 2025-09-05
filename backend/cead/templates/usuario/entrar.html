@@ -1,162 +1,149 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="pt-br">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Acesso ao Sistema</title>
 
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css" />
-    <link rel="stylesheet" href="{% static 'css/usuario/principal.css' %}" />
-    <link rel="stylesheet" href="{% static 'css/usuario/usuario.css' %}" />
-  </head>
-  <body>
-    <div class="container py-5">
-      <div class="row justify-content-center">
-        <div class="col-lg-6 col-md-7">
-          <div class="card shadow-sm login-card">
-            <div class="card-header login-header text-white text-center py-4">
-              <h3 class="mb-0">
-                <i class="bi bi-lock me-2"></i>Acesso ao Sistema
-              </h3>
-            </div>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Acesso ao Sistema</title>
 
-            <div class="card-body p-4">
-              {# Mensagens do Django (opcional) #}
-              {% if messages %}
-                {% for message in messages %}
-                  <div class="alert alert-{{ message.tags|default:'info' }} mb-3" role="alert">{{ message }}</div>
-                {% endfor %}
-              {% endif %}
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css" />
+  <link rel="stylesheet" href="{% static 'css/usuario/principal.css' %}" />
+  <link rel="stylesheet" href="{% static 'css/usuario/usuario.css' %}" />
+</head>
 
-              {# Erros do form de autenticação #}
-              {% if form.errors %}
-                <div class="alert alert-danger mb-3" role="alert">
-                  <i class="bi bi-exclamation-triangle me-2"></i>Usuário e/ou senha incorretos. Tente novamente.
-                </div>
-              {% endif %}
-
-              <form method="post" novalidate>
-                {% csrf_token %}
-                {# preserva o next vindo por GET (ou passado pelo view) #}
-                {% if request.GET.next %}
-                  <input type="hidden" name="next" value="{{ request.GET.next }}">
-                {% elif next %}
-                  <input type="hidden" name="next" value="{{ next }}">
-                {% endif %}
-
-                <div class="mb-3">
-                  <label for="id_username" class="form-label fw-bold">
-                    <i class="bi bi-person me-1"></i>Usuário
-                  </label>
-                  <div class="input-group">
-                    <span class="input-group-text" id="user-addon">
-                      <i class="bi bi-person-fill"></i>
-                    </span>
-                    <input
-                      type="text"
-                      class="form-control"
-                      name="username"
-                      id="id_username"
-                      autofocus
-                      autocapitalize="none"
-                      autocomplete="username"
-                      maxlength="150"
-                      aria-describedby="user-addon"
-                      required
-                    />
-                  </div>
-                  {# erros de campo (se o form for um AuthenticationForm padrão) #}
-                  {% if form.username.errors %}
-                    <div class="text-danger small mt-1">
-                      {% for e in form.username.errors %}{{ e }}{% if not forloop.last %}<br>{% endif %}{% endfor %}
-                    </div>
-                  {% endif %}
-                </div>
-
-                <div class="mb-3">
-                  <label for="id_password" class="form-label fw-bold">
-                    <i class="bi bi-key me-1"></i>Senha
-                  </label>
-                  <div class="input-group">
-                    <span class="input-group-text" id="pwd-addon">
-                      <i class="bi bi-key-fill"></i>
-                    </span>
-                    <input
-                      type="password"
-                      class="form-control"
-                      name="password"
-                      id="id_password"
-                      autocomplete="current-password"
-                      aria-describedby="pwd-addon pwd-toggle"
-                      required
-                    />
-                    <button type="button" class="btn btn-outline-secondary" id="pwd-toggle" aria-label="Mostrar senha">
-                      <i class="bi bi-eye" aria-hidden="true"></i>
-                    </button>
-                  </div>
-                  {% if form.password.errors %}
-                    <div class="text-danger small mt-1">
-                      {% for e in form.password.errors %}{{ e }}{% if not forloop.last %}<br>{% endif %}{% endfor %}
-                    </div>
-                  {% endif %}
-                </div>
-
-                <div class="d-grid mt-4">
-                  <button type="submit" class="btn btn-danger btn-lg" id="btn-entrar">
-                    <span class="spinner-border spinner-border-sm me-2 d-none" role="status" aria-hidden="true"></span>
-                    <span id="btn-text">Entrar</span>
-                  </button>
-                </div>
-              </form>
-
-              <div class="text-center mt-3">
-                <a href="{% url 'password_reset' %}">Esqueceu sua senha?</a>
-              </div>
-            </div>
+<body>
+  <div class="container py-5">
+    <div class="row justify-content-center">
+      <div class="col-lg-6 col-md-7">
+        <div class="card shadow-sm login-card">
+          <div class="card-header login-header text-white text-center py-4">
+            <h3 class="mb-0">
+              <i class="bi bi-lock me-2"></i>Acesso ao Sistema
+            </h3>
           </div>
 
-          {# erros não-categorizados (fallback) #}
-          {% if form.non_field_errors %}
-            <div class="alert alert-danger mt-3" role="alert">
-              {% for e in form.non_field_errors %}{{ e }}{% if not forloop.last %}<br>{% endif %}{% endfor %}
+          <div class="card-body p-4">
+            {# Mensagens do Django (opcional) #}
+            {% if messages %}
+            {% for message in messages %}
+            <div class="alert alert-{{ message.tags|default:'info' }} mb-3" role="alert">{{ message }}</div>
+            {% endfor %}
+            {% endif %}
+
+            {# Erros do form de autenticação #}
+            {% if form.errors %}
+            <div class="alert alert-danger mb-3" role="alert">
+              <i class="bi bi-exclamation-triangle me-2"></i>Usuário e/ou senha incorretos. Tente novamente.
             </div>
-          {% endif %}
+            {% endif %}
+
+            <form method="post" novalidate>
+              {% csrf_token %}
+              {# preserva o next vindo por GET (ou passado pelo view) #}
+              {% if request.GET.next %}
+              <input type="hidden" name="next" value="{{ request.GET.next }}">
+              {% elif next %}
+              <input type="hidden" name="next" value="{{ next }}">
+              {% endif %}
+
+              <div class="mb-3">
+                <label for="id_username" class="form-label fw-bold">
+                  <i class="bi bi-person me-1"></i>Usuário
+                </label>
+                <div class="input-group">
+                  <span class="input-group-text" id="user-addon">
+                    <i class="bi bi-person-fill"></i>
+                  </span>
+                  <input type="text" class="form-control" name="username" id="id_username" autofocus
+                    autocapitalize="none" autocomplete="username" maxlength="150" aria-describedby="user-addon"
+                    required />
+                </div>
+                {# erros de campo (se o form for um AuthenticationForm padrão) #}
+                {% if form.username.errors %}
+                <div class="text-danger small mt-1">
+                  {% for e in form.username.errors %}{{ e }}{% if not forloop.last %}<br>{% endif %}{% endfor %}
+                </div>
+                {% endif %}
+              </div>
+
+              <div class="mb-3">
+                <label for="id_password" class="form-label fw-bold">
+                  <i class="bi bi-key me-1"></i>Senha
+                </label>
+                <div class="input-group">
+                  <span class="input-group-text" id="pwd-addon">
+                    <i class="bi bi-key-fill"></i>
+                  </span>
+                  <input type="password" class="form-control" name="password" id="id_password"
+                    autocomplete="current-password" aria-describedby="pwd-addon pwd-toggle" required />
+                  <button type="button" class="btn btn-outline-secondary" id="pwd-toggle" aria-label="Mostrar senha">
+                    <i class="bi bi-eye" aria-hidden="true"></i>
+                  </button>
+                </div>
+                {% if form.password.errors %}
+                <div class="text-danger small mt-1">
+                  {% for e in form.password.errors %}{{ e }}{% if not forloop.last %}<br>{% endif %}{% endfor %}
+                </div>
+                {% endif %}
+              </div>
+
+              <div class="d-grid mt-4">
+                <button type="submit" class="btn btn-danger btn-lg" id="btn-entrar">
+                  <span class="spinner-border spinner-border-sm me-2 d-none" role="status" aria-hidden="true"></span>
+                  <span id="btn-text">Entrar</span>
+                </button>
+              </div>
+            </form>
+
+            <div class="text-center mt-3">
+              <a href="{% url 'password_reset' %}">Esqueceu sua senha?</a>
+            </div>
+          </div>
         </div>
+
+        {# erros não-categorizados (fallback) #}
+        {% if form.non_field_errors %}
+        <div class="alert alert-danger mt-3" role="alert">
+          {% for e in form.non_field_errors %}{{ e }}{% if not forloop.last %}<br>{% endif %}{% endfor %}
+        </div>
+        {% endif %}
       </div>
     </div>
+  </div>
 
-    <script>
-      // Toggle de senha + UX de envio com spinner
-      (function () {
-        const toggleBtn = document.getElementById('pwd-toggle');
-        const pwdInput = document.getElementById('id_password');
-        const submitBtn = document.getElementById('btn-entrar');
-        const spinner = submitBtn.querySelector('.spinner-border');
-        const btnText = document.getElementById('btn-text');
+  <script>
+    // Toggle de senha + UX de envio com spinner
+    (function () {
+      const toggleBtn = document.getElementById('pwd-toggle');
+      const pwdInput = document.getElementById('id_password');
+      const submitBtn = document.getElementById('btn-entrar');
+      const spinner = submitBtn.querySelector('.spinner-border');
+      const btnText = document.getElementById('btn-text');
 
-        if (toggleBtn && pwdInput) {
-          toggleBtn.addEventListener('click', () => {
-            const isPwd = pwdInput.type === 'password';
-            pwdInput.type = isPwd ? 'text' : 'password';
-            toggleBtn.innerHTML = isPwd
-              ? '<i class="bi bi-eye-slash" aria-hidden="true"></i>'
-              : '<i class="bi bi-eye" aria-hidden="true"></i>';
-            toggleBtn.setAttribute('aria-label', isPwd ? 'Ocultar senha' : 'Mostrar senha');
-          });
-        }
+      if (toggleBtn && pwdInput) {
+        toggleBtn.addEventListener('click', () => {
+          const isPwd = pwdInput.type === 'password';
+          pwdInput.type = isPwd ? 'text' : 'password';
+          toggleBtn.innerHTML = isPwd
+            ? '<i class="bi bi-eye-slash" aria-hidden="true"></i>'
+            : '<i class="bi bi-eye" aria-hidden="true"></i>';
+          toggleBtn.setAttribute('aria-label', isPwd ? 'Ocultar senha' : 'Mostrar senha');
+        });
+      }
 
-        // mostra spinner durante o submit (progressive enhancement)
-        const form = document.querySelector('form[method="post"]');
-        if (form) {
-          form.addEventListener('submit', () => {
-            submitBtn.disabled = true;
-            spinner.classList.remove('d-none');
-            btnText.textContent = 'Entrando...';
-          });
-        }
-      })();
-    </script>
-  </body>
+      // mostra spinner durante o submit (progressive enhancement)
+      const form = document.querySelector('form[method="post"]');
+      if (form) {
+        form.addEventListener('submit', () => {
+          submitBtn.disabled = true;
+          spinner.classList.remove('d-none');
+          btnText.textContent = 'Entrando...';
+        });
+      }
+    })();
+  </script>
+</body>
+
 </html>
