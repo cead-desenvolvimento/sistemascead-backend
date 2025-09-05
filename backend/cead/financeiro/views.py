@@ -70,8 +70,9 @@ class CursoComBolsistasAtivosAPIView(APIView):
     def get(self, request, ac_curso_id):
         fichas_ativas = FiPessoaFicha.objects.filter(
             data_inicio_vinculacao__lt=now(),
-            data_fim_vinculacao__isnull=True,
             ac_curso_oferta__ac_curso__id=ac_curso_id,
+        ).filter(
+            Q(data_fim_vinculacao__isnull=True) | Q(data_fim_vinculacao__gt=now())
         ).select_related("cm_pessoa")
 
         serializer = BolsistaSerializer(fichas_ativas, many=True)
