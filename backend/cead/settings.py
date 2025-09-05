@@ -86,7 +86,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
-    "axes.middleware.AxesMiddleware",
+    # "axes.middleware.AxesMiddleware",
     "corsheaders.middleware.CorsMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
