@@ -46,7 +46,7 @@ class ListarCursosComBolsistasAtivosAPIView(APIView):
     def get(self, request):
         fichas_ativas = FiPessoaFicha.objects.filter(
             data_inicio_vinculacao__lt=now(),
-            data_fim_vinculacao__isnull=True,
+            data_fim_vinculacao__gt=now(),
             ac_curso_oferta__isnull=False,
             ac_curso_oferta__ac_curso__isnull=False,
         ).select_related("ac_curso_oferta__ac_curso")
