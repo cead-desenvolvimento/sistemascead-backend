@@ -1,7 +1,7 @@
 from drf_spectacular.utils import extend_schema
 
 from django.db import transaction, IntegrityError
-from django.db.models import OuterRef, Subquery
+from django.db.models import OuterRef, Q, Subquery
 from django.utils.timezone import now
 
 from rest_framework import status
@@ -46,9 +46,10 @@ class ListarCursosComBolsistasAtivosAPIView(APIView):
     def get(self, request):
         fichas_ativas = FiPessoaFicha.objects.filter(
             data_inicio_vinculacao__lt=now(),
-            data_fim_vinculacao__gt=now(),
             ac_curso_oferta__isnull=False,
-            ac_curso_oferta__ac_curso__isnull=False,
+            ac_curso_oferta__ac_curso__isnull=False
+        ).filter(
+            Q(data_fim_vinculacao__isnull=True) | Q(data_fim_vinculacao__gt=now())
         ).select_related("ac_curso_oferta__ac_curso")
 
         cursos = AcCurso.objects.filter(
