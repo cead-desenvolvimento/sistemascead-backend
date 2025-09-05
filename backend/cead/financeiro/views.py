@@ -44,13 +44,17 @@ class ListarCursosComBolsistasAtivosAPIView(APIView):
     permission_classes = [IsAuthenticated, IsGerenciadorDataVinculacaoFichas]
 
     def get(self, request):
-        fichas_ativas = FiPessoaFicha.objects.filter(
-            data_inicio_vinculacao__lt=now(),
-            ac_curso_oferta__isnull=False,
-            ac_curso_oferta__ac_curso__isnull=False
-        ).filter(
-            Q(data_fim_vinculacao__isnull=True) | Q(data_fim_vinculacao__gt=now())
-        ).select_related("ac_curso_oferta__ac_curso")
+        fichas_ativas = (
+            FiPessoaFicha.objects.filter(
+                data_inicio_vinculacao__lt=now(),
+                ac_curso_oferta__isnull=False,
+                ac_curso_oferta__ac_curso__isnull=False,
+            )
+            .filter(
+                Q(data_fim_vinculacao__isnull=True) | Q(data_fim_vinculacao__gt=now())
+            )
+            .select_related("ac_curso_oferta__ac_curso")
+        )
 
         cursos = AcCurso.objects.filter(
             id__in=fichas_ativas.values_list(
@@ -68,12 +72,16 @@ class CursoComBolsistasAtivosAPIView(APIView):
     permission_classes = [IsAuthenticated, IsGerenciadorDataVinculacaoFichas]
 
     def get(self, request, ac_curso_id):
-        fichas_ativas = FiPessoaFicha.objects.filter(
-            data_inicio_vinculacao__lt=now(),
-            ac_curso_oferta__ac_curso__id=ac_curso_id,
-        ).filter(
-            Q(data_fim_vinculacao__isnull=True) | Q(data_fim_vinculacao__gt=now())
-        ).select_related("cm_pessoa")
+        fichas_ativas = (
+            FiPessoaFicha.objects.filter(
+                data_inicio_vinculacao__lt=now(),
+                ac_curso_oferta__ac_curso__id=ac_curso_id,
+            )
+            .filter(
+                Q(data_fim_vinculacao__isnull=True) | Q(data_fim_vinculacao__gt=now())
+            )
+            .select_related("cm_pessoa")
+        )
 
         serializer = BolsistaSerializer(fichas_ativas, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)

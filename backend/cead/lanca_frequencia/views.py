@@ -224,18 +224,22 @@ class RelatorioLancamentoAPIView(APIView):
 
         request.cm_pessoa_coordenador = cm_pessoa_coordenador
         request.cursos_do_coordenador = cursos_do_coordenador
+        request.datafrequencia = get_datafrequencia_mes_atual()
 
     def get(self, request):
+        # Eu fiz tudo girar em torno da ficha, senao vira bagunca de dados (como no sistema antigo)
+        # E esse e' o preco
         cursos_do_coordenador = []
 
         for curso_do_coordenador in request.cursos_do_coordenador:
+            # 1) lista de pessoas lançadas no curso/período
             frequencias = FiFrequencia.objects.filter(
-                fi_datafrequencia=get_datafrequencia_mes_atual(),
+                fi_datafrequencia=request.datafrequencia,
                 cm_pessoa_coordenador=request.cm_pessoa_coordenador,
+                ac_curso_oferta__ac_curso=curso_do_coordenador,
             )
 
-            # Eu fiz tudo girar em torno da ficha, senao vira bagunca de dados
-            # E esse e' o preco
+            # 2) fichas correspondentes apenas a essas pessoas
             fichas_queryset = (
                 FiPessoaFicha.objects.filter(
                     cm_pessoa__in=frequencias.values("cm_pessoa"),
@@ -243,6 +247,7 @@ class RelatorioLancamentoAPIView(APIView):
                 )
                 .order_by("cm_pessoa", "-id")
                 .distinct("cm_pessoa")
+                .select_related("cm_pessoa", "ac_curso_oferta")
             )
 
             dados_do_curso = {
@@ -257,10 +262,7 @@ class RelatorioLancamentoAPIView(APIView):
                     dados_do_curso,
                     context={
                         "bolsistas": sorted(
-                            fichas_queryset.select_related(
-                                "cm_pessoa", "ac_curso_oferta"
-                            ),
-                            key=lambda f: f.cm_pessoa.nome,
+                            fichas_queryset, key=lambda f: f.cm_pessoa.nome
                         )
                     },
                 ).data
@@ -268,7 +270,9 @@ class RelatorioLancamentoAPIView(APIView):
 
         return Response(
             {
-                "mes_ano_datafrequencia_mes_anterior": get_datafrequencia_mes_anterior().mes_ano_datafrequencia(),
+                "mes_ano_datafrequencia_mes_anterior": get_datafrequencia_periodo_anterior(
+                    request.datafrequencia
+                ),
                 "cursos": cursos_do_coordenador,
             },
             status=status.HTTP_200_OK,
@@ -316,7 +320,6 @@ class RelatorioAdministrativoLancamentoAPIView(APIView):
             .order_by("-id")
             .values_list("id", flat=True)[:6]
         )
-
         if int(fi_datafrequencia_id) not in ultimos_ids_permitidos:
             raise PermissionDenied(ERRO_LANCA_FREQUENCIA_GET_DATAFREQUENCIA_ANTIGA)
 
@@ -327,33 +330,35 @@ class RelatorioAdministrativoLancamentoAPIView(APIView):
                 f"{ERRO_LANCA_FREQUENCIA_GET_DATAFREQUENCIA_VAZIO}: {fi_datafrequencia_id}"
             )
 
-        cursos_com_frequencia_lancadas = get_cursos_com_frequencia_lancada(
+        cursos_com_frequencias_lancadas = get_cursos_com_frequencia_lancada(
             datafrequencia
         )
-        if isinstance(cursos_com_frequencia_lancadas, Response):
-            raise ValidationError(cursos_com_frequencia_lancadas.data)
+        if isinstance(cursos_com_frequencias_lancadas, Response):
+            raise ValidationError(cursos_com_frequencias_lancadas.data)
 
         request.datafrequencia = datafrequencia
-        request.cursos_com_frequencia_lancadas = cursos_com_frequencia_lancadas
+        request.cursos_com_frequencias_lancadas = cursos_com_frequencias_lancadas
 
     def get(self, request, fi_datafrequencia_id):
-        cursos_com_frequencia_lancadas = []
+        cursos_com_frequencias_lancadas = []
 
-        for curso_com_frequencia_lancada in request.cursos_com_frequencia_lancadas:
-            frequencias = FiFrequencia.objects.filter(
+        for curso_com_frequencia_lancada in request.cursos_com_frequencias_lancadas:
+            # 1) lista de pessoas lançadas no curso/período
+            pessoas_lancadas_ids = FiFrequencia.objects.filter(
                 fi_datafrequencia=request.datafrequencia,
+                ac_curso_oferta__ac_curso=curso_com_frequencia_lancada,
                 cm_pessoa_coordenador=curso_com_frequencia_lancada.cm_pessoa_coordenador,
-            )
+            ).values_list("cm_pessoa_id", flat=True)
 
-            # Eu fiz tudo girar em torno da ficha, senao vira bagunca de dados
-            # E esse e' o preco
+            # 2) fichas correspondentes apenas a essas pessoas
             fichas_queryset = (
                 FiPessoaFicha.objects.filter(
-                    cm_pessoa__in=frequencias.values("cm_pessoa"),
+                    cm_pessoa_id__in=pessoas_lancadas_ids,
                     ac_curso_oferta__ac_curso=curso_com_frequencia_lancada,
                 )
                 .order_by("cm_pessoa", "-id")
                 .distinct("cm_pessoa")
+                .select_related("cm_pessoa", "ac_curso_oferta")
             )
 
             dados_do_curso = {
@@ -363,14 +368,12 @@ class RelatorioAdministrativoLancamentoAPIView(APIView):
                 "curso": curso_com_frequencia_lancada,
             }
 
-            cursos_com_frequencia_lancadas.append(
+            cursos_com_frequencias_lancadas.append(
                 FrequenciaMesAtualSerializer(
                     dados_do_curso,
                     context={
                         "bolsistas": sorted(
-                            fichas_queryset.select_related(
-                                "cm_pessoa", "ac_curso_oferta"
-                            ),
+                            fichas_queryset,
                             key=lambda f: f.cm_pessoa.nome,
                         )
                     },
@@ -382,7 +385,7 @@ class RelatorioAdministrativoLancamentoAPIView(APIView):
                 "mes_ano_datafrequencia_mes_anterior": get_datafrequencia_periodo_anterior(
                     request.datafrequencia
                 ),
-                "cursos": cursos_com_frequencia_lancadas,
+                "cursos": cursos_com_frequencias_lancadas,
             },
             status=status.HTTP_200_OK,
         )
