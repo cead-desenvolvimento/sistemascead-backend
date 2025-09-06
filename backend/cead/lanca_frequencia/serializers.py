@@ -86,7 +86,6 @@ class FiPessoaFichaFuncaoDisciplinaMesAnteriorSerializer(serializers.ModelSerial
         frequencias_disciplinas = FiFrequenciaDisciplina.objects.filter(
             fi_frequencia__fi_datafrequencia=get_datafrequencia_mes_anterior(),
             fi_frequencia__cm_pessoa=obj.cm_pessoa,
-            fi_frequencia__cm_pessoa_coordenador=obj.ac_curso_oferta.ac_curso.cm_pessoa_coordenador,
         ).values_list("ac_disciplina_id", flat=True)
 
         return list(frequencias_disciplinas)

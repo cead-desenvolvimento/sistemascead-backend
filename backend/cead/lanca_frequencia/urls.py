@@ -4,6 +4,11 @@ from . import views
 urlpatterns = [
     path("", views.LancaFrequenciaAPIView.as_view(), name="lanca_frequencia"),
     path(
+        "previa/",
+        views.LancaFrequenciaPreviaAPIView.as_view(),
+        name="previa_lanca_frequencia",
+    ),
+    path(
         "relatorio/",
         views.RelatorioLancamentoAPIView.as_view(),
         name="relatorio_lancamento",

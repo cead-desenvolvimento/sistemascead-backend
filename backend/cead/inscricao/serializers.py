@@ -75,7 +75,7 @@ class CmPessoaPostSerializer(serializers.ModelSerializer):
     def validate_email(self, value):
         try:
             valid = validate_email(value, check_deliverability=False)
-            email = valid.email
+            email = valid.email.lower()
         except EmailNotValidError as e:
             raise serializers.ValidationError(ERRO_EMAIL_INVALIDO + " " + str(e))
 

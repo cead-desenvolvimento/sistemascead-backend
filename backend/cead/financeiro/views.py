@@ -66,6 +66,30 @@ class ListarCursosComBolsistasAtivosAPIView(APIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
+@extend_schema(**DOCS_LISTAR_CURSOS_COM_BOLSISTAS_INATIVOS_APIVIEW)
+class ListarCursosComBolsistasInativosAPIView(APIView):
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated, IsGerenciadorDataVinculacaoFichas]
+
+    def get(self, request):
+        # Fichas "zeradas" = sem início de vinculação definido
+        fichas_inativas = FiPessoaFicha.objects.filter(
+            data_inicio_vinculacao__isnull=True,
+            data_fim_vinculacao__isnull=True,
+            ac_curso_oferta__isnull=False,
+            ac_curso_oferta__ac_curso__isnull=False,
+        ).select_related("ac_curso_oferta__ac_curso")
+
+        curso_ids = fichas_inativas.values_list(
+            "ac_curso_oferta__ac_curso__id", flat=True
+        )
+
+        cursos = AcCurso.objects.filter(id__in=curso_ids).distinct().order_by("nome")
+
+        serializer = AcCursoIdNomeSerializer(cursos, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
 @extend_schema(**DOCS_CURSO_COM_BOLSISTAS_ATIVOS_APIVIEW)
 class CursoComBolsistasAtivosAPIView(APIView):
     authentication_classes = [JWTAuthentication]
@@ -87,19 +111,36 @@ class CursoComBolsistasAtivosAPIView(APIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
+@extend_schema(**DOCS_CURSO_COM_BOLSISTAS_INATIVOS_APIVIEW)
+class CursoComBolsistasInativosAPIView(APIView):
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated, IsGerenciadorDataVinculacaoFichas]
+
+    def get(self, request, ac_curso_id):
+        fichas_inativas = FiPessoaFicha.objects.filter(
+            data_inicio_vinculacao__isnull=True,
+            ac_curso_oferta__ac_curso__id=ac_curso_id,
+        ).select_related("cm_pessoa")
+
+        serializer = BolsistaSerializer(fichas_inativas, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
 @extend_schema(**DOCS_LISTAR_ULTIMAS_FICHAS_APIVIEW)
 class ListarUltimasFichasAPIView(APIView):
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated, IsGerenciadorDataVinculacaoFichas]
 
     def get(self, request):
-        subquery = FiPessoaFicha.objects.filter(
-            cm_pessoa=OuterRef("cm_pessoa")
-        ).order_by("-data_inicio_vinculacao")
+        subquery = (
+            FiPessoaFicha.objects.filter(cm_pessoa=OuterRef("cm_pessoa"))
+            .order_by("-id")
+            .values("id")[:1]
+        )
 
-        ultimas_fichas = FiPessoaFicha.objects.filter(
-            id=Subquery(subquery.values("id")[:1])
-        ).order_by("-id")[:25]
+        ultimas_fichas = FiPessoaFicha.objects.filter(id=Subquery(subquery)).order_by(
+            "-id"
+        )[:25]
 
         serializer = BolsistaSerializer(ultimas_fichas, many=True)
         return Response(serializer.data)

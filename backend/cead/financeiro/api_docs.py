@@ -27,6 +27,30 @@ DOCS_LISTAR_CURSOS_COM_BOLSISTAS_ATIVOS_APIVIEW = {
     "auth": [{"type": "bearer"}],
 }
 
+DOCS_LISTAR_CURSOS_COM_BOLSISTAS_INATIVOS_APIVIEW = {
+    "summary": "Listar cursos com bolsistas inativos",
+    "description": (
+        "Retorna a lista de cursos que possuem pelo menos um bolsista inativo, "
+        "ou seja, fichas vinculadas ao curso que já foram encerradas "
+        "(com `data_fim_vinculacao` preenchida)."
+    ),
+    "responses": {
+        200: {
+            "description": "Lista de cursos encontrados",
+            "examples": {
+                "application/json": [
+                    {"id": 10, "nome": "Licenciatura em Matemática"},
+                    {"id": 12, "nome": "Engenharia de Produção"},
+                ]
+            },
+        },
+        401: {"description": "Não autenticado"},
+        403: {"description": "Sem permissão"},
+    },
+    "tags": ["Financeiro - Bolsistas"],
+}
+
+
 DOCS_CURSO_COM_BOLSISTAS_ATIVOS_APIVIEW = {
     "summary": "Lista bolsistas ativos de um curso",
     "description": (
@@ -65,6 +89,51 @@ DOCS_CURSO_COM_BOLSISTAS_ATIVOS_APIVIEW = {
     },
     "auth": [{"type": "bearer"}],
 }
+
+DOCS_CURSO_COM_BOLSISTAS_INATIVOS_APIVIEW = {
+    "summary": "Listar bolsistas inativos de um curso",
+    "description": (
+        "Retorna a lista de bolsistas inativos associados a um curso específico. "
+        "Considera-se inativo aquele cuja ficha ainda não possui data de início de vinculação (`data_inicio_vinculacao` nula)."
+    ),
+    "parameters": [
+        {
+            "name": "ac_curso_id",
+            "in": "path",
+            "required": True,
+            "description": "ID do curso para buscar bolsistas inativos",
+            "schema": {"type": "integer"},
+        }
+    ],
+    "responses": {
+        200: {
+            "description": "Lista de bolsistas inativos do curso",
+            "examples": {
+                "application/json": [
+                    {
+                        "id": 101,
+                        "nome": "Maria da Silva",
+                        "edital": "Edital 11/2025",
+                        "data_inicio_vinculacao": None,
+                        "data_fim_vinculacao": None,
+                    },
+                    {
+                        "id": 102,
+                        "nome": "João Pereira",
+                        "edital": "Edital 16/2025",
+                        "data_inicio_vinculacao": None,
+                        "data_fim_vinculacao": None,
+                    },
+                ]
+            },
+        },
+        401: {"description": "Não autenticado"},
+        403: {"description": "Sem permissão"},
+        404: {"description": "Curso não encontrado"},
+    },
+    "tags": ["Financeiro - Bolsistas"],
+}
+
 
 DOCS_LISTAR_ULTIMAS_FICHAS_APIVIEW = {
     "summary": "Lista as últimas fichas cadastradas",

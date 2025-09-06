@@ -13,9 +13,19 @@ urlpatterns = [
         name="lista_cursos_com_bolsistas_ativos",
     ),
     path(
+        "bolsistas/inativos/",
+        views.ListarCursosComBolsistasInativosAPIView.as_view(),
+        name="lista_cursos_com_bolsistas_inativos",
+    ),
+    path(
         "bolsistas/ativos/<int:ac_curso_id>/",
         views.CursoComBolsistasAtivosAPIView.as_view(),
         name="curso_com_bolsistas_ativos",
+    ),
+    path(
+        "bolsistas/inativos/<int:ac_curso_id>/",
+        views.CursoComBolsistasInativosAPIView.as_view(),
+        name="curso_com_bolsistas_inativos",
     ),
     path(
         "bolsista/atualizar/",

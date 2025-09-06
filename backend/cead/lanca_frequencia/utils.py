@@ -1,6 +1,7 @@
 from django.utils import timezone
 from datetime import timedelta
-from cead.models import FiFrequencia, FiDatafrequencia
+from cead.models import FiFrequencia, FiDatafrequencia, FiPessoaFicha
+
 from .messages import (
     ERRO_LANCA_FREQUENCIA_GET_DATAFREQUENCIA_MES_ANTERIOR,
     ERRO_LANCA_FREQUENCIA_GET_DATAFREQUENCIA_MES_ATUAL,
@@ -77,3 +78,31 @@ def ja_lancou_frequencia(datafrequencia, cm_pessoa_coordenador):
     return FiFrequencia.objects.filter(
         cm_pessoa_coordenador=cm_pessoa_coordenador, fi_datafrequencia=datafrequencia
     ).exists()
+
+
+def montar_relatorio_curso(curso, coord, datafrequencia):
+    """
+    Monta o dicionário de um curso com coordenador e bolsistas lançados.
+    Tudo gira em torno da ficha, porque são os dados mais confiáveis da base do legado
+    """
+    pessoas_ids = FiFrequencia.objects.filter(
+        fi_datafrequencia=datafrequencia,
+        ac_curso_oferta__ac_curso=curso,
+        cm_pessoa_coordenador_id=coord.id,
+    ).values_list("cm_pessoa_id", flat=True)
+
+    fichas_queryset = (
+        FiPessoaFicha.objects.filter(
+            cm_pessoa_id__in=pessoas_ids,
+            ac_curso_oferta__ac_curso=curso,
+        )
+        .order_by("cm_pessoa", "-id")
+        .distinct("cm_pessoa")
+        .select_related("cm_pessoa", "ac_curso_oferta")
+    )
+
+    return {
+        "coordenador": coord,
+        "curso": curso,
+        "fichas": fichas_queryset,
+    }

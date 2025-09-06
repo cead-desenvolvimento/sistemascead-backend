@@ -1,6 +1,65 @@
 from drf_spectacular.utils import OpenApiExample, OpenApiResponse
 
 
+DOCS_LANCA_FREQUENCIA_PREVIA_API_VIEW = {
+    "summary": "Prévia do lançamento de frequência",
+    "description": (
+        "Recebe os dados de frequência selecionados pelo coordenador e retorna uma prévia formatada. "
+        "Essa prévia permite ao usuário confirmar visualmente os dados antes de realizar o lançamento definitivo. "
+        "Nenhum dado é salvo no banco nesta etapa."
+    ),
+    "request": {
+        "application/json": {
+            "example": {
+                "bolsistas": [
+                    {
+                        "ficha_id": 123,
+                        "autorizar_pagamento": True,
+                        "disciplinas": [10, 11],
+                    },
+                    {"ficha_id": 456, "autorizar_pagamento": False, "disciplinas": []},
+                ]
+            }
+        }
+    },
+    "responses": {
+        200: {
+            "description": "Prévia gerada com sucesso",
+            "content": {
+                "application/json": {
+                    "example": {
+                        "preview": [
+                            {
+                                "ficha_id": 123,
+                                "nome": "Maria da Silva",
+                                "cpf": "123.456.789-00",
+                                "funcao": "Tutor",
+                                "curso": "Especialização em Gestão Escolar",
+                                "autorizar_pagamento": True,
+                                "disciplinas": ["Matemática I", "Estatística Aplicada"],
+                                "disciplinas_ids": [10, 11],
+                            },
+                            {
+                                "ficha_id": 456,
+                                "nome": "João Souza",
+                                "cpf": "987.654.321-00",
+                                "funcao": "Coordenador de Polo",
+                                "curso": "Licenciatura em Pedagogia",
+                                "autorizar_pagamento": False,
+                                "disciplinas": [],
+                                "disciplinas_ids": [],
+                            },
+                        ]
+                    }
+                }
+            },
+        },
+        400: {"description": "Erro de requisição, dados inválidos ou vazios"},
+        404: {"description": "Ficha ou disciplina não encontrada"},
+    },
+}
+
+
 DOCS_LANCA_FREQUENCIA_API_VIEW = {
     "summary": "Lançamento mensal de frequência pelos coordenadores",
     "description": (
