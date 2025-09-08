@@ -346,7 +346,7 @@ class ListarEditalJustificativaAPIView(GenericAPIView):
     def get(self, request):
         try:
             editais = EdEdital.objects.filter(
-                data_fim_validacao__lt=timezone.now(), data_validade__gt=timezone.now()
+                data_inicio_validacao__gt=timezone.now(), data_validade__gt=timezone.now()
             ).order_by("-id")
             return Response(
                 ListarEditalJustificativaSerializer(editais, many=True).data,
@@ -1092,7 +1092,7 @@ class EnviarJustificativaPorEmailAPIView(APIView):
 
         try:
             edital = EdEdital.objects.get(
-                data_fim_validacao__lt=timezone.now(),
+                data_inicio_validacao__gt=timezone.now(),
                 data_validade__gt=timezone.now(),
                 ano=ano,
                 numero=numero,
