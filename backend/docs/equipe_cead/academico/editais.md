@@ -79,7 +79,7 @@ Para cada vaga, você poderá definir os campos de inscrição dos candidatos. E
     -   **É possível haver perda de dados nesse caso!**
 -   **Alterar datas do edital** após a criação **não causa problemas**;
 -   A inscrição será feita em [https://sistemascead.ufjf.br/inscricao](https://sistemascead.ufjf.br/inscricao), e as datas cadastradas determinam a disponibilidade do edital na tela;
--   O candidato poderá visualizar a justificativa em [https://sistemascead.ufjf.br/editais/justificativa](https://sistemascead.ufjf.br/editais/justificativa), desde que o edital tenha passado da data de validação e ainda não tenha passado da data de validade.
+-   O candidato poderá visualizar a justificativa em [https://sistemascead.ufjf.br/editais/justificativa](https://sistemascead.ufjf.br/editais/justificativa), desde que o edital tenha iniciado a época de validação e ainda não tenha passado da data de validade.
 
 ---
 
