@@ -1227,15 +1227,19 @@ class RelatorioDoEditalAPIView(APIView):
                     "cpf": inscricao.cm_pessoa.cpf_com_pontos_e_traco(),
                     "email": inscricao.cm_pessoa.email,
                     "pontuacao_informada": (
-                        inscricao.pontuacao
-                        if inscricao and inscricao.pontuacao is not None
-                        else "-"
+                        0.0
+                        if inscricao.pontuacao is None
+                        else float(inscricao.pontuacao)
                     ),
                     # 0 = NULL, se validado
                     "pontuacao_real": (
                         0.0
                         if validacao and validacao.pontuacao is None
-                        else (validacao.pontuacao if validacao else "-")
+                        else (
+                            float(validacao.pontuacao)
+                            if validacao and validacao.pontuacao is not None
+                            else "-"
+                        )
                     ),
                     "responsavel_validacao_ou_justificativa": responsavel,
                     "data_inscricao": (
@@ -1322,15 +1326,17 @@ class RelatorioDaVagaAPIView(APIView):
                 "cpf": inscricao.cm_pessoa.cpf_com_pontos_e_traco(),
                 "email": inscricao.cm_pessoa.email,
                 "pontuacao_informada": (
-                    inscricao.pontuacao
-                    if inscricao and inscricao.pontuacao is not None
-                    else "-"
+                    0.0 if inscricao.pontuacao is None else float(inscricao.pontuacao)
                 ),
                 # 0 = NULL, se validado
                 "pontuacao_real": (
                     0.0
                     if validacao and validacao.pontuacao is None
-                    else (validacao.pontuacao if validacao else "-")
+                    else (
+                        float(validacao.pontuacao)
+                        if validacao and validacao.pontuacao is not None
+                        else "-"
+                    )
                 ),
                 "responsavel_validacao_ou_justificativa": responsavel,
                 "data_inscricao": (
