@@ -1228,13 +1228,14 @@ class RelatorioDoEditalAPIView(APIView):
                     "email": inscricao.cm_pessoa.email,
                     "pontuacao_informada": (
                         inscricao.pontuacao
-                        if inscricao and inscricao.pontuacao
+                        if inscricao and inscricao.pontuacao is not None
                         else "-"
                     ),
+                    # 0 = NULL, se validado
                     "pontuacao_real": (
-                        validacao.pontuacao
-                        if validacao and validacao.pontuacao
-                        else "-"
+                        0
+                        if validacao and validacao.pontuacao is None
+                        else (validacao.pontuacao if validacao else "-")
                     ),
                     "responsavel_validacao_ou_justificativa": responsavel,
                     "data_inscricao": (
@@ -1321,10 +1322,15 @@ class RelatorioDaVagaAPIView(APIView):
                 "cpf": inscricao.cm_pessoa.cpf_com_pontos_e_traco(),
                 "email": inscricao.cm_pessoa.email,
                 "pontuacao_informada": (
-                    inscricao.pontuacao if inscricao and inscricao.pontuacao else "-"
+                    inscricao.pontuacao
+                    if inscricao and inscricao.pontuacao is not None
+                    else "-"
                 ),
+                # 0 = NULL, se validado
                 "pontuacao_real": (
-                    validacao.pontuacao if validacao and validacao.pontuacao else "-"
+                    0
+                    if validacao and validacao.pontuacao is None
+                    else (validacao.pontuacao if validacao else "-")
                 ),
                 "responsavel_validacao_ou_justificativa": responsavel,
                 "data_inscricao": (
