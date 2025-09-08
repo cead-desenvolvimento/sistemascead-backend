@@ -1233,7 +1233,7 @@ class RelatorioDoEditalAPIView(APIView):
                     ),
                     # 0 = NULL, se validado
                     "pontuacao_real": (
-                        0
+                        0.0
                         if validacao and validacao.pontuacao is None
                         else (validacao.pontuacao if validacao else "-")
                     ),
@@ -1328,7 +1328,7 @@ class RelatorioDaVagaAPIView(APIView):
                 ),
                 # 0 = NULL, se validado
                 "pontuacao_real": (
-                    0
+                    0.0
                     if validacao and validacao.pontuacao is None
                     else (validacao.pontuacao if validacao else "-")
                 ),
