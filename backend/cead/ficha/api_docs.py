@@ -1,8 +1,8 @@
 from drf_spectacular.utils import OpenApiExample, OpenApiParameter, OpenApiResponse
 
 from cead.serializers import CPFSerializer
+from cead.messages import ERRO_HASH_INVALIDO
 from .messages import (
-    ERRO_ED_PESSOA_VAGA_VALIDACAO_GEROU_FICHA_JA_EXISTE,
     ERRO_GET_FI_EDITAL_FUNCAO_OFERTA,
     OK_CPF_HASH_VALIDADO,
 )
@@ -23,11 +23,13 @@ DOCS_LISTAR_MUNICIPIOS_VIEW = {
 DOCS_CPF_CODIGO_PESSOA_VALIDACAO_VIEW = {
     "summary": "Valida código do candidato e CPF para acesso à ficha",
     "description": (
-        "Recebe um código de validação (da URL) e um CPF (no payload) e valida se o candidato pode acessar o preenchimento da ficha."
+        "Recebe um código de validação (da URL) e um CPF (no payload) e valida se o candidato pode acessar ou editar o preenchimento da ficha."
         "\n\n"
-        "Verifica vínculo do CPF com o código, existência do curso associado e se a ficha já foi gerada."
+        "Verifica vínculo do CPF com o código e existência da associação de edital/função/oferta correspondente."
         "\n\n"
-        "Em caso de sucesso, salva identificadores na sessão para os próximos passos."
+        "Em caso de sucesso, salva identificadores na sessão para os próximos passos (cadastro/edição da ficha)."
+        "\n\n"
+        "Caso o código seja inválido ou a associação não seja encontrada, retorna erro."
     ),
     "tags": ["Ficha - Acesso Público"],
     "parameters": [
@@ -51,17 +53,15 @@ DOCS_CPF_CODIGO_PESSOA_VALIDACAO_VIEW = {
             ],
         ),
         400: OpenApiResponse(
-            description=f"{ERRO_GET_FI_EDITAL_FUNCAO_OFERTA} OU {ERRO_ED_PESSOA_VAGA_VALIDACAO_GEROU_FICHA_JA_EXISTE}",
+            description=f"{ERRO_GET_FI_EDITAL_FUNCAO_OFERTA} OU {ERRO_HASH_INVALIDO}",
             examples=[
                 OpenApiExample(
                     "Erro associação de edital/função/oferta",
                     value={"detail": ERRO_GET_FI_EDITAL_FUNCAO_OFERTA},
                 ),
                 OpenApiExample(
-                    "Erro de ficha já gerada",
-                    value={
-                        "detail": ERRO_ED_PESSOA_VAGA_VALIDACAO_GEROU_FICHA_JA_EXISTE
-                    },
+                    "Erro de código inválido",
+                    value={"detail": ERRO_HASH_INVALIDO},
                 ),
             ],
         ),

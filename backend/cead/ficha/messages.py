@@ -3,7 +3,7 @@ from cead.messages import INFO_ENTRE_CONTATO_SUPORTE
 # ------------------------------
 # ERROS - GERAÇÃO DE FICHA
 # ------------------------------
-ERRO_ED_PESSOA_VAGA_VALIDACAO_GEROU_FICHA_JA_EXISTE = "A ficha já foi gerada"
+ERRO_CODIGO_URL_NAO_ENCONTRADO = "O código de acesso não está presente no endereço da página"
 
 # ------------------------------
 # ERROS - BUSCA

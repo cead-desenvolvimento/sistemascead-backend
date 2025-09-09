@@ -333,11 +333,11 @@ class FiPessoaFichaPostSerializer(serializers.ModelSerializer):
 
     @transaction.atomic
     def create(self, validated_data):
-        # 1) Remove os campos que vamos sobrescrever manualmente
+        # 1) Remove campos que serão forçados manualmente
         validated_data.pop("fi_funcao_bolsista", None)
         validated_data.pop("ac_curso_oferta", None)
 
-        # 2) Insere os valores “certos” vindos de self._fi_edital_funcao_oferta
+        # 2) Insere valores consistentes
         validated_data["fi_funcao_bolsista"] = (
             self._fi_edital_funcao_oferta.fi_funcao_bolsista
         )
@@ -345,19 +345,30 @@ class FiPessoaFichaPostSerializer(serializers.ModelSerializer):
             self._fi_edital_funcao_oferta.ac_curso_oferta
         )
 
-        # 3) Zera o nome do cônjuge se solteiro ou divorciado
+        # 3) Se solteiro/divorciado → zera cônjuge
         if validated_data.get("estado_civil") in ["S", "D"]:
             validated_data["nome_conjuge"] = None
 
-        # 4) Deixa o DRF criar o FiPessoaFicha (inclui cm_municipio automaticamente)
-        ficha = super().create(validated_data)
+        cm_pessoa = self.context["ed_pessoa_vaga_validacao"].cm_pessoa
+        ed_edital = self.context["ed_pessoa_vaga_validacao"].ed_vaga.ed_edital
 
-        # 5) Efeito colateral: registra a geração da ficha
-        EdPessoaVagaGerouFicha.objects.create(
-            ed_pessoa_vaga_validacao=self.context["ed_pessoa_vaga_validacao"]
-        )
+        # 4) Procura ficha existente para a mesma pessoa + edital + função/oferta
+        ficha_existente = FiPessoaFicha.objects.filter(
+            cm_pessoa=cm_pessoa,
+            ed_edital=ed_edital,
+            fi_funcao_bolsista=validated_data["fi_funcao_bolsista"],
+            ac_curso_oferta=validated_data["ac_curso_oferta"],
+        ).last()
 
-        return ficha
+        if ficha_existente:
+            # Atualiza os campos que vieram do formulário
+            for field, value in validated_data.items():
+                setattr(ficha_existente, field, value)
+            ficha_existente.save()
+            return ficha_existente
+
+        # 5) Se não existe, cria
+        return super().create(validated_data)
 
 
 ## BLOCO: documentação OpenAPI

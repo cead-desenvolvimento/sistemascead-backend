@@ -60,7 +60,7 @@ A geração da ficha somente é permitida quando houver associação do edital a
 -   **Validação de sessão a cada etapa**  
     Só acessa a etapa se tiver código e hash válidos na sessão.
 -   **Bloqueio de múltiplos envios**  
-    Só é possível gerar a ficha uma vez; após isso, o acesso é bloqueado até nova liberação.
+    A ficha pode ser acessada novamente para edição sempre que necessário, utilizando o mesmo link de validação.
 -   **Isolamento total entre candidatos**  
     Cada candidato só acessa e preenche sua própria ficha.
 

@@ -974,17 +974,10 @@ class EdPessoaVagaValidacao(models.Model):
     @classmethod
     def validar_codigo_pelo_cpf(cls, cpf, codigo):
         from cead.messages import ERRO_HASH_INVALIDO
-        from cead.ficha.messages import (
-            ERRO_ED_PESSOA_VAGA_VALIDACAO_GEROU_FICHA_JA_EXISTE,
-        )
 
         validacoes = cls.objects.filter(cm_pessoa__cpf=cpf)
         for validacao in validacoes:
             if validacao.codigo == codigo:
-                if EdPessoaVagaGerouFicha.objects.filter(
-                    ed_pessoa_vaga_validacao_id=validacao.id
-                ).exists():
-                    raise Exception(ERRO_ED_PESSOA_VAGA_VALIDACAO_GEROU_FICHA_JA_EXISTE)
                 return validacao
         raise Exception(ERRO_HASH_INVALIDO)
 
