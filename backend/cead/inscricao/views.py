@@ -1627,6 +1627,14 @@ class AnexarArquivosView(APIView):
                         )
                     # 🔴 Agora processamos o arquivo salvo
                     extensao = os.path.splitext(arquivo.name)[1].lower()
+                    extensoes_permitidas = [".pdf", ".jpg", ".jpeg", ".png"]
+
+                    if extensao not in extensoes_permitidas:
+                        return Response(
+                            {"detail": ERRO_ARQUIVO_INVALIDO_TIPO_INVALIDO},
+                            status=status.HTTP_400_BAD_REQUEST,
+                        )
+
                     requer_assinatura = False
                     if campo_tipo == "checkbox":
                         requer_assinatura = ed_campo.ed_vaga_campo_checkbox.assinado

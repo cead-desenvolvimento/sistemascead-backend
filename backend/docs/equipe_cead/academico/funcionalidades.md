@@ -19,7 +19,7 @@ Permite associar uma pessoa a um edital específico. Útil para um coordenador a
 
 > **Não basta apenas associar a pessoa. Se ela não tiver senha cadastrada não conseguirá acesso!**
 
-> **Associe a pessoa e, na parte inferior da página, use o botão “Editar” correspondente para conceder a permissão de grupos, caso necessário**
+> **A associação da pessoa ao edital garante a inclusão automática nos grupos de permissão (Django) necessários.**
 
 ### Relatório de inscrição e validação dos editais
 

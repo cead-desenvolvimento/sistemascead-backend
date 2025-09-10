@@ -4,7 +4,7 @@ import os
 import textwrap
 from pathlib import Path
 
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, Group
 from django.core.mail import send_mail
 from django.db.models import F, FloatField, Max, Q, Sum
 from django.db.models.functions import Coalesce
@@ -1060,6 +1060,20 @@ class AssociarEditalPessoaAPIView(APIView):
                 cm_pessoa_id=data.get("cm_pessoa"),
                 defaults=serializer.validated_data,
             )
+
+            # Adiciona a pessoa aos grupos
+            # Validadores de editais e Visualizadores de relatório de editais
+            user = User.objects.filter(username=instance.cm_pessoa.cpf).first()
+
+            if user:
+                grupo_validadores, _ = Group.objects.get_or_create(
+                    name="Validadores de editais"
+                )
+                grupo_relatorios, _ = Group.objects.get_or_create(
+                    name="Visualizadores de relatório de editais"
+                )
+                user.groups.add(grupo_validadores, grupo_relatorios)
+
             return Response(
                 EdPostEditalPessoaSerializer(instance).data,
                 status=status.HTTP_201_CREATED if created else status.HTTP_200_OK,

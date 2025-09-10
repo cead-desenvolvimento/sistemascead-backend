@@ -48,6 +48,7 @@ ERRO_MULTIPLAS_VAGAS = (
 # ERROS - UPLOAD E ARQUIVOS
 # ------------------------------
 ERRO_ARQUIVO_INVALIDO = "Arquivo inválido"
+ERRO_ARQUIVO_INVALIDO_TIPO_INVALIDO = "Tipo de arquivo inválido - são aceitos PDF, PNG, JP(E)G"
 ERRO_ARQUIVO_SENHA = "O arquivo está protegido com senha"
 ERRO_CRIACAO_PASTA_UPLOAD = "Erro na criação da pasta de upload de arquivos"
 ERRO_FALTA_ARQUIVO = (
