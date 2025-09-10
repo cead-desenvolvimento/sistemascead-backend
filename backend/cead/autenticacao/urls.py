@@ -6,7 +6,6 @@ from .forms import CustomPasswordResetForm
 
 
 urlpatterns = [
-    path("is-admin/", views.is_admin, name="is_admin"),
     path("entrar/", views.CustomLoginView.as_view(), name="login"),
     path(
         "obter-uris-permitidas/",

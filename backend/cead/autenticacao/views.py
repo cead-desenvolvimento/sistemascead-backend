@@ -57,13 +57,6 @@ class CustomTokenObtainPairView(TokenObtainPairView):
     serializer_class = CustomTokenObtainPairSerializer
 
 
-@extend_schema(**DOCS_IS_ADMIN)
-@api_view(["GET"])
-@permission_classes([IsAuthenticated])
-def is_admin(request):
-    return Response({"is_staff": request.user.is_staff})
-
-
 @login_required
 def trocar_senha(request):
     if request.method == "POST":
@@ -98,4 +91,5 @@ def obter_uris_permitidas(request):
         .order_by("uri")
     )
     serializer = DjUriSerializer(uris_permitidas, many=True)
-    return Response(serializer.data)
+
+    return Response({"is_staff": request.user.is_staff, "uris": serializer.data})

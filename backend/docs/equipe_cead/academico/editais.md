@@ -65,9 +65,9 @@ Para cada vaga, você poderá definir os campos de inscrição dos candidatos. E
 -   Utilizado para experiências que pontuam por **períodos de tempo**
     -   Exemplo: _Experiência com EAD: 5 pontos por ano, até no máximo 20 pontos_
 -   Deve-se informar:
-    -   A pontuação por unidade de tempo;
-    -   Qual é a unidade de tempo que multiplica a pontuação;
-    -   O limite máximo de pontuação.
+    -   A **fração de pontuação** (quanto vale cada unidade de tempo);
+    -   O **multiplicador em dias** (quantos dias equivalem a uma unidade de tempo — por exemplo, 365 para “por ano”);
+    -   O **limite máximo de pontuação**.
 
 ---
 

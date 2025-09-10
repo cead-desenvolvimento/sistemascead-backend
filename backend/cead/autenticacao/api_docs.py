@@ -2,35 +2,44 @@ from drf_spectacular.utils import OpenApiExample, OpenApiResponse
 
 from .serializers import DjUriSerializer
 
-DOCS_IS_ADMIN = {
-    "summary": "Verifica se o usuário é admin (staff)",
+DOCS_OBTER_URIS_PERMITIDAS = {
+    "summary": "Obtém URIs permitidas e status de administrador",
     "description": (
-        "Retorna um objeto indicando se o usuário autenticado possui o atributo `is_staff`."
+        "Retorna um objeto contendo:\n"
+        "- A lista de URIs permitidas de acordo com os grupos de permissões "
+        "associados ao usuário autenticado.\n"
+        "- O atributo `is_staff`, indicando se o usuário é administrador."
     ),
     "tags": ["Autenticação"],
     "responses": {
         200: OpenApiResponse(
             response=None,
             examples=[
-                OpenApiExample("Exemplo admin", value={"is_staff": True}),
-                OpenApiExample("Exemplo não admin", value={"is_staff": False}),
+                OpenApiExample(
+                    "Exemplo admin",
+                    value={
+                        "is_staff": True,
+                        "uris": [
+                            {"id": 1, "descricao": "Página inicial", "uri": "/home/"},
+                            {
+                                "id": 2,
+                                "descricao": "Administração",
+                                "uri": "/backend/admin/",
+                            },
+                        ],
+                    },
+                ),
+                OpenApiExample(
+                    "Exemplo não admin",
+                    value={
+                        "is_staff": False,
+                        "uris": [
+                            {"id": 1, "descricao": "Página inicial", "uri": "/home/"},
+                        ],
+                    },
+                ),
             ],
-            description="Retorna se o usuário é staff/admin.",
-        ),
-        401: OpenApiResponse(description="Não autenticado."),
-    },
-}
-
-DOCS_OBTER_URIS_PERMITIDAS = {
-    "summary": "Obtém URIs permitidas para o usuário autenticado",
-    "description": (
-        "Retorna a lista de URIs permitidas de acordo com os grupos de permissões "
-        "associados ao usuário autenticado. Para construção de menus dinâmicos no frontend."
-    ),
-    "tags": ["Autenticação"],
-    "responses": {
-        200: OpenApiResponse(
-            response=DjUriSerializer(many=True), description="Lista de URIs permitidas."
+            description="Objeto com a flag de administrador e a lista de URIs permitidas.",
         ),
         401: OpenApiResponse(description="Não autenticado."),
     },
