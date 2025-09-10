@@ -87,7 +87,7 @@ class ListarMunicipiosAPIView(APIView):
 @extend_schema(**DOCS_CPF_CODIGO_PESSOA_VALIDACAO_VIEW)
 class CPFCodigoPessoaValidacaoView(APIView):
     def post(self, request, codigo):
-        if not codigo:
+        if not codigo or codigo.lower() in ["null", "undefined", ""]:
             return Response(
                 {"detail": ERRO_CODIGO_URL_NAO_ENCONTRADO},
                 status=status.HTTP_400_BAD_REQUEST,
