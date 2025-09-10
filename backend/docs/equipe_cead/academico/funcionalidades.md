@@ -19,6 +19,8 @@ Permite associar uma pessoa a um edital específico. Útil para um coordenador a
 
 > **Não basta apenas associar a pessoa. Se ela não tiver senha cadastrada não conseguirá acesso!**
 
+> **Associe a pessoa e, na parte inferior da página, use o botão “Editar” correspondente para conceder a permissão de grupos, caso necessário**
+
 ### Relatório de inscrição e validação dos editais
 
 Exibe relatórios com o status de inscrição e validação de candidatos em editais.
