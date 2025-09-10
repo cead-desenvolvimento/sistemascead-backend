@@ -3,7 +3,10 @@ from cead.messages import INFO_ENTRE_CONTATO_SUPORTE
 # ------------------------------
 # ERROS - GERAÇÃO DE FICHA
 # ------------------------------
-ERRO_CODIGO_URL_NAO_ENCONTRADO = "O código de acesso não está presente no endereço da página"
+ERRO_CODIGO_URL_NAO_ENCONTRADO = (
+    "O código de acesso não está presente no endereço da página"
+)
+ERRO_FICHA_JA_ATIVA = "A ficha já possui início de vínculo do bolsista registrado e não pode mais ser editada"
 
 # ------------------------------
 # ERROS - BUSCA

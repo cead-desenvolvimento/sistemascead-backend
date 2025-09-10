@@ -103,6 +103,20 @@ class CPFCodigoPessoaValidacaoView(APIView):
         except Exception as e:
             return Response({"detail": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
+        ficha_existente = (
+            FiPessoaFicha.objects.filter(
+                cm_pessoa=ed_pessoa_vaga_validacao.cm_pessoa,
+                ed_edital=ed_pessoa_vaga_validacao.ed_vaga.ed_edital,
+            )
+            .order_by("-id")
+            .first()
+        )
+        if ficha_existente and ficha_existente.data_inicio_vinculacao:
+            return Response(
+                {"detail": ERRO_FICHA_JA_ATIVA},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+
         associacao_edital_funcao_oferta_id = (
             FiEditalFuncaoOferta.objects.filter(
                 ed_edital=ed_pessoa_vaga_validacao.ed_vaga.ed_edital
