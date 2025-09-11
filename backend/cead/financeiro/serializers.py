@@ -3,6 +3,8 @@ from datetime import date
 from rest_framework import serializers
 
 from cead.models import (
+    AcCursoOferta,
+    CmPessoa,
     EdEdital,
     FiEditalFuncaoOferta,
     FiFuncaoBolsista,
@@ -52,6 +54,74 @@ class AtualizarDataVinculoSerializer(serializers.ModelSerializer):
                 raise serializers.ValidationError(ERRO_DATA_INVALIDA)
 
         return data
+
+
+class FiPessoaFichaEdicaoFinanceiroSerializer(serializers.ModelSerializer):
+    """
+    As fichas do sistema antigo estao com dados incompletos
+    Este serializer deixa o financeiro editar os campos problematicos
+    Dessa forma, o lancamento de frequencia, a geracao da ficha e ativacao de bolsistas
+    vai funcionando a contento
+    """
+
+    edital = serializers.StringRelatedField(source="ed_edital", read_only=True)
+    funcao = serializers.StringRelatedField(source="fi_funcao_bolsista", read_only=True)
+    curso_oferta = serializers.StringRelatedField(
+        source="ac_curso_oferta", read_only=True
+    )
+
+    edital_id = serializers.PrimaryKeyRelatedField(
+        source="ed_edital", queryset=EdEdital.objects.all()
+    )
+    funcao_id = serializers.PrimaryKeyRelatedField(
+        source="fi_funcao_bolsista", queryset=FiFuncaoBolsista.objects.all()
+    )
+    curso_oferta_id = serializers.PrimaryKeyRelatedField(
+        source="ac_curso_oferta", queryset=AcCursoOferta.objects.all()
+    )
+
+    nome = serializers.CharField(source="cm_pessoa.nome", read_only=True)
+
+    class Meta:
+        model = FiPessoaFicha
+        fields = [
+            "id",
+            "nome",
+            "edital",
+            "edital_id",
+            "funcao",
+            "funcao_id",
+            "curso_oferta",
+            "curso_oferta_id",
+            "data_inicio_vinculacao",
+            "data_fim_vinculacao",
+        ]
+
+    def validate(self, data):
+        data_inicio = data.get("data_inicio_vinculacao")
+        data_fim = data.get("data_fim_vinculacao")
+
+        limite_inferior = date(2005, 1, 1)
+        limite_superior = date(2050, 12, 31)
+
+        if data_inicio < limite_inferior or data_inicio > limite_superior:
+            raise serializers.ValidationError(ERRO_DATA_INVALIDA)
+        if data_fim:
+            if data_fim < limite_inferior or data_fim > limite_superior:
+                raise serializers.ValidationError(ERRO_DATA_INVALIDA)
+            if data_fim < data_inicio:
+                raise serializers.ValidationError(ERRO_DATA_INVALIDA)
+
+        return data
+
+
+class CmPessoaComFichasSerializer(serializers.ModelSerializer):
+    nome_cpf = serializers.CharField(source="__str__", read_only=True)
+    fichas = FiPessoaFichaEdicaoFinanceiroSerializer(many=True)
+
+    class Meta:
+        model = CmPessoa
+        fields = ["id", "nome_cpf", "fichas"]
 
 
 class EdEditalSerializer(serializers.ModelSerializer):

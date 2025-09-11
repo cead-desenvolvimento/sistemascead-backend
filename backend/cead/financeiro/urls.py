@@ -2,6 +2,10 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
+    # Helpers na edicao da ficha pelo financeiro
+    path("bolsista/editais/", views.ListarEditaisAPIView.as_view()),
+    path("bolsista/funcoes/", views.ListarFuncoesAPIView.as_view()),
+    path("bolsista/ofertas/", views.ListarOfertasAPIView.as_view()),
     path(
         "bolsistas/",
         views.ListarUltimasFichasAPIView.as_view(),
@@ -31,6 +35,21 @@ urlpatterns = [
         "bolsista/atualizar/",
         views.AtualizarDataVinculoBolsistaAPIView.as_view(),
         name="atualizar_data_vinculo_bolsista",
+    ),
+    path(
+        "bolsista/atualizar_ficha/",
+        views.AtualizarFiPessoaFichaAPIView.as_view(),
+        name="atualizar_ficha",
+    ),
+    path(
+        "bolsista/ficha/<int:ficha_id>/",
+        views.DetalharFiPessoaFichaAPIView.as_view(),
+        name="detalhar_ficha",
+    ),
+    path(
+        "bolsista/buscar/",
+        views.ListarFiPessoaFichaPorNomeOuCpfAPIView.as_view(),
+        name="buscar_bolsista",
     ),
     # Para associar editais, funcao da ficha e oferta
     path(

@@ -31,6 +31,12 @@ ERRO_FINANCEIRO_NAO_ESTA_NO_GRUPO_DE_ASSOCIADOR_VAGA_FICHA = (
 )
 
 # ------------------------------
+# ATUALIZAÇÃO DE FICHA
+# ------------------------------
+OK_FICHA_ATUALIZADA = "A ficha foi atualizada"
+
+
+# ------------------------------
 # APLICA CONTATO DO SUPORTE EM TODAS AS MENSAGENS DE ERRO
 # ------------------------------
 for var_name in list(globals()):

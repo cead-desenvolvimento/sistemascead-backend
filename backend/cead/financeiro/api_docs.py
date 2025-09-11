@@ -1,6 +1,9 @@
 from drf_spectacular.utils import OpenApiExample, OpenApiParameter, OpenApiResponse
 
-from cead.serializers import AcCursoIdNomeSerializer, AcCursoOfertaIdDescricaoSerializer
+from cead.serializers import (
+    AcCursoIdNomeSerializer,
+    AcCursoOfertaIdDescricaoSerializer,
+)
 from .serializers import *
 
 DOCS_LISTAR_CURSOS_COM_BOLSISTAS_ATIVOS_APIVIEW = {
@@ -134,6 +137,50 @@ DOCS_CURSO_COM_BOLSISTAS_INATIVOS_APIVIEW = {
     "tags": ["Financeiro - Bolsistas"],
 }
 
+DOCS_LISTAR_FICHAS_POR_NOME_OU_CPF = {
+    "summary": "Busca pessoas e suas fichas por nome ou CPF",
+    "description": (
+        "Localiza pessoas a partir do nome ou CPF e retorna a lista de fichas "
+        "associadas a cada pessoa. "
+        "Cada pessoa aparece apenas uma vez no resultado, com suas fichas agrupadas."
+    ),
+    "tags": ["Financeiro - Fichas"],
+    "responses": {
+        200: OpenApiResponse(
+            response=CmPessoaComFichasSerializer,
+            examples=[
+                OpenApiExample(
+                    "Exemplo de resposta",
+                    value=[
+                        {
+                            "id": 9220,
+                            "nome": "Maria da Silva",
+                            "cpf": "12345678901",
+                            "fichas": [
+                                {
+                                    "id": 501,
+                                    "edital": "Edital 01/2025",
+                                    "funcao": "Tutor a Distância",
+                                    "curso_oferta": "Oferta X do curso Y",
+                                    "data_inicio_vinculacao": "2025-02-01",
+                                    "data_fim_vinculacao": None,
+                                },
+                                {
+                                    "id": 438,
+                                    "edital": "Edital 02/2024",
+                                    "funcao": "Coordenador de Polo",
+                                    "curso_oferta": "Oferta X do curso Y",
+                                    "data_inicio_vinculacao": "2024-08-01",
+                                    "data_fim_vinculacao": "2024-12-31",
+                                },
+                            ],
+                        }
+                    ],
+                )
+            ],
+        )
+    },
+}
 
 DOCS_LISTAR_ULTIMAS_FICHAS_APIVIEW = {
     "summary": "Lista as últimas fichas cadastradas",
@@ -223,6 +270,87 @@ DOCS_ATUALIZAR_DATA_VINCULO_BOLSISTA_APIVIEW = {
         ),
     },
     "auth": [{"type": "bearer"}],
+}
+
+DOCS_ATUALIZAR_FICHA = {
+    "summary": "Atualiza datas de vinculação da ficha",
+    "description": (
+        "Permite ao financeiro editar `data_inicio_vinculacao` e "
+        "`data_fim_vinculacao` de uma ficha de bolsista."
+    ),
+    "tags": ["Financeiro - Fichas"],
+    "request": FiPessoaFichaEdicaoFinanceiroSerializer,
+    "responses": {
+        200: OpenApiResponse(
+            response=None,
+            description="Ficha atualizada com sucesso",
+            examples=[
+                OpenApiExample(
+                    "Exemplo de sucesso",
+                    value={"detail": "Ficha atualizada com sucesso"},
+                )
+            ],
+        ),
+        400: OpenApiResponse(
+            response=None,
+            description="Erro de validação",
+            examples=[
+                OpenApiExample(
+                    "Exemplo de erro",
+                    value={"detail": "ID da ficha é obrigatório"},
+                )
+            ],
+        ),
+        404: OpenApiResponse(
+            response=None,
+            description="Ficha não encontrada",
+            examples=[
+                OpenApiExample(
+                    "Exemplo de erro",
+                    value={"detail": "Ficha não encontrada"},
+                )
+            ],
+        ),
+    },
+}
+
+DOCS_DETALHAR_FICHA = {
+    "summary": "Detalha uma ficha de bolsista",
+    "description": (
+        "Retorna as informações de uma ficha específica de bolsista, "
+        "incluindo edital, função, curso/oferta e datas de vinculação. "
+        "Esse endpoint deve ser usado para carregar os dados antes da edição."
+    ),
+    "tags": ["Financeiro - Fichas"],
+    "responses": {
+        200: OpenApiResponse(
+            response=FiPessoaFichaEdicaoFinanceiroSerializer,
+            description="Dados da ficha retornados com sucesso",
+            examples=[
+                OpenApiExample(
+                    "Exemplo de resposta",
+                    value={
+                        "id": 501,
+                        "edital": "Edital 01/2025",
+                        "funcao": "Tutor a Distância",
+                        "curso_oferta": "Matemática - Oferta 2025/1",
+                        "data_inicio_vinculacao": "2025-02-01",
+                        "data_fim_vinculacao": None,
+                    },
+                )
+            ],
+        ),
+        404: OpenApiResponse(
+            response=None,
+            description="Ficha não encontrada",
+            examples=[
+                OpenApiExample(
+                    "Exemplo de erro",
+                    value={"detail": "Ficha não encontrada"},
+                )
+            ],
+        ),
+    },
 }
 
 DOCS_LISTAR_EDITAIS_ATUAIS_APIVIEW = {
