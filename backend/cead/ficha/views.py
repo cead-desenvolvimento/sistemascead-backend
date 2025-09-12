@@ -515,7 +515,12 @@ class GerarFichaPDFAPIView(APIView):
             "disable-smart-shrinking": "",
             "zoom": "0.9",
         }
-        pdf = pdfkit.from_string(html_string, False, options=options)
+        try:
+            pdf = pdfkit.from_string(html_string, False, options=options)
+        except Exception as e:
+            raise ValidationError({"detail": f"{ERRO_GERACAO_PDF}: {e}"})
+        if not pdf:
+            raise ValidationError({"detail": ERRO_GERACAO_PDF_WKHTMLTOPDF})
 
         response = HttpResponse(pdf, content_type="application/pdf")
         response["Content-Disposition"] = (

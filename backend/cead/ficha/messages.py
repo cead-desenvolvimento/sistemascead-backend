@@ -7,6 +7,8 @@ ERRO_CODIGO_URL_NAO_ENCONTRADO = (
     "O código de acesso não está presente no endereço da página"
 )
 ERRO_FICHA_JA_ATIVA = "A ficha já possui início de vínculo do bolsista registrado e não pode mais ser editada"
+ERRO_GERACAO_PDF = "Erro ao gerar o PDF"
+ERRO_GERACAO_PDF_WKHTMLTOPDF = "Erro ao gerar o PDF - wkhtmltopdf"
 
 # ------------------------------
 # ERROS - BUSCA
