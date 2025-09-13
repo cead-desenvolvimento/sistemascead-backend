@@ -16,7 +16,7 @@ urlpatterns = [
         name="validar_editais",
     ),
     path(
-        "validar/<int:ano>/<int:numero>/",
+        "validar/<int:id>/",
         views.ListarVagasValidacaoAPIView.as_view(),
         name="validar_edital",
     ),
@@ -42,7 +42,7 @@ urlpatterns = [
         name="enviar_mensagem_editais",
     ),
     path(
-        "enviar_mensagem/<int:ano>/<int:numero>/",
+        "enviar_mensagem/<int:id>/",
         views.ListarVagasEmissoresMensagemFichaAPIView.as_view(),
         name="enviar_mensagem_edital",
     ),
@@ -58,7 +58,7 @@ urlpatterns = [
         name="relatorio_listar_editais",
     ),
     path(
-        "relatorio/listar/edital/<int:ano>/<int:numero>/",
+        "relatorio/listar/edital/<int:id>/",
         views.ListarVagasRelatorioAPIView.as_view(),
         name="relatorio_listar_edital",
     ),
@@ -105,7 +105,7 @@ urlpatterns = [
         name="listar-justificativa-edital",
     ),
     path(
-        "<int:ano>/<int:numero>/justificativa/",
+        "<int:id>/justificativa/",
         views.EnviarJustificativaPorEmailAPIView.as_view(),
         name="enviar-justificativa-edital",
     ),

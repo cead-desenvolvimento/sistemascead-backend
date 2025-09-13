@@ -418,6 +418,21 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="Cadastro do Edital">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#unidade-responsavel" class="md-nav__link">
+    <span class="md-ellipsis">
+      Unidade responsável
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -1237,6 +1252,21 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="Cadastro do Edital">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#unidade-responsavel" class="md-nav__link">
+    <span class="md-ellipsis">
+      Unidade responsável
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -1342,6 +1372,17 @@
 <p>Após preencher os dados principais, clique em <strong>"Salvar e continuar editando"</strong>.</p>
 </blockquote>
 <p>Isso permitirá que o <em>link</em> <strong>"Ir para as vagas"</strong> apareça ao final da página, facilitando o próximo passo: o cadastro dos campos das vagas vinculadas ao edital.</p>
+<h3 id="unidade-responsavel">Unidade responsável<a class="headerlink" href="#unidade-responsavel" title="Permanent link">&para;</a></h3>
+<p>O edital também possui <strong>unidade responsável</strong>, que serve para diferenciar casos em que duas unidades da UFJF publicam editais com a mesma numeração.</p>
+<p><strong>Exemplo:</strong></p>
+<ul>
+<li><code>2/2022</code> – Edital Complementar de Seleção de Alunos para o Curso de Especialização em Ciências Biológicas</li>
+<li><code>2/2022H</code> – Departamento de História – Processo seletivo para professores formadores bolsistas do curso de especialização em história e cultura no Brasil contemporâneo na modalidade a distância</li>
+</ul>
+<p>A indicação da unidade responsável garante que editais com mesma numeração sejam distinguidos de forma clara.</p>
+<blockquote>
+<p>Nota técnica - os valores na base ainda são os mesmos: foi removida a <em>constraint</em> <code>UNIQUE TOGETHER</code>, mudou-se apenas a exibição via <code>__str__</code> do model em EdEdital com a relação via FK do EdEditalUnidade.</p>
+</blockquote>
 <hr />
 <h2 id="cadastro-dos-campos-das-vagas-do-edital">Cadastro dos campos das vagas do edital<a class="headerlink" href="#cadastro-dos-campos-das-vagas-do-edital" title="Permanent link">&para;</a></h2>
 <p>Cada edital pode conter <strong>uma ou mais vagas</strong>. Ao clicar em "Ir para as vagas", você será direcionado à edição da primeira vaga cadastrada.</p>

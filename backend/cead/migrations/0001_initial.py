@@ -762,8 +762,8 @@ class Migration(migrations.Migration):
             ],
             options={
                 "verbose_name": "(Editais) Período (informado) do candidato - datebox",
-                "verbose_name_plural": "Períodos (informados) dos candidatos - dateboxes",
-                "db_table": "ed_pessoa_vaga_campo_datebox",
+                "verbose_name_plural": "(Editais) Períodos (informados) dos candidatos - dateboxes",
+                "db_table": "ed_pessoa_vaga_campo_datebox_periodo",
                 "managed": False,
             },
         ),
@@ -833,18 +833,6 @@ class Migration(migrations.Migration):
             },
         ),
         migrations.CreateModel(
-            name="EdPessoaVagaGerouFicha",
-            fields=[
-                ("id", models.BigAutoField(primary_key=True, serialize=False)),
-            ],
-            options={
-                "verbose_name": "(Editais) Pessoa - gerou ficha?",
-                "verbose_name_plural": "(Editais) Pessoas - geraram fichas?",
-                "db_table": "ed_pessoa_vaga_gerouficha",
-                "managed": False,
-            },
-        ),
-        migrations.CreateModel(
             name="EdPessoaVagaJustificativa",
             fields=[
                 ("id", models.BigAutoField(primary_key=True, serialize=False)),
@@ -867,6 +855,30 @@ class Migration(migrations.Migration):
                 "verbose_name": "(Editais) Pessoa validada",
                 "verbose_name_plural": "(Editais) Pessoas validadas",
                 "db_table": "ed_pessoa_vaga_validacao",
+                "managed": False,
+            },
+        ),
+        migrations.CreateModel(
+            name="EdUnidade",
+            fields=[
+                ("id", models.BigAutoField(primary_key=True, serialize=False)),
+            ],
+            options={
+                "verbose_name": "(Editais) Unidade responsável pelo edital",
+                "verbose_name_plural": "(Editais) Unidades responsáveis pelos editais",
+                "db_table": "ed_unidade",
+                "managed": False,
+            },
+        ),
+        migrations.CreateModel(
+            name="EdEditalUnidade",
+            fields=[
+                ("id", models.BigAutoField(primary_key=True, serialize=False)),
+            ],
+            options={
+                "verbose_name": "(Editais) Associação edital/unidade responsável",
+                "verbose_name_plural": "(Editais) Associações editais/unidades responsáveis",
+                "db_table": "ed_edital_unidade",
                 "managed": False,
             },
         ),
@@ -1301,7 +1313,7 @@ class Migration(migrations.Migration):
             },
         ),
         migrations.CreateModel(
-            name="TrLimitesTransmissao",
+            name="TrLimites",
             fields=[
                 ("id", models.SmallIntegerField(primary_key=True, serialize=False)),
                 (
@@ -1319,13 +1331,7 @@ class Migration(migrations.Migration):
                 (
                     "maximo_dias_na_semana",
                     models.SmallIntegerField(
-                        verbose_name="Máximo de dias na semana para transmissão"
-                    ),
-                ),
-                (
-                    "evento_passando_de_semana",
-                    models.BooleanField(
-                        verbose_name="O mesmo evento pode se estender por mais de uma semana?"
+                        verbose_name="Máximo de dias de transmissão por semana"
                     ),
                 ),
                 (
@@ -1334,11 +1340,29 @@ class Migration(migrations.Migration):
                         verbose_name="Limite de pedidos ativos por pessoa"
                     ),
                 ),
+                (
+                    "dias_de_antecedencia",
+                    models.SmallIntegerField(
+                        verbose_name="Dias a partir de hoje de antecedência para agendamento"
+                    ),
+                ),
+                (
+                    "dias_de_agenda_aberta",
+                    models.SmallIntegerField(
+                        verbose_name="Dias a partir de hoje abertos na agenda"
+                    ),
+                ),
+                (
+                    "evento_passando_de_semana",
+                    models.BooleanField(
+                        verbose_name="O mesmo evento pode se estender por mais de uma semana?"
+                    ),
+                ),
             ],
             options={
                 "verbose_name": "(Transmissão) Limites de pedido de transmissão",
                 "verbose_name_plural": "(Transmissão) Limites de pedidos de transmissões",
-                "db_table": "tr_limites_transmissao",
+                "db_table": "tr_limites",
                 "managed": False,
             },
         ),

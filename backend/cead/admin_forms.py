@@ -1,8 +1,10 @@
 from django import forms
+from django.forms.models import BaseInlineFormSet
 from django.forms.widgets import SplitDateTimeWidget
 
 from .models import (
     EdEdital,
+    EdEditalUnidade,
     EdVagaCampoDatebox,
     EdVagaCampoCheckbox,
     EdVagaCampoCombobox,
@@ -31,6 +33,47 @@ class EdEditalAdminForm(forms.ModelForm):
                 field.widget.widgets[1].attrs.update(
                     {"value": hora, "placeholder": "hh:mm:ss"}
                 )
+
+
+class EdEditalUnidadeForm(forms.ModelForm):
+    class Meta:
+        model = EdEditalUnidade
+        fields = "__all__"
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Permite que o usuário deixe o campo em branco (para selecionar placeholder CEAD)
+        self.fields["ed_unidade"].required = False
+
+
+class EdEditalUnidadeFormSet(BaseInlineFormSet):
+    """
+    Salva apenas a unidade selecionada, ignorando o ->placeholder<- CEAD
+    - Se o form estiver vazio ou marcado para DELETE, deleta a instância existente.
+    """
+
+    def save(self, commit=True):
+        instances = super().save(commit=False)
+        result = []
+
+        for form, instance in zip(self.forms, instances):
+            if not form.cleaned_data:
+                continue
+
+            unidade = form.cleaned_data.get("ed_unidade")
+            delete_flag = form.cleaned_data.get("DELETE", False)
+
+            # Se selecionou placeholder (None) ou marcou DELETE → deleta
+            if delete_flag or unidade is None:
+                if instance.pk:
+                    instance.delete()
+                continue
+
+            # Caso normal: salva/atualiza
+            instance.save()
+            result.append(instance)
+
+        return result
 
 
 class EdVagaCampoDateboxForm(forms.ModelForm):

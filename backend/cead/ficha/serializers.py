@@ -12,7 +12,6 @@ from cead.models import (
     CmPessoaEndereco,
     CmPessoaTelefone,
     CmUf,
-    EdPessoaVagaGerouFicha,
     FiEditalFuncaoOferta,
     FiFuncaoBolsista,
     FiPessoaFicha,

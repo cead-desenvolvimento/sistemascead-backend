@@ -31,6 +31,19 @@ O formulário de cadastro do edital é direto e envolve principalmente:
 
 Isso permitirá que o _link_ **"Ir para as vagas"** apareça ao final da página, facilitando o próximo passo: o cadastro dos campos das vagas vinculadas ao edital.
 
+### Unidade responsável
+
+O edital também possui **unidade responsável**, que serve para diferenciar casos em que duas unidades da UFJF publicam editais com a mesma numeração.
+
+**Exemplo:**
+
+-   `2/2022` – Edital Complementar de Seleção de Alunos para o Curso de Especialização em Ciências Biológicas
+-   `2/2022H` – Departamento de História – Processo seletivo para professores formadores bolsistas do curso de especialização em história e cultura no Brasil contemporâneo na modalidade a distância
+
+A indicação da unidade responsável garante que editais com mesma numeração sejam distinguidos de forma clara.
+
+> Nota técnica - os valores na base ainda são os mesmos: foi removida a _constraint_ `UNIQUE TOGETHER`, mudou-se apenas a exibição via `__str__` do model em EdEdital com a relação via FK do EdEditalUnidade.
+
 ---
 
 ## Cadastro dos campos das vagas do edital

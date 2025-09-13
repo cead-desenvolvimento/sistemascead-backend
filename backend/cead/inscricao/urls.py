@@ -5,7 +5,7 @@ urlpatterns = [
     # Em ordem do fluxo da inscricao
     path("editais/", views.EditaisFaseInscricaoView.as_view(), name="editais"),
     path(
-        "edital/<int:ano>/<int:numero>/",
+        "edital/<int:id>/",
         views.VagasEditalFaseInscricaoView.as_view(),
         name="listar_vagas",
     ),

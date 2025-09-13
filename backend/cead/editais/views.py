@@ -28,7 +28,6 @@ from cead.messages import (
     ERRO_GET_ARQUIVO,
     ERRO_GET_EDITAL,
     ERRO_GET_PESSOA_VAGA_VALIDACAO,
-    ERRO_MULTIPLOS_EDITAIS,
     ERRO_GET_VAGA,
     ERRO_GET_VAGAS,
     ERRO_SESSAO_INVALIDA,
@@ -259,7 +258,7 @@ class ListarEditaisEmissoresMensagemFichaAPIView(APIView):
         ).exists():
             editais = EdEdital.objects.filter(
                 data_fim_validacao__lte=agora, data_validade__gte=agora
-            ).order_by("-id")
+            )
         else:  # Busca apenas os editais que estão associados em ed_edital_pessoa
             try:
                 pessoa = CmPessoa.objects.get(cpf=request.user.username)
@@ -274,7 +273,7 @@ class ListarEditaisEmissoresMensagemFichaAPIView(APIView):
                 ),
                 data_fim_validacao__lte=agora,
                 data_validade__gte=agora,
-            ).order_by("-id")
+            )
 
         return Response(
             ListarEditaisEmissoresMensagemFichaSerializer(editais, many=True).data,
@@ -291,7 +290,7 @@ class ListarEditaisRelatoriosAPIView(APIView):
         if request.user.groups.filter(
             name__in=["Acadêmico - administradores", "Financeiro - administradores"]
         ).exists():
-            editais = EdEdital.objects.all().order_by("-id")
+            editais = EdEdital.objects.all()
         else:
             pessoa = CmPessoa.objects.get(cpf=request.user.username)
             if not pessoa:
@@ -303,7 +302,7 @@ class ListarEditaisRelatoriosAPIView(APIView):
                 id__in=EdEditalPessoa.objects.filter(cm_pessoa=pessoa).values_list(
                     "ed_edital_id", flat=True
                 )
-            ).order_by("-id")
+            )
 
         return Response(
             ListarEditaisRelatorioSerializer(editais, many=True).data,
@@ -325,7 +324,7 @@ class ListarEditaisValidacaoAPIView(APIView):
                 data_inicio_validacao__lte=agora,
                 data_fim_validacao__gte=agora,
                 data_validade__gte=agora,
-            ).order_by("-id")
+            )
         else:
             editais = EdEdital.objects.filter(
                 id__in=EdEditalPessoa.objects.filter(
@@ -334,7 +333,7 @@ class ListarEditaisValidacaoAPIView(APIView):
                 data_inicio_validacao__lte=agora,
                 data_fim_validacao__gte=agora,
                 data_validade__gte=agora,
-            ).order_by("-id")
+            )
 
         return Response(ListarEditaisValidacaoSerializer(editais, many=True).data)
 
@@ -348,7 +347,7 @@ class ListarEditalJustificativaAPIView(GenericAPIView):
             editais = EdEdital.objects.filter(
                 data_inicio_validacao__lt=timezone.now(),
                 data_validade__gt=timezone.now(),
-            ).order_by("-id")
+            )
             return Response(
                 ListarEditalJustificativaSerializer(editais, many=True).data,
                 status=status.HTTP_200_OK,
@@ -365,22 +364,15 @@ class ListarVagasEmissoresMensagemFichaAPIView(APIView):
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated, IsEmissorMensagemCriacaoFicha]
 
-    def get(self, request, ano, numero):
+    def get(self, request, id):
         try:
-            vagas = EdVaga.objects.filter(
-                ed_edital=EdEdital.objects.get(ano=ano, numero=numero)
-            )
+            vagas = EdVaga.objects.filter(ed_edital=EdEdital.objects.get(id=id))
             return Response(
                 ListarVagasEmissoresMensagemFichaSerializer(vagas, many=True).data
             )
         except EdEdital.DoesNotExist:
             return Response(
                 {"detail": ERRO_GET_EDITAL}, status=status.HTTP_404_NOT_FOUND
-            )
-        except EdEdital.MultipleObjectsReturned:
-            return Response(
-                {"detail": ERRO_MULTIPLOS_EDITAIS},
-                status=status.HTTP_400_BAD_REQUEST,
             )
         except Exception as e:
             return Response(
@@ -398,9 +390,9 @@ class ListarVagasRelatorioAPIView(APIView):
         PodeAcessarEditalEspecifico,
     ]
 
-    def get(self, request, ano, numero):
+    def get(self, request, id):
         try:
-            edital = EdEdital.objects.get(ano=ano, numero=numero)
+            edital = EdEdital.objects.get(id=id)
             vagas = EdVaga.objects.filter(ed_edital=edital)
             return Response(
                 ListarVagasRelatorioSerializer(vagas, many=True).data,
@@ -417,20 +409,13 @@ class ListarVagasValidacaoAPIView(APIView):
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated, IsValidadorDeEditais]
 
-    def get(self, request, ano, numero):
+    def get(self, request, id):
         try:
-            vagas = EdVaga.objects.filter(
-                ed_edital=EdEdital.objects.get(ano=ano, numero=numero)
-            )
+            vagas = EdVaga.objects.filter(ed_edital=EdEdital.objects.get(id=id))
             return Response(ListarVagasValidacaoSerializer(vagas, many=True).data)
         except EdEdital.DoesNotExist:
             return Response(
                 {"detail": ERRO_GET_EDITAL}, status=status.HTTP_404_NOT_FOUND
-            )
-        except EdEdital.MultipleObjectsReturned:
-            return Response(
-                {"detail": ERRO_MULTIPLOS_EDITAIS},
-                status=status.HTTP_400_BAD_REQUEST,
             )
         except Exception as e:
             return Response(
@@ -978,7 +963,7 @@ class ListarEditaisAssociarEditalPessoaAPIView(APIView):
         # Filtro = editais antes do fim da validacao e antes da validade
         editais = EdEdital.objects.filter(
             data_fim_validacao__gte=agora, data_validade__gte=agora
-        ).order_by("-id")
+        )
 
         return Response(
             ListarEditaisAssociacaoEditalPessoaSerializer(editais, many=True).data,
@@ -1029,11 +1014,6 @@ class AssociarEditalPessoaAPIView(APIView):
         except EdEdital.DoesNotExist:
             return Response(
                 {"detail": ERRO_GET_EDITAL}, status=status.HTTP_404_NOT_FOUND
-            )
-        except EdEdital.MultipleObjectsReturned:
-            return Response(
-                {"detail": ERRO_MULTIPLOS_EDITAIS},
-                status=status.HTTP_400_BAD_REQUEST,
             )
         except Exception as e:
             return Response(
@@ -1098,7 +1078,7 @@ class AssociarEditalPessoaRetrieveDestroyAPIView(DestroyModelMixin, RetrieveAPIV
 class EnviarJustificativaPorEmailAPIView(APIView):
     serializer_class = CPFSerializer
 
-    def post(self, request, ano, numero):
+    def post(self, request, id):
         serializer = CPFSerializer(data=request.data)
         if not serializer.is_valid():
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -1107,19 +1087,13 @@ class EnviarJustificativaPorEmailAPIView(APIView):
 
         try:
             edital = EdEdital.objects.get(
+                id=id,
                 data_inicio_validacao__lt=timezone.now(),
                 data_validade__gt=timezone.now(),
-                ano=ano,
-                numero=numero,
             )
         except EdEdital.DoesNotExist:
             return Response(
                 {"detail": ERRO_GET_EDITAL}, status=status.HTTP_404_NOT_FOUND
-            )
-        except EdEdital.MultipleObjectsReturned:
-            return Response(
-                {"detail": ERRO_MULTIPLOS_EDITAIS},
-                status=status.HTTP_400_BAD_REQUEST,
             )
         except Exception as e:
             return Response(

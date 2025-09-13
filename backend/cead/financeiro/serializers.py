@@ -176,6 +176,11 @@ class FiGetEditalFuncaoOfertaSerializer(serializers.ModelSerializer):
 
 
 class FiPostEditalFuncaoOfertaSerializer(serializers.ModelSerializer):
+    """
+    A complicação toda daqui é que é preciso ter um UNIQUE entre
+    edital/função/oferta, mas a oferta pode ser NULL
+    """
+
     class Meta:
         model = FiEditalFuncaoOferta
         fields = ["ed_edital", "fi_funcao_bolsista", "ac_curso_oferta"]

@@ -34,16 +34,19 @@ from .utils import calcular_maximo_de_pontos
 
 ## BLOCO: emissão de mensagem para candidato aprovado
 class ListarEditaisEmissoresMensagemFichaSerializer(serializers.ModelSerializer):
+    edital_str = serializers.SerializerMethodField()
+
     class Meta:
         model = EdEdital
         fields = [
             "id",
-            "numero",
-            "ano",
-            "descricao",
+            "edital_str",
             "data_fim_validacao",
             "data_validade",
         ]
+
+    def get_edital_str(self, obj):
+        return str(obj)
 
 
 class ListarVagasEmissoresMensagemFichaSerializer(serializers.ModelSerializer):
@@ -84,17 +87,20 @@ class EmitirMensagemFichaVagaSerializer(serializers.ModelSerializer):
 
 ## BLOCO: validação do candidato
 class ListarEditaisValidacaoSerializer(serializers.ModelSerializer):
+    edital_str = serializers.SerializerMethodField()
+
     class Meta:
         model = EdEdital
         fields = [
             "id",
-            "numero",
-            "ano",
-            "descricao",
+            "edital_str",
             "data_inicio_validacao",
             "data_fim_validacao",
             "data_validade",
         ]
+
+    def get_edital_str(self, obj):
+        return str(obj)
 
 
 class ListarVagasValidacaoSerializer(serializers.ModelSerializer):
@@ -477,9 +483,14 @@ class ValidarVagaPostSerializer(serializers.Serializer):
 
 ## BLOCO: relatórios
 class ListarEditaisRelatorioSerializer(serializers.ModelSerializer):
+    edital_str = serializers.SerializerMethodField()
+
     class Meta:
         model = EdEdital
-        fields = ["id", "numero", "ano", "descricao", "data_validade"]
+        fields = ["id", "edital_str", "data_validade"]
+
+    def get_edital_str(self, obj):
+        return str(obj)
 
 
 class ListarVagasRelatorioSerializer(serializers.ModelSerializer):
@@ -519,22 +530,30 @@ class RelatorioVagaSerializer(serializers.Serializer):
 
 ## BLOCO: justificativas
 class ListarEditalJustificativaSerializer(serializers.ModelSerializer):
+    edital_str = serializers.SerializerMethodField()
+
     class Meta:
         model = EdEdital
-        fields = ["numero", "ano", "descricao"]
+        fields = ["id", "edital_str"]
+
+    def get_edital_str(self, obj):
+        return str(obj)
 
 
 class ListarEditaisAssociacaoEditalPessoaSerializer(serializers.ModelSerializer):
+    edital_str = serializers.SerializerMethodField()
+
     class Meta:
         model = EdEdital
         fields = [
             "id",
-            "numero",
-            "ano",
-            "descricao",
+            "edital_str",
             "data_fim_validacao",
             "data_validade",
         ]
+
+    def get_edital_str(self, obj):
+        return str(obj)
 
 
 ## BLOCO: associação edital - pessoa

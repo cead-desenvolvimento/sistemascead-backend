@@ -17,7 +17,6 @@ from cead.models import (
     CmPessoaEndereco,
     CmPessoaTelefone,
     CmUf,
-    EdPessoaVagaGerouFicha,
     EdPessoaVagaValidacao,
     FiEditalFuncaoOferta,
     FiFuncaoBolsistaDeclaracao,
@@ -365,9 +364,7 @@ class CadastroFiPessoaFichaAPIView(APIView):
         return Response(
             {
                 "cm_pessoa__nome_display": request.ed_pessoa_vaga_validacao.cm_pessoa.nome,
-                "ed_edital__numero_ano_edital_display": (
-                    f"Edital {ed_edital.numero_ano_edital()} - {ed_edital.descricao}"
-                ),
+                "ed_edital__numero_ano_edital_display": str(ed_edital),
                 "ac_curso_oferta": ac_curso_oferta_data,
                 "fi_funcao_bolsista": fi_funcao_bolsista_serializer.data,
                 "fi_ficha": fi_ficha_serializer.data,

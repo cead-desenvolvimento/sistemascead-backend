@@ -19,6 +19,8 @@ from cead.messages import (
 )
 from .admin_forms import (
     EdEditalAdminForm,
+    EdEditalUnidadeForm,
+    EdEditalUnidadeFormSet,
     EdVagaCampoCheckboxForm,
     EdVagaCampoComboboxForm,
     EdVagaCampoDateboxForm,
@@ -459,6 +461,20 @@ class EdVagaAdminInline(admin.TabularInline):
     verbose_name_plural = "Vagas"
 
 
+class EdEditalUnidadeInline(admin.TabularInline):
+    model = EdEditalUnidade
+    form = EdEditalUnidadeForm
+    formset = EdEditalUnidadeFormSet
+    max_num = 1
+    extra = 1
+
+    def formfield_for_foreignkey(self, db_field, request=None, **kwargs):
+        if db_field.name == "ed_unidade":
+            kwargs["queryset"] = db_field.remote_field.model.objects.all()
+            kwargs["empty_label"] = "CEAD"
+        return super().formfield_for_foreignkey(db_field, request, **kwargs)
+
+
 class EdEditalAdmin(admin.ModelAdmin):
     list_display = (
         "edital",
@@ -483,7 +499,7 @@ class EdEditalAdmin(admin.ModelAdmin):
     def curso(self, obj):
         return obj.ac_curso if obj else "-"
 
-    inlines = [EdVagaAdminInline]
+    inlines = [EdEditalUnidadeInline, EdVagaAdminInline]
 
     # Cria um link na tela de edicao do edital para ir para a vaga
     def change_view(self, request, object_id, form_url="", extra_context=None):
@@ -785,45 +801,10 @@ class EdPessoaVagaValidacaoAdmin(admin.ModelAdmin):
         return "-"
 
 
-class EdPessoaVagaGerouFichaAdmin(admin.ModelAdmin):
-    list_display = ("pessoa", "edital", "vaga", "data_validacao")
-    search_fields = ["ed_pessoa_vaga_validacao__cm_pessoa__nome"]
-
-    def has_add_permission(self, request):
-        return False
-
-    def has_change_permission(self, request, obj=None):
-        return False
-
-    def pessoa(self, obj):
-        if obj.ed_pessoa_vaga_validacao and obj.ed_pessoa_vaga_validacao.cm_pessoa:
-            return str(obj.ed_pessoa_vaga_validacao.cm_pessoa)
-        return "-"
-
-    pessoa.short_description = "Pessoa"
-
-    def edital(self, obj):
-        if obj.ed_pessoa_vaga_validacao and obj.ed_pessoa_vaga_validacao.ed_vaga:
-            edital = obj.ed_pessoa_vaga_validacao.ed_vaga.ed_edital
-            if edital:
-                return edital.numero_ano_edital()
-        return "-"
-
-    edital.short_description = "Edital"
-
-    def vaga(self, obj):
-        if obj.ed_pessoa_vaga_validacao and obj.ed_pessoa_vaga_validacao.ed_vaga:
-            return str(obj.ed_pessoa_vaga_validacao.ed_vaga)
-        return "-"
-
-    vaga.short_description = "Vaga"
-
-    def data_validacao(self, obj):
-        if obj.ed_pessoa_vaga_validacao:
-            return obj.ed_pessoa_vaga_validacao.data
-        return "-"
-
-    data_validacao.short_description = "Data de validação"
+class EdUnidadeAdmin(admin.ModelAdmin):
+    list_display = ("id", "abreviacao", "nome")
+    search_fields = ("abreviacao", "nome")
+    ordering = ("nome",)
 
 
 class EdVagaCampoCheckboxAdminInline(admin.TabularInline):
@@ -1463,7 +1444,7 @@ admin.site.register(EdPessoaVagaCota, EdPessoaVagaCotaAdmin)
 admin.site.register(EdPessoaVagaInscricao, EdPessoaVagaInscricaoAdmin)
 admin.site.register(EdPessoaVagaJustificativa, EdPessoaVagaJustificativaAdmin)
 admin.site.register(EdPessoaVagaValidacao, EdPessoaVagaValidacaoAdmin)
-admin.site.register(EdPessoaVagaGerouFicha, EdPessoaVagaGerouFichaAdmin)
+admin.site.register(EdUnidade, EdUnidadeAdmin)
 admin.site.register(EdVaga, EdVagaAdmin)
 admin.site.register(EdVagaCota, EdVagaCotaAdmin)
 admin.site.register(EdVagaCampoCheckbox, EdVagaCampoCheckboxAdmin)

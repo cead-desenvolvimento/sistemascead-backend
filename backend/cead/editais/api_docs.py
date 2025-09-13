@@ -6,7 +6,6 @@ from cead.messages import (
     ERRO_GET_VAGA,
     ERRO_GET_VAGAS,
     ERRO_GET_PESSOA_VAGA_VALIDACAO,
-    ERRO_MULTIPLOS_EDITAIS,
 )
 from cead.serializers import CmPessoaIdNomeCpfSerializer
 from .messages import *
@@ -175,16 +174,10 @@ DOCS_LISTAR_VAGAS_EMISSORES_MENSAGEM_FICHA_APIVIEW = {
     "tags": ["Editais - Mensagens"],
     "parameters": [
         OpenApiParameter(
-            name="ano",
+            name="id",
             type=int,
             location=OpenApiParameter.PATH,
-            description="Ano do edital.",
-        ),
-        OpenApiParameter(
-            name="numero",
-            type=int,
-            location=OpenApiParameter.PATH,
-            description="Número do edital.",
+            description="id do edital.",
         ),
     ],
     "responses": {
@@ -193,7 +186,6 @@ DOCS_LISTAR_VAGAS_EMISSORES_MENSAGEM_FICHA_APIVIEW = {
             description="Lista de vagas do edital.",
         ),
         404: OpenApiResponse(description=ERRO_GET_EDITAL),
-        400: OpenApiResponse(description=ERRO_MULTIPLOS_EDITAIS),
         500: OpenApiResponse(description=ERRO_GET_VAGAS),
     },
     "auth": [{"type": "bearer"}],
@@ -259,7 +251,6 @@ DOCS_LISTAR_VAGAS_VALIDACAO_APIVIEW = {
             description="Lista de vagas do edital para validação.",
         ),
         404: OpenApiResponse(description=ERRO_GET_EDITAL),
-        400: OpenApiResponse(description=ERRO_MULTIPLOS_EDITAIS),
         500: OpenApiResponse(description=ERRO_GET_VAGAS),
     },
     "auth": [{"type": "bearer"}],

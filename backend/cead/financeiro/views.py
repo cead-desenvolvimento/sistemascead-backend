@@ -42,7 +42,7 @@ from .serializers import (
 
 class ListarEditaisAPIView(APIView):
     def get(self, request):
-        editais = EdEdital.objects.all().order_by("-id")
+        editais = EdEdital.objects.all()
         data = [{"id": e.id, "nome": str(e)} for e in editais]
         return Response(data)
 
@@ -277,9 +277,7 @@ class AtualizarFiPessoaFichaAPIView(APIView):
         )
         if serializer.is_valid():
             serializer.save()
-            return Response(
-                {"detail": OK_FICHA_ATUALIZADA}, status=status.HTTP_200_OK
-            )
+            return Response({"detail": OK_FICHA_ATUALIZADA}, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -289,7 +287,7 @@ class ListarEditaisAtuaisAPIView(APIView):
     permission_classes = [IsAuthenticated, IsAssociadorEditalFuncaoFichaOferta]
 
     def get(self, request):
-        editais = EdEdital.objects.filter(data_validade__gte=now()).order_by("-id")
+        editais = EdEdital.objects.filter(data_validade__gte=now())
 
         serializer = EdEditalSerializer(editais, many=True)
         return Response(serializer.data)

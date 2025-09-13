@@ -44,17 +44,15 @@ class PostVagasSerializer(serializers.Serializer):
 
 
 class GetEditaisSerializer(serializers.ModelSerializer):
+    edital_str = serializers.SerializerMethodField()
     vagas = GetVagasSerializer(many=True, read_only=True)
 
     class Meta:
         model = EdEdital
-        fields = ["id", "numero", "ano", "descricao", "vagas"]
+        fields = ["id", "edital_str", "vagas"]
 
-    # # Retorna so o que estao em fase de inscricao
-    # def to_representation(self, instance):
-    #     if (instance.data_inicio_inscricao <= timezone.now() <= instance.data_fim_inscricao):
-    #         return super().to_representation(instance)
-    #     return None
+    def get_edital_str(self, obj):
+        return str(obj)
 
 
 class CmPessoaPostSerializer(serializers.ModelSerializer):

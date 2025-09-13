@@ -639,11 +639,17 @@ class EdEdital(models.Model):
     )
 
     def __str__(self):
+        unidade_edital = self.unidades_associadas.first()
+        if unidade_edital:
+            return f"{self.numero_ano_edital()} - {unidade_edital.ed_unidade.nome} - {self.descricao}"
         if self.descricao:
             return f"{self.numero_ano_edital()} - {self.descricao}"
-        return "-"
+        return self.numero_ano_edital()
 
     def numero_ano_edital(self):
+        unidade_edital = self.unidades_associadas.first()
+        if unidade_edital:
+            return f"{self.numero}/{self.ano}{unidade_edital.ed_unidade.abreviacao}"
         return f"{self.numero}/{self.ano}"
 
     class Meta:
@@ -651,6 +657,7 @@ class EdEdital(models.Model):
         verbose_name_plural = "(Editais) Editais"
         managed = False
         db_table = "ed_edital"
+        ordering = ["-ano", "-numero"]
 
 
 class EdEditalPessoa(models.Model):
@@ -671,6 +678,28 @@ class EdEditalPessoa(models.Model):
 
     def __str__(self):
         return f"{self.ed_edital} - {self.cm_pessoa}"
+
+
+class EdEditalUnidade(models.Model):
+    id = models.BigAutoField(primary_key=True)
+    ed_edital = models.ForeignKey(
+        "EdEdital",
+        models.DO_NOTHING,
+        verbose_name="Edital",
+        related_name="unidades_associadas",
+    )
+    ed_unidade = models.ForeignKey(
+        "EdUnidade", models.DO_NOTHING, verbose_name="Unidade responsável pelo edital"
+    )
+
+    def __str__(self):
+        return f"{self.ed_edital.numero_ano_edital()}"
+
+    class Meta:
+        verbose_name = "(Editais) Associação edital/unidade responsável"
+        verbose_name_plural = "(Editais) Associações editais/unidades responsáveis"
+        managed = False
+        db_table = "ed_edital_unidade"
 
 
 class EdPessoaFormacao(models.Model):
@@ -912,19 +941,6 @@ class EdPessoaVagaInscricao(models.Model):
     codigo_pessoavagainscricao.short_description = "Código gerado na inscrição"
 
 
-class EdPessoaVagaGerouFicha(models.Model):
-    id = models.BigAutoField(primary_key=True)
-    ed_pessoa_vaga_validacao = models.ForeignKey(
-        "EdPessoaVagaValidacao", models.DO_NOTHING
-    )
-
-    class Meta:
-        verbose_name = "(Editais) Pessoa - gerou ficha?"
-        verbose_name_plural = "(Editais) Pessoas - geraram fichas?"
-        managed = False
-        db_table = "ed_pessoa_vaga_gerouficha"
-
-
 class EdPessoaVagaJustificativa(models.Model):
     id = models.BigAutoField(primary_key=True)
     cm_pessoa = models.ForeignKey(CmPessoa, models.DO_NOTHING)
@@ -1008,6 +1024,23 @@ class EdPessoaVagaValidacao(models.Model):
         return self.codigo
 
     codigo_label.short_description = "Código da validação"
+
+
+class EdUnidade(models.Model):
+    id = models.BigAutoField(primary_key=True)
+    abreviacao = models.CharField(
+        max_length=3, unique=True, verbose_name="Abreviação da unidade"
+    )
+    nome = models.CharField(max_length=63, verbose_name="Nome da unidade")
+
+    def __str__(self):
+        return self.nome
+
+    class Meta:
+        verbose_name = "(Editais) Unidade responsável pelo edital"
+        verbose_name_plural = "(Editais) Unidades responsáveis pelos editais"
+        managed = False
+        db_table = "ed_unidade"
 
 
 class EdVaga(models.Model):

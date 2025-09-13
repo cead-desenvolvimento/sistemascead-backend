@@ -51,7 +51,6 @@ from cead.messages import (
     ERRO_INSERCAO_ED_PESSOA_VAGA_CAMPO_CHECKBOX,
     ERRO_INSERCAO_ED_PESSOA_VAGA_CAMPO_COMBOBOX,
     ERRO_INSERCAO_ED_PESSOA_VAGA_CAMPO_DATEBOX,
-    ERRO_MULTIPLOS_EDITAIS,
     ERRO_SESSAO_INVALIDA,
     ERRO_VAGAID_NA_SESSAO,
     ERRO_VAGAIDHASH_NA_SESSAO,
@@ -198,7 +197,7 @@ class EditaisFaseInscricaoView(APIView):
         editais = EdEdital.objects.filter(
             data_inicio_inscricao__lte=timezone.now(),
             data_fim_inscricao__gte=timezone.now(),
-        ).order_by("-id")
+        )
 
         return Response(
             GetEditaisSerializer(editais, many=True).data, status=status.HTTP_200_OK
@@ -209,17 +208,12 @@ class EditaisFaseInscricaoView(APIView):
 class VagasEditalFaseInscricaoView(GenericAPIView):
     serializer_class = PostVagasSerializer
 
-    def get(self, request, ano, numero):
+    def get(self, request, id):
         try:
-            edital = EdEdital.objects.get(ano=ano, numero=numero)
+            edital = EdEdital.objects.get(id=id)
         except EdEdital.DoesNotExist:
             return Response(
                 {"detail": ERRO_GET_EDITAL}, status=status.HTTP_404_NOT_FOUND
-            )
-        except EdEdital.MultipleObjectsReturned:
-            return Response(
-                {"detail": ERRO_MULTIPLOS_EDITAIS},
-                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
         except Exception as e:
             return Response(
@@ -237,13 +231,11 @@ class VagasEditalFaseInscricaoView(GenericAPIView):
         )
 
     # Colocar o ID da vaga na sessão (controle de fluxo da inscrição)
-    def post(self, request, ano, numero):
+    def post(self, request, id):
         try:
             vaga_id = request.data.get("vaga_id")
             if vaga_id:
-                vaga = EdVaga.objects.get(
-                    id=vaga_id, ed_edital__ano=ano, ed_edital__numero=numero
-                )
+                vaga = EdVaga.objects.get(id=vaga_id, ed_edital__id=id)
             else:
                 return Response(
                     {"detail": ERRO_REQUEST_DATA_GET_VAGAID},

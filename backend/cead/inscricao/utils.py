@@ -3,6 +3,7 @@ import subprocess
 import uuid
 import shutil
 
+from PIL import Image
 from PyPDF2 import PdfReader
 from .messages import ERRO_ARQUIVO_INVALIDO, ERRO_ARQUIVO_SENHA, ERRO_GS_NAO_ENCONTRADO
 
