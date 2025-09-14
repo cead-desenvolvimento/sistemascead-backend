@@ -923,7 +923,7 @@ class EdPessoaVagaInscricao(models.Model):
     pontuacao = models.SmallIntegerField(
         blank=True, null=True, verbose_name="Pontuação"
     )
-    data = models.DateTimeField(verbose_name="Data da inscrição")
+    data = models.DateTimeField(auto_now=True, verbose_name="Data da inscrição")
 
     class Meta:
         verbose_name = "(Editais) Pessoa inscrita"

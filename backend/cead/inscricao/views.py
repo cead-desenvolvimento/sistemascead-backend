@@ -1851,7 +1851,7 @@ class FinalizarInscricaoView(APIView):
             inscricao, created = EdPessoaVagaInscricao.objects.update_or_create(
                 cm_pessoa=request.candidato,
                 ed_vaga=request.vaga,
-                defaults={"pontuacao": pontuacao, "data": timezone.now()},
+                defaults={"pontuacao": pontuacao},
             )
             del request.session["pontuacao"]
             request.session["inscricao_id"] = inscricao.id
