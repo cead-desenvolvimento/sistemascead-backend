@@ -453,7 +453,6 @@ class ValidarVagaPostSerializer(serializers.Serializer):
             defaults={
                 "cm_pessoa_responsavel_validacao": cm_pessoa_responsavel,
                 "pontuacao": None if float(pontuacao) == 0.0 else pontuacao,
-                "data": timezone.now(),
             },
         )
 

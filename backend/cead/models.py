@@ -979,7 +979,7 @@ class EdPessoaVagaValidacao(models.Model):
     )
     ed_vaga = models.ForeignKey("EdVaga", models.DO_NOTHING, verbose_name="Vaga")
     pontuacao = models.FloatField(verbose_name="Pontuação")
-    data = models.DateTimeField(verbose_name="Data da validação")
+    data = models.DateTimeField(auto_now=True, verbose_name="Data da validação")
 
     class Meta:
         verbose_name = "(Editais) Pessoa validada"
