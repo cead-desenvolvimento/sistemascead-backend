@@ -513,10 +513,7 @@ class GerarFichaPDFAPIView(APIView):
             "zoom": "0.9",
         }
         try:
-            config = pdfkit.configuration(wkhtmltopdf="/usr/local/bin/wkhtmltopdf")
-            pdf = pdfkit.from_string(
-                html_string, False, options=options, configuration=config
-            )
+            pdf = pdfkit.from_string(html_string, False, options=options)
         except Exception as e:
             raise ValidationError({"detail": f"{ERRO_GERACAO_PDF}: {e}"})
         if not pdf:
