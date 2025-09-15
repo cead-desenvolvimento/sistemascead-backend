@@ -955,6 +955,15 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#importante" class="md-nav__link">
+    <span class="md-ellipsis">
+      IMPORTANTE
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#funcionalidades-principais" class="md-nav__link">
     <span class="md-ellipsis">
       Funcionalidades Principais
@@ -1205,6 +1214,15 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#importante" class="md-nav__link">
+    <span class="md-ellipsis">
+      IMPORTANTE
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#funcionalidades-principais" class="md-nav__link">
     <span class="md-ellipsis">
       Funcionalidades Principais
@@ -1286,6 +1304,12 @@
 <h1 id="app-relatorios-de-acesso-moodle">App: Relatórios de Acesso Moodle<a class="headerlink" href="#app-relatorios-de-acesso-moodle" title="Permanent link">&para;</a></h1>
 <h2 id="visao-geral">Visão Geral<a class="headerlink" href="#visao-geral" title="Permanent link">&para;</a></h2>
 <p>Este app oferece <strong>relatórios gerenciais sobre os acessos dos bolsistas ao Moodle</strong>, cruzando os meses de frequência lançada e os cursos vinculados. Ele permite que coordenadores, setor financeiro e gestores acompanhem a efetiva atuação dos bolsistas na plataforma Moodle — essencial para comprovação de atividade e, em muitos casos, autorização do pagamento.</p>
+<h2 id="importante">IMPORTANTE<a class="headerlink" href="#importante" title="Permanent link">&para;</a></h2>
+<p>Os relatórios utilizam o <strong>webservice do Moodle</strong> do <a href="https://ead.ufjf.br/">https://ead.ufjf.br/</a>, que é executado no <strong>container <code>site-cead</code></strong> (verificar cron). O <strong>script de integração</strong> atualiza a tabela <code>fi_frequencia_moodle</code>.</p>
+<blockquote>
+<p><strong>Observação:</strong> Moodles diferentes do <a href="https://ead.ufjf.br/">https://ead.ufjf.br/</a> <strong>não são consultados</strong>. Para esses casos, verifique as informações diretamente na tela de relatório.</p>
+<p><strong>Observação técnica:</strong> A consulta ao Moodle da UEMA foi feita em PHP, com <em>crawl</em> (<code>preg_match</code>, etc). Foram abertos dois chamados na UEMA, pedindo acesso ao <em>webservice</em>, e é claro que sequer responderam. Não fiz em Django porque gerou muita dependência no projeto. Detalhes técnicos: <a href="https://github.com/cead-desenvolvimento/sistemascead-c10">https://github.com/cead-desenvolvimento/sistemascead-c10</a></p>
+</blockquote>
 <h2 id="funcionalidades-principais">Funcionalidades Principais<a class="headerlink" href="#funcionalidades-principais" title="Permanent link">&para;</a></h2>
 <ul>
 <li><strong>Listagem dos meses com acessos registrados no Moodle:</strong> Permite selecionar apenas os meses em que houve lançamento de acessos para análise.</li>
@@ -1301,23 +1325,27 @@
 </ol>
 <h2 id="endpoints-e-funcionalidades">Endpoints e Funcionalidades<a class="headerlink" href="#endpoints-e-funcionalidades" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>Listar meses com registro de acesso no Moodle:</strong><br />
-<code>GET /backend/relatorio-moodle/meses/</code>  </li>
 <li>
-<p>Retorna todos os meses (FiDatafrequencia) com algum acesso registrado para relatórios.</p>
+<p><strong>Listar meses com registro de acesso no Moodle:</strong><br />
+<code>GET /backend/relatorio-moodle/meses/</code></p>
+<ul>
+<li>Retorna todos os meses (FiDatafrequencia) com algum acesso registrado para relatórios.</li>
+</ul>
 </li>
 <li>
 <p><strong>Listar cursos com registros de acesso em determinado mês:</strong><br />
-<code>GET /backend/relatorio-moodle/cursos/{fi_datafrequencia_id}/</code>  </p>
-</li>
-<li>
-<p>Retorna cursos disponíveis para o mês selecionado.</p>
+<code>GET /backend/relatorio-moodle/cursos/{fi_datafrequencia_id}/</code></p>
+<ul>
+<li>Retorna cursos disponíveis para o mês selecionado.</li>
+</ul>
 </li>
 <li>
 <p><strong>Relatório detalhado de acessos no Moodle:</strong><br />
-<code>GET /backend/relatorio-moodle/detalhado/{fi_datafrequencia_id}/?cursos=1,2,3</code>  </p>
-</li>
+<code>GET /backend/relatorio-moodle/detalhado/{fi_datafrequencia_id}/?cursos=1,2,3</code></p>
+<ul>
 <li>Retorna o relatório de acessos filtrado por mês (obrigatório) e, opcionalmente, por lista de cursos.</li>
+</ul>
+</li>
 </ul>
 <h2 id="regras-de-negocio-e-validacoes">Regras de Negócio e Validações<a class="headerlink" href="#regras-de-negocio-e-validacoes" title="Permanent link">&para;</a></h2>
 <ul>
@@ -1345,10 +1373,6 @@
 <li>Dados serializados e prontos para exibição em painéis/admins ou exportação.</li>
 <li>Documentação automática via drf-spectacular/OpenAPI.</li>
 </ul>
-<hr />
-<blockquote>
-<p><strong>Observação:</strong> Há no frontend a consulta do Moodle da UEMA, feito em PHP. O <em>crawl</em> no Django trazia um caminhão de dependências, e já que era pra fazer gambiarra, no PHP era só fazer preg_match.</p>
-</blockquote>
 
 
 

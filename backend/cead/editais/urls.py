@@ -63,7 +63,7 @@ urlpatterns = [
         name="relatorio_listar_edital",
     ),
     path(
-        "relatorio/edital/<int:ano>/<int:numero>/",
+        "relatorio/edital/<int:id>/",
         views.RelatorioDoEditalAPIView.as_view(),
         name="relatorio_edital",
     ),

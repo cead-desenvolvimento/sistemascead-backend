@@ -23,8 +23,8 @@ ERRO_FINANCEIRO_GET_FI_EDITAL_FUNCAO_OFERTA = "Identificador não encontrado"
 # ------------------------------
 # ERROS - PERMISSÕES DE GRUPO
 # ------------------------------
-ERRO_FINANCEIRO_NAO_ESTA_NO_GRUPO_DE_GERENCIADORES_DATA_VINCULACAO_FICHAS = (
-    "Você não está no grupo de gerenciadores de datas de vinculação de fichas"
+ERRO_FINANCEIRO_NAO_ESTA_NO_GRUPO_DE_GERENCIADORES_VINCULACAO_FICHAS = (
+    "Você não está no grupo de gerenciadores de vinculação de fichas"
 )
 ERRO_FINANCEIRO_NAO_ESTA_NO_GRUPO_DE_ASSOCIADOR_VAGA_FICHA = (
     "Você não está no grupo de associadores de vaga e ficha"

@@ -1306,47 +1306,51 @@ O módulo é utilizado por <strong>coordenadores</strong>, <strong>equipe financ
 </ol>
 <h2 id="endpoints-e-funcionalidades">Endpoints e Funcionalidades<a class="headerlink" href="#endpoints-e-funcionalidades" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>Lançamento de frequência mensal:</strong><br />
-<code>GET/POST /backend/frequencia/</code>  </li>
-<li>GET: Lista bolsistas, disciplinas e fichas do mês anterior para coordenador.</li>
 <li>
-<p>POST: Lança frequência para os bolsistas do mês atual, apontando disciplinas e autorização de pagamento.</p>
+<p><strong>Lançamento de frequência mensal:</strong><br />
+<code>GET/POST /backend/frequencia/</code></p>
+<ul>
+<li>GET: Lista bolsistas, disciplinas e fichas do mês anterior para coordenador.</li>
+<li>POST: Lança frequência para os bolsistas do mês atual, apontando disciplinas e autorização de pagamento.</li>
+</ul>
 </li>
 <li>
 <p><strong>Listar meses com frequência lançada:</strong><br />
-<code>GET /backend/frequencia/meses/</code>  </p>
-</li>
-<li>
-<p>Retorna até 6 meses anteriores com frequência já registrada.</p>
+<code>GET /backend/frequencia/meses/</code></p>
+<ul>
+<li>Retorna até 6 meses anteriores com frequência já registrada.</li>
+</ul>
 </li>
 <li>
 <p><strong>Listar cursos com disciplinas:</strong><br />
-<code>GET /backend/frequencia/cursos/</code>  </p>
-</li>
-<li>
-<p>Lista cursos que possuem ao menos uma disciplina cadastrada.</p>
+<code>GET /backend/frequencia/cursos/</code></p>
+<ul>
+<li>Lista cursos que possuem ao menos uma disciplina cadastrada.</li>
+</ul>
 </li>
 <li>
 <p><strong>Cadastrar/gerenciar disciplinas do curso:</strong><br />
-<code>GET/POST /backend/frequencia/curso/{id}/disciplinas/</code>  </p>
-</li>
+<code>GET/POST /backend/frequencia/curso/{id}/disciplinas/</code></p>
+<ul>
 <li>GET: Lista disciplinas do curso.</li>
 <li>POST: Cadastra nova disciplina.</li>
-<li>
-<p>PUT: Atualiza disciplina.</p>
+<li>PUT: Atualiza disciplina.</li>
+</ul>
 </li>
 <li>
 <p><strong>Relatório administrativo de frequência:</strong><br />
-<code>GET /backend/frequencia/relatorio/{mes_id}/</code>  </p>
-</li>
-<li>
-<p>Retorna relatório completo por mês, curso, coordenador e bolsistas.</p>
+<code>GET /backend/frequencia/relatorio/{mes_id}/</code></p>
+<ul>
+<li>Retorna relatório completo por mês, curso, coordenador e bolsistas.</li>
+</ul>
 </li>
 <li>
 <p><strong>Relatório pessoal do coordenador:</strong><br />
-<code>GET /backend/frequencia/relatorio-coordenador/{mes_id}/</code>  </p>
-</li>
+<code>GET /backend/frequencia/relatorio-coordenador/{mes_id}/</code></p>
+<ul>
 <li>Retorna o próprio relatório do coordenador para o mês corrente.</li>
+</ul>
+</li>
 </ul>
 <h2 id="regras-de-negocio-e-validacoes">Regras de Negócio e Validações<a class="headerlink" href="#regras-de-negocio-e-validacoes" title="Permanent link">&para;</a></h2>
 <ul>

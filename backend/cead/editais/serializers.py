@@ -498,35 +498,6 @@ class ListarVagasRelatorioSerializer(serializers.ModelSerializer):
         fields = ["id", "descricao", "quantidade"]
 
 
-class RelatorioEditalSerializer(serializers.Serializer):
-    protocolo = serializers.IntegerField()
-    vaga = serializers.CharField()
-    nome = serializers.CharField()
-    cpf = serializers.CharField()
-    email = serializers.EmailField()
-    pontuacao_informada = serializers.CharField()
-    pontuacao_real = serializers.CharField()
-    responsavel_validacao_ou_justificativa = serializers.CharField()
-    data_inscricao = serializers.CharField()
-    data_validacao = serializers.CharField()
-    justificativa_pontuacao = serializers.CharField()
-    confirmado = serializers.CharField()
-
-
-class RelatorioVagaSerializer(serializers.Serializer):
-    protocolo = serializers.IntegerField()
-    nome = serializers.CharField()
-    cpf = serializers.CharField()
-    email = serializers.EmailField()
-    pontuacao_informada = serializers.CharField()
-    pontuacao_real = serializers.CharField()
-    responsavel_validacao_ou_justificativa = serializers.CharField()
-    data_inscricao = serializers.CharField()
-    data_validacao = serializers.CharField()
-    justificativa_pontuacao = serializers.CharField()
-    confirmado = serializers.CharField()
-
-
 ## BLOCO: justificativas
 class ListarEditalJustificativaSerializer(serializers.ModelSerializer):
     edital_str = serializers.SerializerMethodField()

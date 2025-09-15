@@ -25,7 +25,7 @@ from .api_docs import *
 from .messages import *
 from .permissions import (
     IsAssociadorEditalFuncaoFichaOferta,
-    IsGerenciadorDataVinculacaoFichas,
+    IsGerenciadorVinculacaoFichas,
 )
 from cead.serializers import AcCursoIdNomeSerializer, AcCursoOfertaIdDescricaoSerializer
 from .serializers import (
@@ -64,7 +64,7 @@ class ListarOfertasAPIView(APIView):
 @extend_schema(**DOCS_LISTAR_CURSOS_COM_BOLSISTAS_ATIVOS_APIVIEW)
 class ListarCursosComBolsistasAtivosAPIView(APIView):
     authentication_classes = [JWTAuthentication]
-    permission_classes = [IsAuthenticated, IsGerenciadorDataVinculacaoFichas]
+    permission_classes = [IsAuthenticated, IsGerenciadorVinculacaoFichas]
 
     def get(self, request):
         fichas_ativas = (
@@ -92,7 +92,7 @@ class ListarCursosComBolsistasAtivosAPIView(APIView):
 @extend_schema(**DOCS_LISTAR_CURSOS_COM_BOLSISTAS_INATIVOS_APIVIEW)
 class ListarCursosComBolsistasInativosAPIView(APIView):
     authentication_classes = [JWTAuthentication]
-    permission_classes = [IsAuthenticated, IsGerenciadorDataVinculacaoFichas]
+    permission_classes = [IsAuthenticated, IsGerenciadorVinculacaoFichas]
 
     def get(self, request):
         # Fichas "zeradas" = sem início de vinculação definido
@@ -116,7 +116,7 @@ class ListarCursosComBolsistasInativosAPIView(APIView):
 @extend_schema(**DOCS_LISTAR_FICHAS_POR_NOME_OU_CPF)
 class ListarFiPessoaFichaPorNomeOuCpfAPIView(APIView):
     authentication_classes = [JWTAuthentication]
-    permission_classes = [IsAuthenticated, IsGerenciadorDataVinculacaoFichas]
+    permission_classes = [IsAuthenticated, IsGerenciadorVinculacaoFichas]
 
     def get(self, request):
         termo = (request.query_params.get("q") or "").strip()
@@ -149,7 +149,7 @@ class ListarFiPessoaFichaPorNomeOuCpfAPIView(APIView):
 @extend_schema(**DOCS_DETALHAR_FICHA)
 class DetalharFiPessoaFichaAPIView(APIView):
     authentication_classes = [JWTAuthentication]
-    permission_classes = [IsAuthenticated, IsGerenciadorDataVinculacaoFichas]
+    permission_classes = [IsAuthenticated, IsGerenciadorVinculacaoFichas]
 
     def get(self, request, ficha_id):
         try:
@@ -169,7 +169,7 @@ class DetalharFiPessoaFichaAPIView(APIView):
 @extend_schema(**DOCS_CURSO_COM_BOLSISTAS_ATIVOS_APIVIEW)
 class CursoComBolsistasAtivosAPIView(APIView):
     authentication_classes = [JWTAuthentication]
-    permission_classes = [IsAuthenticated, IsGerenciadorDataVinculacaoFichas]
+    permission_classes = [IsAuthenticated, IsGerenciadorVinculacaoFichas]
 
     def get(self, request, ac_curso_id):
         fichas_ativas = (
@@ -190,7 +190,7 @@ class CursoComBolsistasAtivosAPIView(APIView):
 @extend_schema(**DOCS_CURSO_COM_BOLSISTAS_INATIVOS_APIVIEW)
 class CursoComBolsistasInativosAPIView(APIView):
     authentication_classes = [JWTAuthentication]
-    permission_classes = [IsAuthenticated, IsGerenciadorDataVinculacaoFichas]
+    permission_classes = [IsAuthenticated, IsGerenciadorVinculacaoFichas]
 
     def get(self, request, ac_curso_id):
         fichas_inativas = FiPessoaFicha.objects.filter(
@@ -205,7 +205,7 @@ class CursoComBolsistasInativosAPIView(APIView):
 @extend_schema(**DOCS_LISTAR_ULTIMAS_FICHAS_APIVIEW)
 class ListarUltimasFichasAPIView(APIView):
     authentication_classes = [JWTAuthentication]
-    permission_classes = [IsAuthenticated, IsGerenciadorDataVinculacaoFichas]
+    permission_classes = [IsAuthenticated, IsGerenciadorVinculacaoFichas]
 
     def get(self, request):
         subquery = (
@@ -225,7 +225,7 @@ class ListarUltimasFichasAPIView(APIView):
 @extend_schema(**DOCS_ATUALIZAR_DATA_VINCULO_BOLSISTA_APIVIEW)
 class AtualizarDataVinculoBolsistaAPIView(APIView):
     authentication_classes = [JWTAuthentication]
-    permission_classes = [IsAuthenticated, IsGerenciadorDataVinculacaoFichas]
+    permission_classes = [IsAuthenticated, IsGerenciadorVinculacaoFichas]
 
     def put(self, request):
         ficha_id = request.data.get("id")
@@ -254,7 +254,7 @@ class AtualizarDataVinculoBolsistaAPIView(APIView):
 @extend_schema(**DOCS_ATUALIZAR_FICHA)
 class AtualizarFiPessoaFichaAPIView(APIView):
     authentication_classes = [JWTAuthentication]
-    permission_classes = [IsAuthenticated, IsGerenciadorDataVinculacaoFichas]
+    permission_classes = [IsAuthenticated, IsGerenciadorVinculacaoFichas]
 
     def put(self, request):
         ficha_id = request.data.get("id")

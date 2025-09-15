@@ -16,10 +16,10 @@ O cadastro inicial dos usuários é feito pelo suporte, e a identificação do u
 
 Informar para o cadastro:
 
-- Nome completo;
-- CPF;
-- E-email;
-- Tipo de vínculo (quais ações deseja executar no sistema).
+-   Nome completo;
+-   CPF;
+-   E-email;
+-   Tipo de vínculo (quais ações deseja executar no sistema).
 
 Após o cadastro, o suporte enviará e-mail com instruções de acesso.
 
@@ -31,21 +31,20 @@ Cada usuário é associado a um ou mais **grupos de acesso**, que determinam qua
 
 Os grupos são:
 
-| Grupos de Acesso                                                                  |
-|-----------------------------------------------------------------------------------|
-| Acadêmico - administradores                                                       |
-| Associadores de editais e pessoas                                                 |
-| Associadores de edital, função da ficha e oferta                                  |
-| Editores de disciplinas                                                           |
-| Emissores de mensagem para criação de ficha                                       |
-| Financeiro - administradores                                                      |
-| Gerenciadores de datas de vinculação de fichas                                    |
-| Lançadores de frequência                                                          |
-| Validadores de editais                                                            |
-| Visualizadores de relatório de editais                                            |
-| Visualizadores de relatório de Frequência                                         |
-| Visualizadores de relatório Moodle                                                |
-
+| Grupos de Acesso                                 |
+| ------------------------------------------------ |
+| Acadêmico - administradores                      |
+| Associadores de editais e pessoas                |
+| Associadores de edital, função da ficha e oferta |
+| Editores de disciplinas                          |
+| Emissores de mensagem para criação de ficha      |
+| Financeiro - administradores                     |
+| Gerenciadores de datas de vinculação de fichas   |
+| Lançadores de frequência                         |
+| Validadores de editais                           |
+| Visualizadores de relatório de editais           |
+| Visualizadores de relatório de Frequência        |
+| Visualizadores de relatório Moodle               |
 
 > A visibilidade dos módulos no menu inicial depende exclusivamente do(s) grupo(s) aos quais o usuário está vinculado.
 
@@ -63,7 +62,7 @@ Os grupos são:
 
 Se você não conseguir acessar o sistema ou não visualizar os módulos esperados:
 
-- Confirme com o suporte se seu cadastro está ativo e em um grupo apropriado.
-- Redefina a senha, se necessário
+-   Confirme com o suporte se seu cadastro está ativo e em um grupo apropriado.
+-   Redefina a senha, se necessário
 
 As mensagens de erro indicam a qual equipe do CEAD recorrer.

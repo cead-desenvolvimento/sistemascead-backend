@@ -733,29 +733,25 @@ DOCS_ENVIAR_JUSTIFICATIVA_POR_EMAIL_APIVIEW = {
 DOCS_RELATORIO_DO_EDITAL_APIVIEW = {
     "summary": "Gera relatório de inscritos de um edital",
     "description": (
-        "Retorna uma lista detalhada dos inscritos no edital especificado, incluindo pontuação, justificativa, responsáveis, datas e situação de confirmação."
-        "\n\nUtilizado para exportar, visualizar e analisar os dados completos do processo seletivo de um edital."
+        "Retorna uma lista detalhada dos inscritos no edital especificado, incluindo pontuação, justificativa, responsáveis, datas e situação de confirmação.\n\n"
+        "Utilizado para exportar, visualizar e analisar os dados completos do processo seletivo de um edital.\n\n"
+        "### Ordenação das inscrições\n"
+        "1. Candidatos **sem justificativa** (válidos), em ordem decrescente de pontuação real.\n"
+        "2. Candidatos **com justificativa** (indeferidos), aparecem ao final, também ordenados pela pontuação real.\n\n"
+        "As pontuações são numéricas; se não houver pontuação real, usa-se a pontuação informada como fallback."
     ),
     "tags": ["Editais - Relatórios"],
     "parameters": [
         OpenApiParameter(
-            name="ano",
+            name="id",
             type=int,
             location=OpenApiParameter.PATH,
             required=True,
             description="Ano do edital.",
         ),
-        OpenApiParameter(
-            name="numero",
-            type=int,
-            location=OpenApiParameter.PATH,
-            required=True,
-            description="Número do edital.",
-        ),
     ],
     "responses": {
         200: OpenApiResponse(
-            response=RelatorioEditalSerializer(many=True),
             description="Lista detalhada dos inscritos do edital.",
             examples=[
                 OpenApiExample(
@@ -765,13 +761,13 @@ DOCS_RELATORIO_DO_EDITAL_APIVIEW = {
                             "protocolo": 1234,
                             "vaga": "Professor Matemática",
                             "nome": "Maria Eduarda",
-                            "cpf": "12345678901",
+                            "cpf": "123.456.789-01",
                             "email": "ma*****@ex*****.com",
-                            "pontuacao_informada": "20",
-                            "pontuacao_real": "18",
-                            "responsavel_validacao_ou_justificativa": "Rodrigo Marangon",
-                            "data_inscricao": "19/06/2025",
-                            "data_validacao": "20/06/2025",
+                            "pontuacao_informada": 20,
+                            "pontuacao_real": 18,
+                            "responsavel_validacao": "Rodrigo Marangon",
+                            "data_inscricao": "19/06/2025 14:30",
+                            "data_validacao": "20/06/2025 09:00",
                             "justificativa_pontuacao": "Documentação incompleta.",
                             "confirmado": "Sim",
                         }
@@ -784,11 +780,16 @@ DOCS_RELATORIO_DO_EDITAL_APIVIEW = {
     "auth": [{"type": "bearer"}],
 }
 
+
 DOCS_RELATORIO_DA_VAGA_APIVIEW = {
     "summary": "Gera relatório de inscritos de uma vaga",
     "description": (
-        "Retorna uma lista detalhada dos inscritos na vaga especificada, com informações sobre pontuação, responsáveis, datas, justificativas e confirmação."
-        "\n\nUtilizado para análise, exportação e acompanhamento do processo seletivo em uma vaga específica de um edital."
+        "Retorna uma lista detalhada dos inscritos na vaga especificada, com informações sobre pontuação, responsáveis, datas, justificativas e situação de confirmação.\n\n"
+        "Utilizado para análise, exportação e acompanhamento do processo seletivo em uma vaga específica de um edital.\n\n"
+        "### Ordenação das inscrições\n"
+        "1. Candidatos **sem justificativa** (válidos), em ordem decrescente de pontuação real.\n"
+        "2. Candidatos **com justificativa** (indeferidos), aparecem ao final, também ordenados pela pontuação real.\n\n"
+        "As pontuações são numéricas; se não houver pontuação real, usa-se a pontuação informada como fallback."
     ),
     "tags": ["Editais - Relatórios"],
     "parameters": [
@@ -802,25 +803,39 @@ DOCS_RELATORIO_DA_VAGA_APIVIEW = {
     ],
     "responses": {
         200: OpenApiResponse(
-            response=RelatorioVagaSerializer(many=True),
             description="Lista detalhada dos inscritos da vaga.",
             examples=[
                 OpenApiExample(
                     "Exemplo de resposta",
                     value=[
+                        # candidato válido
                         {
                             "protocolo": 5555,
                             "nome": "João Silva",
-                            "cpf": "98765432100",
+                            "cpf": "987.654.321-00",
                             "email": "jo***@em***.com",
-                            "pontuacao_informada": "18",
-                            "pontuacao_real": "16",
-                            "responsavel_validacao_ou_justificativa": "Maria Eduarda",
-                            "data_inscricao": "15/06/2025",
-                            "data_validacao": "17/06/2025",
+                            "pontuacao_informada": 18,
+                            "pontuacao_real": 16,
+                            "responsavel_validacao": "Maria Eduarda",
+                            "data_inscricao": "15/06/2025 10:30",
+                            "data_validacao": "17/06/2025 09:15",
                             "justificativa_pontuacao": "",
                             "confirmado": "Sim",
-                        }
+                        },
+                        # candidato com justificativa
+                        {
+                            "protocolo": 5556,
+                            "nome": "Ana Costa",
+                            "cpf": "123.456.789-01",
+                            "email": "an***@em***.com",
+                            "pontuacao_informada": 20,
+                            "pontuacao_real": 0,
+                            "responsavel_validacao": "Rodrigo Marangon",
+                            "data_inscricao": "16/06/2025 14:00",
+                            "data_validacao": "18/06/2025 11:20",
+                            "justificativa_pontuacao": "Documentação incompleta.",
+                            "confirmado": "Não",
+                        },
                     ],
                 )
             ],

@@ -12,18 +12,18 @@ O sistema é para o candidato, e não para o administrador dele e nem para o des
 
 ## Funcionalidades Principais
 
-- **Listagem de editais abertos para inscrição**
-- **Seleção de vaga pelo candidato**
-- **Validação de CPF e cadastro/atualização dos dados pessoais**
-- **Envio e validação de código por e-mail**
-- **Escolha e marcação de cotas (ações afirmativas)**
-- **Registro de formação acadêmica**
-- **Alerta sobre inscrição duplicada ou concorrente**
-- **Preenchimento e marcação dos campos exigidos na vaga (checkbox, combobox, datebox)**
-- **Upload de arquivos obrigatórios (PDF, imagens, etc)**
-- **Download dos arquivos enviados**
-- **Finalização da inscrição, com validação de etapa e submissão segura**
-- **Documentação detalhada via drf-spectacular/OpenAPI**
+-   **Listagem de editais abertos para inscrição**
+-   **Seleção de vaga pelo candidato**
+-   **Validação de CPF e cadastro/atualização dos dados pessoais**
+-   **Envio e validação de código por e-mail**
+-   **Escolha e marcação de cotas (ações afirmativas)**
+-   **Registro de formação acadêmica**
+-   **Alerta sobre inscrição duplicada ou concorrente**
+-   **Preenchimento e marcação dos campos exigidos na vaga (checkbox, combobox, datebox)**
+-   **Upload de arquivos obrigatórios (PDF, imagens, etc)**
+-   **Download dos arquivos enviados**
+-   **Finalização da inscrição, com validação de etapa e submissão segura**
+-   **Documentação detalhada via drf-spectacular/OpenAPI**
 
 ## Fluxo Resumido de Uso
 
@@ -40,77 +40,77 @@ O sistema é para o candidato, e não para o administrador dele e nem para o des
 
 ## Principais Endpoints (Views)
 
-- **Editais em fase de inscrição:**  
-  `GET /backend/inscricao/editais/`
+-   **Editais em fase de inscrição:**  
+    `GET /backend/inscricao/editais/`
 
-- **Vagas de um edital:**  
-  `GET/POST /backend/inscricao/edital/{ano}/{numero}/vagas/`  
-  (GET lista vagas, POST marca vaga na sessão)
+-   **Vagas de um edital:**  
+    `GET/POST /backend/inscricao/edital/{ano}/{numero}/vagas/`  
+    (GET lista vagas, POST marca vaga na sessão)
 
-- **Validação de CPF:**  
-  `POST /backend/inscricao/validar-cpf/`
+-   **Validação de CPF:**  
+    `POST /backend/inscricao/validar-cpf/`
 
-- **Cadastro de pessoa:**  
-  `POST /backend/inscricao/criar-pessoa/`
+-   **Cadastro de pessoa:**  
+    `POST /backend/inscricao/criar-pessoa/`
 
-- **Envio de código por e-mail:**  
-  `GET/POST /backend/inscricao/enviar-codigo/`
+-   **Envio de código por e-mail:**  
+    `GET/POST /backend/inscricao/enviar-codigo/`
 
-- **Validação do código recebido:**  
-  `POST /backend/inscricao/verificar-codigo/`
+-   **Validação do código recebido:**  
+    `POST /backend/inscricao/verificar-codigo/`
 
-- **Cotas:**  
-  `GET/POST/DELETE /backend/inscricao/cotas/`  
-  (listar, marcar, remover cotas)
+-   **Cotas:**  
+    `GET/POST/DELETE /backend/inscricao/cotas/`  
+    (listar, marcar, remover cotas)
 
-- **Formação acadêmica:**  
-  `GET/POST/DELETE /backend/inscricao/formacao/`  
-  (listar, adicionar, remover formação)
+-   **Formação acadêmica:**  
+    `GET/POST/DELETE /backend/inscricao/formacao/`  
+    (listar, adicionar, remover formação)
 
-- **Campos da vaga:**  
-  `GET /backend/inscricao/vaga/campos/`  
-  (lista campos checkbox, combobox, datebox)
+-   **Campos da vaga:**  
+    `GET /backend/inscricao/vaga/campos/`  
+    (lista campos checkbox, combobox, datebox)
 
-- **Marcação dos campos da vaga:**  
-  `GET/POST /backend/inscricao/vaga/campos/preencher/`  
-  (consulta ou marca campos e pontuação)
+-   **Marcação dos campos da vaga:**  
+    `GET/POST /backend/inscricao/vaga/campos/preencher/`  
+    (consulta ou marca campos e pontuação)
 
-- **Upload de arquivos:**  
-  `GET/POST /backend/inscricao/vaga/anexar-arquivos/`
+-   **Upload de arquivos:**  
+    `GET/POST /backend/inscricao/vaga/anexar-arquivos/`
 
-- **Download de arquivos enviados:**  
-  `GET /backend/inscricao/vaga/baixar-arquivo/`
+-   **Download de arquivos enviados:**  
+    `GET /backend/inscricao/vaga/baixar-arquivo/`
 
-- **Finalização da inscrição:**  
-  `POST /backend/inscricao/finalizar/`
+-   **Finalização da inscrição:**  
+    `POST /backend/inscricao/finalizar/`
 
-- **Alerta sobre inscrições concorrentes:**  
-  `GET /backend/inscricao/alerta-inscricao/`
+-   **Alerta sobre inscrições concorrentes:**  
+    `GET /backend/inscricao/alerta-inscricao/`
 
 ## Permissões e Segurança
 
-- **Controle total de sessão:** cada etapa depende de dados e hashes válidos.
-- **Candidato só acessa/edita a própria inscrição.**
-- **Proteção contra concorrência/duplicidade de inscrição** (no mesmo edital/vaga).
-- **Validação de uploads e campos obrigatórios.**
-- **Código de e-mail é temporário e expira após 10 minutos.**
-- **Fluxo "obrigatório":** etapas só avançam se as anteriores estiverem corretas.
+-   **Controle total de sessão:** cada etapa depende de dados e hashes válidos.
+-   **Candidato só acessa/edita a própria inscrição.**
+-   **Proteção contra concorrência/duplicidade de inscrição** (no mesmo edital/vaga).
+-   **Validação de uploads e campos obrigatórios.**
+-   **Código de e-mail é temporário e expira após 10 minutos.**
+-   **Fluxo "obrigatório":** etapas só avançam se as anteriores estiverem corretas.
 
 ## Público-alvo
 
-- **Candidatos:** realizam o preenchimento guiado.
-- **Equipe de suporte e acadêmica:** podem orientar candidatos e auditar registros.
-- **Administradores:** consumo dos dados para validação, relatórios e classificação.
+-   **Candidatos:** realizam o preenchimento guiado.
+-   **Equipe de suporte e acadêmica:** podem orientar candidatos e auditar registros.
+-   **Administradores:** consumo dos dados para validação, relatórios e classificação.
 
 ## Observações Técnicas
 
-- API baseada no DRF, com views APIView e GenericAPIView.
-- Utiliza sessões do Django para todo controle de estado.
-- Uploads organizados por candidato/vaga, com validação de pertencimento.
-- Campos dinâmicos de vaga são configurados no banco e respeitados pelo fluxo.
-- Pontuação automática calculada conforme regras da vaga.
-- Todas as rotas e respostas documentadas via drf-spectacular/OpenAPI.
-- Respostas de erro detalhadas para frontend e suporte.
+-   API baseada no DRF, com views APIView e GenericAPIView.
+-   Utiliza sessões do Django para todo controle de estado.
+-   Uploads organizados por candidato/vaga, com validação de pertencimento.
+-   Campos dinâmicos de vaga são configurados no banco e respeitados pelo fluxo.
+-   Pontuação automática calculada conforme regras da vaga.
+-   Todas as rotas e respostas documentadas via drf-spectacular/OpenAPI.
+-   Respostas de erro detalhadas para frontend e suporte.
 
 ---
 

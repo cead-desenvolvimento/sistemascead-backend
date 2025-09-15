@@ -87,8 +87,6 @@ from .serializers import (
     ListarVagasEmissoresMensagemFichaSerializer,
     ListarVagasRelatorioSerializer,
     ListarVagasValidacaoSerializer,
-    RelatorioEditalSerializer,
-    RelatorioVagaSerializer,
     UsuarioPorCpfSerializer,
     ValidarVagaGetSerializer,
     ValidarVagaPostSerializer,
@@ -1128,7 +1126,7 @@ class EnviarJustificativaPorEmailAPIView(APIView):
                 status=status.HTTP_404_NOT_FOUND,
             )
 
-        assunto = f"{EMAIL_JUSTIFICATIVA_ASSUNTO} {edital.numero}/{edital.ano}"
+        assunto = f"{EMAIL_JUSTIFICATIVA_ASSUNTO} {edital.numero_ano_edital()}"
 
         justificativa_texto = (
             EMAIL_JUSTIFICATIVA_A_SEGUINTE_JUSTIFICATIVA
@@ -1138,7 +1136,7 @@ class EnviarJustificativaPorEmailAPIView(APIView):
 
         corpo = [
             f"{pessoa.nome},",
-            f"{EMAIL_JUSTIFICATIVA_AVALIADOR_REGISTROU} {justificativa_texto} {edital.numero}/{edital.ano} - {edital.descricao}:\n",
+            f"{EMAIL_JUSTIFICATIVA_AVALIADOR_REGISTROU} {justificativa_texto} {edital}:\n",
         ]
 
         for j in justificativas:
@@ -1171,9 +1169,9 @@ class RelatorioDoEditalAPIView(APIView):
     permission_classes = [IsAuthenticated, IsVisualizadordeRelatorioDeEditais]
     renderer_classes = [CSVRenderer]
 
-    def get(self, request, ano, numero):
+    def get(self, request, id):
         try:
-            edital = EdEdital.objects.get(ano=ano, numero=numero)
+            edital = EdEdital.objects.get(id=id)
         except EdEdital.DoesNotExist:
             return Response(
                 {"detail": ERRO_GET_EDITAL}, status=status.HTTP_404_NOT_FOUND
@@ -1189,9 +1187,6 @@ class RelatorioDoEditalAPIView(APIView):
                     ed_vaga=vaga, cm_pessoa=inscricao.cm_pessoa
                 ).first()
                 justificativa = EdPessoaVagaJustificativa.objects.filter(
-                    ed_vaga=vaga, cm_pessoa=inscricao.cm_pessoa
-                ).first()
-                confirmacao = EdPessoaVagaConfirmacao.objects.filter(
                     ed_vaga=vaga, cm_pessoa=inscricao.cm_pessoa
                 ).first()
                 cota = EdPessoaVagaCota.objects.filter(
@@ -1220,17 +1215,12 @@ class RelatorioDoEditalAPIView(APIView):
                         if inscricao.pontuacao is None
                         else float(inscricao.pontuacao)
                     ),
-                    # 0 = NULL, se validado
                     "pontuacao_real": (
-                        0.0
-                        if validacao and validacao.pontuacao is None
-                        else (
-                            float(validacao.pontuacao)
-                            if validacao and validacao.pontuacao is not None
-                            else "-"
-                        )
+                        float(validacao.pontuacao)
+                        if validacao and validacao.pontuacao is not None
+                        else 0.0
                     ),
-                    "responsavel_validacao_ou_justificativa": responsavel,
+                    "responsavel_validacao": responsavel,
                     "data_inscricao": (
                         timezone.localtime(inscricao.data).strftime("%d/%m/%Y %H:%M")
                         if inscricao and inscricao.data
@@ -1244,11 +1234,10 @@ class RelatorioDoEditalAPIView(APIView):
                     "justificativa_pontuacao": (
                         justificativa.justificativa if justificativa else "-"
                     ),
-                    "confirmado": "Sim" if confirmacao else "Não",
                     "cota": cota.ed_vaga_cota.ed_cota.cota if cota else "-",
                 }
 
-                relatorio.append(RelatorioEditalSerializer(dados_inscricao).data)
+                relatorio.append(dados_inscricao)
 
         if not relatorio:
             return Response(
@@ -1261,16 +1250,30 @@ class RelatorioDoEditalAPIView(APIView):
                         "email": "",
                         "pontuacao_informada": "",
                         "pontuacao_real": "",
-                        "responsavel_validacao_ou_justificativa": "",
+                        "responsavel_validacao": "",
                         "data_inscricao": "",
                         "data_validacao": "",
                         "justificativa_pontuacao": "",
-                        "confirmado": "",
                         "cota": "",
                     }
                 ],
                 status=status.HTTP_200_OK,
             )
+
+        def tem_justificativa(item):
+            j = item.get("justificativa_pontuacao")
+            return bool(j and j not in ("-", ""))
+
+        def score(item):
+            # se houver pontuação real (validada), usa-a; senão usa a informada; senão 0.0
+            pr = item.get("pontuacao_real")
+            if pr is not None:
+                return float(pr)
+            return float(item.get("pontuacao_informada") or 0.0)
+
+        # ordenar: 1) válidos (sem justificativa), 2) por pontuação desc, 3) os com justificativa
+        relatorio.sort(key=lambda r: (1 if tem_justificativa(r) else 0, -score(r)))
+
         return Response(relatorio, status=status.HTTP_200_OK)
 
 
@@ -1295,9 +1298,6 @@ class RelatorioDaVagaAPIView(APIView):
             justificativa = EdPessoaVagaJustificativa.objects.filter(
                 ed_vaga=vaga, cm_pessoa=inscricao.cm_pessoa
             ).first()
-            confirmacao = EdPessoaVagaConfirmacao.objects.filter(
-                ed_vaga=vaga, cm_pessoa=inscricao.cm_pessoa
-            ).first()
             cota = EdPessoaVagaCota.objects.filter(
                 cm_pessoa=inscricao.cm_pessoa, ed_vaga_cota__ed_vaga=vaga
             ).first()
@@ -1317,17 +1317,12 @@ class RelatorioDaVagaAPIView(APIView):
                 "pontuacao_informada": (
                     0.0 if inscricao.pontuacao is None else float(inscricao.pontuacao)
                 ),
-                # 0 = NULL, se validado
                 "pontuacao_real": (
-                    0.0
-                    if validacao and validacao.pontuacao is None
-                    else (
-                        float(validacao.pontuacao)
-                        if validacao and validacao.pontuacao is not None
-                        else "-"
-                    )
+                    float(validacao.pontuacao)
+                    if validacao and validacao.pontuacao is not None
+                    else 0.0
                 ),
-                "responsavel_validacao_ou_justificativa": responsavel,
+                "responsavel_validacao": responsavel,
                 "data_inscricao": (
                     timezone.localtime(inscricao.data).strftime("%d/%m/%Y %H:%M")
                     if inscricao and inscricao.data
@@ -1341,11 +1336,10 @@ class RelatorioDaVagaAPIView(APIView):
                 "justificativa_pontuacao": (
                     justificativa.justificativa if justificativa else "-"
                 ),
-                "confirmado": "Sim" if confirmacao else "Não",
                 "cota": cota.ed_vaga_cota.ed_cota.cota if cota else "-",
             }
 
-            relatorio.append(RelatorioVagaSerializer(dados_inscricao).data)
+            relatorio.append(dados_inscricao)
 
         if not relatorio:
             return Response(
@@ -1357,14 +1351,28 @@ class RelatorioDaVagaAPIView(APIView):
                         "email": "",
                         "pontuacao_informada": "",
                         "pontuacao_real": "",
-                        "responsavel_validacao_ou_justificativa": "",
+                        "responsavel_validacao": "",
                         "data_inscricao": "",
                         "data_validacao": "",
                         "justificativa_pontuacao": "",
-                        "confirmado": "",
                         "cota": "",
                     }
                 ],
                 status=status.HTTP_200_OK,
             )
+
+        def tem_justificativa(item):
+            j = item.get("justificativa_pontuacao")
+            return bool(j and j not in ("-", ""))
+
+        def score(item):
+            # se houver pontuação real (validada), usa-a; senão usa a informada; senão 0.0
+            pr = item.get("pontuacao_real")
+            if pr is not None:
+                return float(pr)
+            return float(item.get("pontuacao_informada") or 0.0)
+
+        # ordenar: 1) válidos (sem justificativa), 2) por pontuação desc, 3) os com justificativa
+        relatorio.sort(key=lambda r: (1 if tem_justificativa(r) else 0, -score(r)))
+
         return Response(relatorio, status=status.HTTP_200_OK)
