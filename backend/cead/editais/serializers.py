@@ -18,6 +18,7 @@ from cead.models import (
     EdPessoaVagaInscricao,
     EdPessoaVagaJustificativa,
     EdPessoaVagaValidacao,
+    EdPessoaVagaValidacaoIndeferimento,
     EdVaga,
 )
 from .messages import (
@@ -175,6 +176,7 @@ class ValidarVagaPostSerializer(serializers.Serializer):
     pontuacoes_documentos = serializers.DictField(
         child=serializers.FloatField(), required=False
     )
+    indeferido = serializers.BooleanField(required=False, default=False)
 
     def validate(self, data):
         agora = timezone.now()
@@ -409,6 +411,7 @@ class ValidarVagaPostSerializer(serializers.Serializer):
         cm_pessoa_responsavel = self.validated_data["responsavel"]
         pontuacoes_documentos = self.validated_data.get("pontuacoes_documentos", {})
         arquivos_validos = self.validated_data.get("arquivo_valido", [])
+        indeferido = self.validated_data.get("indeferido", False)
 
         # Dicionários para armazenar IDs separados por tipo
         checkbox_ids = []
@@ -446,15 +449,31 @@ class ValidarVagaPostSerializer(serializers.Serializer):
 
         self._salvar_pontuacoes_individuais(inscricao, pontuacoes_documentos)
 
-        # Atualiza ou cria o registro de validação
-        EdPessoaVagaValidacao.objects.update_or_create(
+        # Lógica de validação e indeferimento: todo indeferido e zerado recebe nota None
+        if indeferido or pontuacao == 0:
+            pontuacao_valida = None
+        else:
+            pontuacao_valida = pontuacao
+
+        # Atualiza ou cria a validação
+        validacao, created = EdPessoaVagaValidacao.objects.update_or_create(
             cm_pessoa=inscricao.cm_pessoa,
             ed_vaga=inscricao.ed_vaga,
             defaults={
                 "cm_pessoa_responsavel_validacao": cm_pessoa_responsavel,
-                "pontuacao": None if float(pontuacao) == 0.0 else pontuacao,
+                "pontuacao": pontuacao_valida,
             },
         )
+
+        # Atualiza ou remove indeferimento
+        if indeferido:
+            EdPessoaVagaValidacaoIndeferimento.objects.update_or_create(
+                ed_pessoa_vaga_validacao=validacao
+            )
+        else:
+            EdPessoaVagaValidacaoIndeferimento.objects.filter(
+                ed_pessoa_vaga_validacao=validacao
+            ).delete()
 
         # Salva ou remove justificativa
         if justificativa and justificativa.strip():
@@ -477,6 +496,7 @@ class ValidarVagaPostSerializer(serializers.Serializer):
             "justificativa": justificativa,
             "arquivo_valido": arquivos_validos,
             "pontuacoes_documentos": pontuacoes_documentos,
+            "indeferido": indeferido,
         }
 
 

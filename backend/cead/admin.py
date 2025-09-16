@@ -1178,7 +1178,7 @@ class FiPessoaFichaAdmin(admin.ModelAdmin):
     )
     list_filter = (FiPessoaFichaAdminDataFimVInculacaoIsNull,)
     search_fields = ("cm_pessoa__nome",)
-    
+
     def get_readonly_fields(self, request, obj=None):
         return [f.name for f in self.model._meta.fields]
 

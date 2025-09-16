@@ -633,6 +633,7 @@ class Migration(migrations.Migration):
                 "verbose_name_plural": "(Editais) Editais",
                 "db_table": "ed_edital",
                 "managed": False,
+                "ordering": ["-ano", "-numero"],
             },
         ),
         migrations.CreateModel(
@@ -855,6 +856,18 @@ class Migration(migrations.Migration):
                 "verbose_name": "(Editais) Pessoa validada",
                 "verbose_name_plural": "(Editais) Pessoas validadas",
                 "db_table": "ed_pessoa_vaga_validacao",
+                "managed": False,
+            },
+        ),
+        migrations.CreateModel(
+            name="EdPessoaVagaValidacaoIndeferimento",
+            fields=[
+                ("id", models.BigAutoField(primary_key=True, serialize=False)),
+            ],
+            options={
+                "verbose_name": "(Editais) Pessoa indeferida",
+                "verbose_name_plural": "(Editais) Pessoas indeferidas",
+                "db_table": "ed_pessoa_vaga_validacao_indeferimento",
                 "managed": False,
             },
         ),

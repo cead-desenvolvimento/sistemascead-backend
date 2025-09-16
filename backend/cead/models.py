@@ -1026,6 +1026,19 @@ class EdPessoaVagaValidacao(models.Model):
     codigo_label.short_description = "Código da validação"
 
 
+class EdPessoaVagaValidacaoIndeferimento(models.Model):
+    id = models.BigAutoField(primary_key=True)
+    ed_pessoa_vaga_validacao = models.ForeignKey(
+        EdPessoaVagaValidacao, models.DO_NOTHING
+    )
+
+    class Meta:
+        managed = False
+        db_table = "ed_pessoa_vaga_validacao_indeferimento"
+        verbose_name = "(Editais) Pessoa indeferida"
+        verbose_name_plural = "(Editais) Pessoas indeferidas"
+
+
 class EdUnidade(models.Model):
     id = models.BigAutoField(primary_key=True)
     abreviacao = models.CharField(

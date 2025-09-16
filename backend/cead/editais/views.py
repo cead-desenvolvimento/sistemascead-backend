@@ -52,6 +52,7 @@ from cead.models import (
     EdPessoaVagaInscricao,
     EdPessoaVagaJustificativa,
     EdPessoaVagaValidacao,
+    EdPessoaVagaValidacaoIndeferimento,
     EdVaga,
     EdVagaCampoCheckbox,
     EdVagaCampoCombobox,
@@ -91,6 +92,11 @@ from .serializers import (
     ValidarVagaGetSerializer,
     ValidarVagaPostSerializer,
     VerificaValidacaoSerializer,
+)
+from .utils import (
+    get_status_order,
+    get_sort_score,
+    processar_inscricao_para_relatorio,
 )
 
 
@@ -518,6 +524,14 @@ class ValidarVagaAPIView(APIView):
         # 2.3 Uploads
         uploads_pontuacoes_dict = self.get_uploads_pontuacoes(vaga, pessoa_ids)
 
+        # 2.4 Indeferimentos (NOVO)
+        indeferidos_ids = set(
+            EdPessoaVagaValidacaoIndeferimento.objects.filter(
+                ed_pessoa_vaga_validacao__ed_vaga=vaga,
+                ed_pessoa_vaga_validacao__cm_pessoa__id__in=pessoa_ids,
+            ).values_list("ed_pessoa_vaga_validacao__cm_pessoa__id", flat=True)
+        )
+
         # 3. Montar resultado usando os dicionários
         return [
             {
@@ -529,6 +543,7 @@ class ValidarVagaAPIView(APIView):
                 "justificativa": justificativas_dict.get(inscrito.cm_pessoa.id),
                 "uploads": uploads_pontuacoes_dict.get(inscrito.cm_pessoa.id, []),
                 "pontuacao_total": pontuacoes_dict.get(inscrito.cm_pessoa.id, 0.0),
+                "indeferido": inscrito.cm_pessoa.id in indeferidos_ids,
             }
             for inscrito in inscritos
         ]
@@ -1181,98 +1196,50 @@ class RelatorioDoEditalAPIView(APIView):
         relatorio = []
 
         for vaga in vagas:
-            for inscricao in EdPessoaVagaInscricao.objects.filter(ed_vaga=vaga):
-                # Espera-se que haja apenas uma validacao, justificativa, etc, mas por seguranca usei filter + first
-                validacao = EdPessoaVagaValidacao.objects.filter(
-                    ed_vaga=vaga, cm_pessoa=inscricao.cm_pessoa
-                ).first()
-                justificativa = EdPessoaVagaJustificativa.objects.filter(
-                    ed_vaga=vaga, cm_pessoa=inscricao.cm_pessoa
-                ).first()
-                cota = EdPessoaVagaCota.objects.filter(
-                    cm_pessoa=inscricao.cm_pessoa, ed_vaga_cota__ed_vaga=vaga
-                ).first()
+            validacoes_dict = {
+                v.cm_pessoa_id: v
+                for v in EdPessoaVagaValidacao.objects.filter(
+                    ed_vaga=vaga
+                ).select_related("cm_pessoa_responsavel_validacao")
+            }
+            justificativas_dict = {
+                j.cm_pessoa_id: j
+                for j in EdPessoaVagaJustificativa.objects.filter(
+                    ed_vaga=vaga
+                ).select_related("cm_pessoa_responsavel_justificativa")
+            }
+            cotas_dict = {
+                c.cm_pessoa.id: c
+                for c in EdPessoaVagaCota.objects.filter(
+                    ed_vaga_cota__ed_vaga=vaga
+                ).select_related("ed_vaga_cota__ed_cota", "cm_pessoa")
+            }
+            indeferidos_da_vaga = EdPessoaVagaValidacaoIndeferimento.objects.filter(
+                ed_pessoa_vaga_validacao__ed_vaga=vaga
+            ).values_list("ed_pessoa_vaga_validacao__cm_pessoa_id", flat=True)
 
-                # No sistema antigo o candidato considerado validado tinha todos os documentos validos
-                # Ou seja, ou ele estava validado ou se usava o campo justificativa para saber o que nao esta' valido
-                if validacao and validacao.cm_pessoa_responsavel_validacao:
-                    responsavel = validacao.cm_pessoa_responsavel_validacao.nome
-                elif (
-                    justificativa and justificativa.cm_pessoa_responsavel_justificativa
-                ):
-                    responsavel = justificativa.cm_pessoa_responsavel_justificativa.nome
-                else:
-                    responsavel = "-"
-
-                dados_inscricao = {
-                    "protocolo": inscricao.id,
-                    "vaga": vaga.descricao,
-                    "nome": inscricao.cm_pessoa.nome,
-                    "cpf": inscricao.cm_pessoa.cpf_com_pontos_e_traco(),
-                    "email": inscricao.cm_pessoa.email,
-                    "pontuacao_informada": (
-                        0.0
-                        if inscricao.pontuacao is None
-                        else float(inscricao.pontuacao)
-                    ),
-                    "pontuacao_real": (
-                        float(validacao.pontuacao)
-                        if validacao and validacao.pontuacao is not None
-                        else 0.0
-                    ),
-                    "responsavel_validacao": responsavel,
-                    "data_inscricao": (
-                        timezone.localtime(inscricao.data).strftime("%d/%m/%Y %H:%M")
-                        if inscricao and inscricao.data
-                        else "-"
-                    ),
-                    "data_validacao": (
-                        timezone.localtime(validacao.data).strftime("%d/%m/%Y %H:%M")
-                        if validacao and validacao.data
-                        else "-"
-                    ),
-                    "justificativa_pontuacao": (
-                        justificativa.justificativa if justificativa else "-"
-                    ),
-                    "cota": cota.ed_vaga_cota.ed_cota.cota if cota else "-",
-                }
-
-                relatorio.append(dados_inscricao)
+            for inscricao in EdPessoaVagaInscricao.objects.filter(
+                ed_vaga=vaga
+            ).select_related("cm_pessoa", "ed_vaga"):
+                dados = processar_inscricao_para_relatorio(
+                    inscricao,
+                    validacoes_dict,
+                    justificativas_dict,
+                    cotas_dict,
+                    indeferidos_da_vaga,
+                    incluir_vaga=True,
+                )
+                relatorio.append(dados)
 
         if not relatorio:
-            return Response(
-                [
-                    {
-                        "protocolo": "",
-                        "vaga": "",
-                        "nome": "",
-                        "cpf": "",
-                        "email": "",
-                        "pontuacao_informada": "",
-                        "pontuacao_real": "",
-                        "responsavel_validacao": "",
-                        "data_inscricao": "",
-                        "data_validacao": "",
-                        "justificativa_pontuacao": "",
-                        "cota": "",
-                    }
-                ],
-                status=status.HTTP_200_OK,
+            return Response([], status=status.HTTP_200_OK)
+
+        relatorio.sort(
+            key=lambda r: (
+                get_status_order(r["status_validacao"]),
+                -get_sort_score(r),
             )
-
-        def tem_justificativa(item):
-            j = item.get("justificativa_pontuacao")
-            return bool(j and j not in ("-", ""))
-
-        def score(item):
-            # se houver pontuação real (validada), usa-a; senão usa a informada; senão 0.0
-            pr = item.get("pontuacao_real")
-            if pr is not None:
-                return float(pr)
-            return float(item.get("pontuacao_informada") or 0.0)
-
-        # ordenar: 1) válidos (sem justificativa), 2) por pontuação desc, 3) os com justificativa
-        relatorio.sort(key=lambda r: (1 if tem_justificativa(r) else 0, -score(r)))
+        )
 
         return Response(relatorio, status=status.HTTP_200_OK)
 
@@ -1289,90 +1256,50 @@ class RelatorioDaVagaAPIView(APIView):
         except EdVaga.DoesNotExist:
             return Response({"detail": ERRO_GET_VAGA}, status=status.HTTP_404_NOT_FOUND)
 
+        validacoes_dict = {
+            v.cm_pessoa_id: v
+            for v in EdPessoaVagaValidacao.objects.filter(ed_vaga=vaga).select_related(
+                "cm_pessoa_responsavel_validacao"
+            )
+        }
+        justificativas_dict = {
+            j.cm_pessoa_id: j
+            for j in EdPessoaVagaJustificativa.objects.filter(
+                ed_vaga=vaga
+            ).select_related("cm_pessoa_responsavel_justificativa")
+        }
+        cotas_dict = {
+            c.cm_pessoa.id: c
+            for c in EdPessoaVagaCota.objects.filter(
+                ed_vaga_cota__ed_vaga=vaga
+            ).select_related("ed_vaga_cota__ed_cota", "cm_pessoa")
+        }
+        indeferidos_da_vaga = EdPessoaVagaValidacaoIndeferimento.objects.filter(
+            ed_pessoa_vaga_validacao__ed_vaga=vaga
+        ).values_list("ed_pessoa_vaga_validacao__cm_pessoa_id", flat=True)
+
         relatorio = []
-
-        for inscricao in EdPessoaVagaInscricao.objects.filter(ed_vaga=vaga):
-            validacao = EdPessoaVagaValidacao.objects.filter(
-                ed_vaga=vaga, cm_pessoa=inscricao.cm_pessoa
-            ).first()
-            justificativa = EdPessoaVagaJustificativa.objects.filter(
-                ed_vaga=vaga, cm_pessoa=inscricao.cm_pessoa
-            ).first()
-            cota = EdPessoaVagaCota.objects.filter(
-                cm_pessoa=inscricao.cm_pessoa, ed_vaga_cota__ed_vaga=vaga
-            ).first()
-
-            if validacao and validacao.cm_pessoa_responsavel_validacao:
-                responsavel = validacao.cm_pessoa_responsavel_validacao.nome
-            elif justificativa and justificativa.cm_pessoa_responsavel_justificativa:
-                responsavel = justificativa.cm_pessoa_responsavel_justificativa.nome
-            else:
-                responsavel = "-"
-
-            dados_inscricao = {
-                "protocolo": inscricao.id,
-                "nome": inscricao.cm_pessoa.nome,
-                "cpf": inscricao.cm_pessoa.cpf_com_pontos_e_traco(),
-                "email": inscricao.cm_pessoa.email,
-                "pontuacao_informada": (
-                    0.0 if inscricao.pontuacao is None else float(inscricao.pontuacao)
-                ),
-                "pontuacao_real": (
-                    float(validacao.pontuacao)
-                    if validacao and validacao.pontuacao is not None
-                    else 0.0
-                ),
-                "responsavel_validacao": responsavel,
-                "data_inscricao": (
-                    timezone.localtime(inscricao.data).strftime("%d/%m/%Y %H:%M")
-                    if inscricao and inscricao.data
-                    else "-"
-                ),
-                "data_validacao": (
-                    timezone.localtime(validacao.data).strftime("%d/%m/%Y %H:%M")
-                    if validacao and validacao.data
-                    else "-"
-                ),
-                "justificativa_pontuacao": (
-                    justificativa.justificativa if justificativa else "-"
-                ),
-                "cota": cota.ed_vaga_cota.ed_cota.cota if cota else "-",
-            }
-
-            relatorio.append(dados_inscricao)
+        for inscricao in EdPessoaVagaInscricao.objects.filter(
+            ed_vaga=vaga
+        ).select_related("cm_pessoa"):
+            dados = processar_inscricao_para_relatorio(
+                inscricao,
+                validacoes_dict,
+                justificativas_dict,
+                cotas_dict,
+                indeferidos_da_vaga,
+                incluir_vaga=False,
+            )
+            relatorio.append(dados)
 
         if not relatorio:
-            return Response(
-                [
-                    {
-                        "protocolo": "",
-                        "nome": "",
-                        "cpf": "",
-                        "email": "",
-                        "pontuacao_informada": "",
-                        "pontuacao_real": "",
-                        "responsavel_validacao": "",
-                        "data_inscricao": "",
-                        "data_validacao": "",
-                        "justificativa_pontuacao": "",
-                        "cota": "",
-                    }
-                ],
-                status=status.HTTP_200_OK,
+            return Response([], status=status.HTTP_200_OK)
+
+        relatorio.sort(
+            key=lambda r: (
+                get_status_order(r["status_validacao"]),
+                -get_sort_score(r),
             )
-
-        def tem_justificativa(item):
-            j = item.get("justificativa_pontuacao")
-            return bool(j and j not in ("-", ""))
-
-        def score(item):
-            # se houver pontuação real (validada), usa-a; senão usa a informada; senão 0.0
-            pr = item.get("pontuacao_real")
-            if pr is not None:
-                return float(pr)
-            return float(item.get("pontuacao_informada") or 0.0)
-
-        # ordenar: 1) válidos (sem justificativa), 2) por pontuação desc, 3) os com justificativa
-        relatorio.sort(key=lambda r: (1 if tem_justificativa(r) else 0, -score(r)))
+        )
 
         return Response(relatorio, status=status.HTTP_200_OK)
