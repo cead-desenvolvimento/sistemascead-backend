@@ -4,6 +4,7 @@ from datetime import date
 import pdfkit
 from django.http import HttpResponse
 from django.template.loader import render_to_string
+from django.utils import timezone
 from drf_spectacular.utils import extend_schema
 from rest_framework import status
 from rest_framework.exceptions import ValidationError
@@ -110,7 +111,11 @@ class CPFCodigoPessoaValidacaoView(APIView):
             .order_by("-id")
             .first()
         )
-        if ficha_existente and ficha_existente.data_inicio_vinculacao:
+        if (
+            ficha_existente 
+            and ficha_existente.data_inicio_vinculacao 
+            and ficha_existente.data_inicio_vinculacao <= timezone.now()
+        ):
             return Response(
                 {"detail": ERRO_FICHA_JA_ATIVA},
                 status=status.HTTP_403_FORBIDDEN,
