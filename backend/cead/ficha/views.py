@@ -112,9 +112,9 @@ class CPFCodigoPessoaValidacaoView(APIView):
             .first()
         )
         if (
-            ficha_existente 
-            and ficha_existente.data_inicio_vinculacao 
-            and ficha_existente.data_inicio_vinculacao <= timezone.now()
+            ficha_existente
+            and ficha_existente.data_inicio_vinculacao
+            and ficha_existente.data_inicio_vinculacao <= timezone.now().date()
         ):
             return Response(
                 {"detail": ERRO_FICHA_JA_ATIVA},
