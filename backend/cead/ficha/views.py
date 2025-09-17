@@ -391,6 +391,16 @@ class CadastroFiPessoaFichaAPIView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+class SalvarLicencaAPIView(APIView):
+    def post(self, request):
+        licenca_produtos = request.data.get("licenca_produtos")
+        if not licenca_produtos:
+            raise ValidationError({"detail": ERRO_LICENCA_OPCAO})
+
+        request.session["licenca_produtos"] = licenca_produtos
+        return Response({"detail": OK_LICENCA_SALVA}, status=status.HTTP_200_OK)
+
+
 @extend_schema(**DOCS_GERAR_FICHA_PDF_APIVIEW)
 class GerarFichaPDFAPIView(APIView):
     def initial(self, request, *args, **kwargs):
@@ -438,11 +448,13 @@ class GerarFichaPDFAPIView(APIView):
         except FiEditalFuncaoOferta.DoesNotExist:
             raise ValidationError({"detail": ERRO_GET_FI_EDITAL_FUNCAO_OFERTA})
 
-        request.session.flush()
         request.ed_pessoa_vaga_validacao = ed_pessoa_vaga_validacao
         request.associacao_edital_funcao_oferta = associacao_edital_funcao_oferta
 
     def get(self, request):
+        licenca_produtos = request.session.get("licenca_produtos", None)
+        request.session.flush()
+
         associacao_edital_funcao_oferta = request.associacao_edital_funcao_oferta
         ed_pessoa_vaga_validacao = request.ed_pessoa_vaga_validacao
         cm_pessoa = request.ed_pessoa_vaga_validacao.cm_pessoa
@@ -504,6 +516,7 @@ class GerarFichaPDFAPIView(APIView):
                     "item_declaracao", flat=True
                 )  # Importante a ordem em que foi cadastrado
             ),
+            "licenca_produtos": licenca_produtos,
             "ficha_static_images_dir": os.path.join(STATIC_ROOT, "ficha", "imagens"),
         }
 

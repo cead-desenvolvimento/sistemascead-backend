@@ -18,6 +18,11 @@ urlpatterns = [
         views.CadastroFiPessoaFichaAPIView.as_view(),
         name="dados_fi_pessoa_ficha",
     ),
+    path(
+        "salvar_licenca/",
+        views.SalvarLicencaAPIView.as_view(),
+        name="salvar_licenca",
+    ),
     path("gerar_pdf/", views.GerarFichaPDFAPIView.as_view(), name="gerar_pdf"),
     # Utilidades
     path(

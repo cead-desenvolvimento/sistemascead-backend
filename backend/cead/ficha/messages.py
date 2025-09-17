@@ -54,6 +54,11 @@ ERRO_SESSAO_ED_PESSOA_VAGA_VALIDACAO_ID_HASH = (
 )
 
 # ------------------------------
+# ERROS - LICENÇA
+# ------------------------------
+ERRO_LICENCA_OPCAO = "Opção de licença não fornecida"
+
+# ------------------------------
 # APLICA CONTATO DO SUPORTE EM TODAS AS MENSAGENS DE ERRO
 # ------------------------------
 for var_name in list(globals()):
@@ -65,6 +70,7 @@ for var_name in list(globals()):
 # ------------------------------
 OK_CPF_HASH_VALIDADO = "O hash é valido para o CPF informado"
 OK_FICHA_SALVA = "Salvou os dados da ficha"
+OK_LICENCA_SALVA = "Salvou os dados da licença"
 OK_SALVOU_ENDERECO_TELEFONE_DADOS_BANCARIOS = (
     "Salvou os dados de endereço, telefone e bancários"
 )
