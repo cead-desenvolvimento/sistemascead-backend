@@ -344,6 +344,10 @@ class FiPessoaFichaPostSerializer(serializers.ModelSerializer):
             self._fi_edital_funcao_oferta.ac_curso_oferta
         )
 
+        # Gambiarra edital 40: pessoa 180 sempre função 60
+        if cm_pessoa.id == 180:
+            validated_data["fi_funcao_bolsista"] = 60
+
         # 3) Se solteiro/divorciado → zera cônjuge
         if validated_data.get("estado_civil") in ["S", "D"]:
             validated_data["nome_conjuge"] = None
