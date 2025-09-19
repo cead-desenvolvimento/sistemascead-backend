@@ -350,7 +350,7 @@ class FiPessoaFichaPostSerializer(serializers.ModelSerializer):
 
         # Gambiarra edital 40: pessoa 180 sempre função 60
         if cm_pessoa.id == 180:
-            validated_data["fi_funcao_bolsista"] = 60
+            validated_data["fi_funcao_bolsista"] = FiFuncaoBolsista.objects.get(id=60)
 
         # 3) Se solteiro/divorciado → zera cônjuge
         if validated_data.get("estado_civil") in ["S", "D"]:
