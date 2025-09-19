@@ -344,6 +344,10 @@ class FiPessoaFichaPostSerializer(serializers.ModelSerializer):
             self._fi_edital_funcao_oferta.ac_curso_oferta
         )
 
+        # ⚡ Definir cm_pessoa antes da gambiarra
+        cm_pessoa = self.context["ed_pessoa_vaga_validacao"].cm_pessoa
+        ed_edital = self.context["ed_pessoa_vaga_validacao"].ed_vaga.ed_edital
+
         # Gambiarra edital 40: pessoa 180 sempre função 60
         if cm_pessoa.id == 180:
             validated_data["fi_funcao_bolsista"] = 60
