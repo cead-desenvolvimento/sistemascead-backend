@@ -476,19 +476,17 @@ class GerarFichaPDFAPIView(APIView):
 
         # Resolve a associacao curso e tipo de curso a ficha
         # Nem sempre a ficha possui esses dados, ex.: coordenadoria geral
-        oferta = associacao_edital_funcao_oferta.ac_curso_oferta
-        ac_curso = (
-            getattr(getattr(oferta, "ac_curso", None), "nome", None) if oferta else None
-        )
-        ac_curso_tipo = (
-            getattr(
+        # Financeiro pediu a condição do if
+        if oferta is None:
+            ac_curso = "Centro de Educação a Distância"
+            ac_curso_tipo = "Extensão"
+        else:
+            ac_curso = getattr(getattr(oferta, "ac_curso", None), "nome", None)
+            ac_curso_tipo = getattr(
                 getattr(getattr(oferta, "ac_curso", None), "ac_curso_tipo", None),
                 "nome",
                 None,
             )
-            if oferta
-            else None
-        )
 
         ficha = {
             "ac_curso": ac_curso,
