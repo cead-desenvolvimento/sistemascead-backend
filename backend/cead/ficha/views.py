@@ -477,6 +477,7 @@ class GerarFichaPDFAPIView(APIView):
         # Resolve a associacao curso e tipo de curso a ficha
         # Nem sempre a ficha possui esses dados, ex.: coordenadoria geral
         # Financeiro pediu a condição do if
+        oferta = associacao_edital_funcao_oferta.ac_curso_oferta
         if oferta is None:
             ac_curso = "Centro de Educação a Distância"
             ac_curso_tipo = "Extensão"
