@@ -1217,17 +1217,17 @@ class FiPessoaFichaAdmin(admin.ModelAdmin):
 
     def edital(self, obj):
         if obj.ed_edital:
-            return obj.ed_edital.__str__()
+            return obj.ed_edital
         return "-"
 
     def oferta(self, obj):
-        if obj.ed_edital:
-            return obj.ac_curso_oferta.numero
+        if obj.ac_curso_oferta:
+            return obj.ac_curso_oferta
         return "-"
 
     def funcao(self, obj):
         if obj.fi_funcao_bolsista:
-            return obj.fi_funcao_bolsista.funcao
+            return obj.fi_funcao_bolsista
         return "-"
 
 
