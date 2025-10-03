@@ -1,4 +1,4 @@
-from django.db.models import Exists, OuterRef, Subquery
+from django.db.models import Exists, OuterRef, Q, Subquery
 from django.utils import timezone
 from drf_spectacular.utils import extend_schema
 from rest_framework import status
@@ -9,6 +9,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.authentication import JWTAuthentication
+
 
 from cead.models import (
     AcCurso,
@@ -177,14 +178,12 @@ class LancaFrequenciaAPIView(APIView):
                 .values("id")[:1]
             )
 
-            bolsistas = (
-                FiPessoaFicha.objects.filter(
-                    ac_curso_oferta__ac_curso=curso_do_coordenador,
-                    data_fim_vinculacao__isnull=True,
-                    id=Subquery(ultima_ficha),
-                )
-                .order_by("cm_pessoa__nome")
-            )
+            bolsistas = FiPessoaFicha.objects.filter(
+                Q(ac_curso_oferta__ac_curso=curso_do_coordenador),
+                Q(data_fim_vinculacao__isnull=True)
+                | Q(data_fim_vinculacao__gte=timezone.now()),
+                id=Subquery(ultima_ficha),
+            ).order_by("cm_pessoa__nome")
 
             dados_do_curso = {
                 "coordenador": request.cm_pessoa_coordenador,
@@ -197,9 +196,7 @@ class LancaFrequenciaAPIView(APIView):
             cursos_do_coordenador.append(
                 FrequenciaMesAnteriorSerializer(
                     dados_do_curso,
-                    context={
-                        "bolsistas": bolsistas
-                    },
+                    context={"bolsistas": bolsistas},
                 ).data
             )
 
