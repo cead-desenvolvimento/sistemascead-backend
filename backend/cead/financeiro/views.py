@@ -278,7 +278,14 @@ class AtualizarFiPessoaFichaAPIView(APIView):
         if serializer.is_valid():
             serializer.save()
             return Response({"detail": OK_FICHA_ATUALIZADA}, status=status.HTTP_200_OK)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        return Response(
+            {
+                "detail": ERRO_FINANCEIRO_FICHA_NAO_ATUALIZADA,
+                "errors": serializer.errors,
+            },
+            status=status.HTTP_400_BAD_REQUEST,
+        )
 
 
 @extend_schema(**DOCS_LISTAR_EDITAIS_ATUAIS_APIVIEW)

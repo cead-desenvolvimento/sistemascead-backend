@@ -17,7 +17,8 @@ ERRO_FINANCEIRO_GET_ID_FI_EDITAL_FUNCAO_OFERTA = (
 ERRO_FINANCEIRO_EDITAL_ASSOCIADO_FI_EDITAL_FUNCAO_OFERTA = (
     "Este edital já está associado a uma função/oferta"
 )
-ERRO_FINANCEIRO_FICHA_NAO_ENCONTRADA = "Ficha não encontrada"
+ERRO_FINANCEIRO_FICHA_NAO_ATUALIZADA = "A ficha não foi atualizada"
+ERRO_FINANCEIRO_FICHA_NAO_ENCONTRADA = "A ficha não foi encontrada"
 ERRO_FINANCEIRO_GET_FI_EDITAL_FUNCAO_OFERTA = "Identificador não encontrado"
 
 # ------------------------------
