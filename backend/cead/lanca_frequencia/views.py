@@ -1,4 +1,4 @@
-from django.db.models import Exists, OuterRef
+from django.db.models import Exists, OuterRef, Subquery
 from django.utils import timezone
 from drf_spectacular.utils import extend_schema
 from rest_framework import status
@@ -170,13 +170,20 @@ class LancaFrequenciaAPIView(APIView):
         cursos_do_coordenador = []
 
         for curso_do_coordenador in request.cursos_do_coordenador:
+            # Pega a última ficha da pessoa e organiza por nome (ordem alfabética)
+            ultima_ficha = (
+                FiPessoaFicha.objects.filter(cm_pessoa=OuterRef("cm_pessoa"))
+                .order_by("-id")
+                .values("id")[:1]
+            )
+
             bolsistas = (
                 FiPessoaFicha.objects.filter(
                     ac_curso_oferta__ac_curso=curso_do_coordenador,
                     data_fim_vinculacao__isnull=True,
+                    id=Subquery(ultima_ficha),
                 )
-                .order_by("cm_pessoa", "-id")
-                .distinct("cm_pessoa")
+                .order_by("cm_pessoa__nome")
             )
 
             dados_do_curso = {
@@ -191,7 +198,7 @@ class LancaFrequenciaAPIView(APIView):
                 FrequenciaMesAnteriorSerializer(
                     dados_do_curso,
                     context={
-                        "bolsistas": sorted(bolsistas, key=lambda b: b.cm_pessoa.nome)
+                        "bolsistas": bolsistas
                     },
                 ).data
             )
