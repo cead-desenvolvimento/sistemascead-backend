@@ -342,6 +342,28 @@ class ListarEditaisValidacaoAPIView(APIView):
         return Response(ListarEditaisValidacaoSerializer(editais, many=True).data)
 
 
+class ListarEditaisAntigosValidacaoAPIView(APIView):
+    serializer_class = ListarEditaisValidacaoSerializer
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated, IsValidadorDeEditais]
+
+    @extend_schema(**DOCS_LISTAR_EDITAIS_ANTIGOS_APIVIEW)
+    def get(self, request):
+        agora = timezone.now()
+
+        if request.user.groups.filter(name="Acadêmico - administradores").exists():
+            editais = EdEdital.objects.filter(data_fim_validacao__lte=agora)
+        else:
+            editais = EdEdital.objects.filter(
+                id__in=EdEditalPessoa.objects.filter(
+                    cm_pessoa=CmPessoa.objects.get(cpf=request.user.username)
+                ).values_list("ed_edital_id", flat=True),
+                data_validade__lt=agora,
+            )
+
+        return Response(ListarEditaisValidacaoSerializer(editais, many=True).data)
+
+
 class ListarEditalJustificativaAPIView(GenericAPIView):
     serializer_class = ListarEditalJustificativaSerializer
 
@@ -428,6 +450,28 @@ class ListarVagasValidacaoAPIView(APIView):
             )
 
 
+@extend_schema(**DOCS_LISTAR_VAGAS_ANTIGAS_VALIDACAO_APIVIEW)
+class ListarVagasAntigasValidacaoAPIView(APIView):
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated, IsValidadorDeEditais]
+
+    def get(self, request, id):
+        try:
+            agora = timezone.now()
+            edital = EdEdital.objects.get(id=id, data_fim_validacao__lte=agora)
+            vagas = EdVaga.objects.filter(ed_edital=edital)
+            return Response(ListarVagasValidacaoSerializer(vagas, many=True).data)
+        except EdEdital.DoesNotExist:
+            return Response(
+                {"detail": ERRO_GET_EDITAL}, status=status.HTTP_404_NOT_FOUND
+            )
+        except Exception as e:
+            return Response(
+                {"detail": f"{ERRO_GET_VAGAS}: {str(e)}"},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
+
+
 @extend_schema(**DOCS_VALIDAR_VAGA_APIVIEW)
 class ValidarVagaAPIView(APIView):
     authentication_classes = [JWTAuthentication]
@@ -438,15 +482,6 @@ class ValidarVagaAPIView(APIView):
             vaga = EdVaga.objects.get(id=vaga_id)
             agora = timezone.now()
             edital = vaga.ed_edital
-
-            if not (
-                edital.data_inicio_validacao <= agora <= edital.data_fim_validacao
-                and edital.data_validade >= agora
-            ):
-                return Response(
-                    {"detail": ERRO_EDITAL_FORA_PRAZO_VALIDACAO},
-                    status=status.HTTP_400_BAD_REQUEST,
-                )
 
             vaga_data = ValidarVagaGetSerializer(vaga).data
 
@@ -796,6 +831,18 @@ class ValidarVagaAPIView(APIView):
     def post(self, request, vaga_id):
         try:
             vaga = EdVaga.objects.get(id=vaga_id)
+            edital = vaga.ed_edital
+            agora = timezone.now()
+
+            if not (
+                edital.data_inicio_validacao <= agora <= edital.data_fim_validacao
+                and edital.data_validade >= agora
+            ):
+                return Response(
+                    {"detail": ERRO_EDITAL_FORA_PRAZO_VALIDACAO},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
         except EdVaga.DoesNotExist:
             return Response({"detail": ERRO_GET_VAGA}, status=status.HTTP_404_NOT_FOUND)
 

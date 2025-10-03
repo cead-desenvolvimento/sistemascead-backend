@@ -109,18 +109,6 @@ class ListarVagasValidacaoSerializer(serializers.ModelSerializer):
         model = EdVaga
         fields = ["id", "descricao", "quantidade"]
 
-    # Retorna so se tiver em epoca de validacao, por seguranca
-    def to_representation(self, instance):
-        agora = timezone.now()
-
-        edital = instance.ed_edital
-        if not (
-            edital.data_inicio_validacao <= agora <= edital.data_fim_validacao
-            and edital.data_validade >= agora
-        ):
-            return None
-        return super().to_representation(instance)
-
 
 class VerificaValidacaoSerializer(serializers.ModelSerializer):
     nome_responsavel_validacao = serializers.SerializerMethodField()
@@ -153,18 +141,6 @@ class ValidarVagaGetSerializer(serializers.ModelSerializer):
 
     def get_maximo_de_pontos(self, obj) -> float:
         return calcular_maximo_de_pontos(obj)
-
-    # Retorna so se tiver em epoca de validacao, por seguranca
-    def to_representation(self, instance):
-        agora = timezone.now()
-
-        edital = instance.ed_edital
-        if not (
-            edital.data_inicio_validacao <= agora <= edital.data_fim_validacao
-            and edital.data_validade >= agora
-        ):
-            raise NotFound(ERRO_EDITAL_FORA_PRAZO_VALIDACAO)
-        return super().to_representation(instance)
 
 
 class ValidarVagaPostSerializer(serializers.Serializer):

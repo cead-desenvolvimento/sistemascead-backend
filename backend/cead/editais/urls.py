@@ -109,4 +109,15 @@ urlpatterns = [
         views.EnviarJustificativaPorEmailAPIView.as_view(),
         name="enviar-justificativa-edital",
     ),
+    # Verificacao da validacao de editais antigos
+    path(
+        "validacao_antiga/",
+        views.ListarEditaisAntigosValidacaoAPIView.as_view(),
+        name="validacao_antiga",
+    ),
+    path(
+        "validacao_antiga/<int:id>/",
+        views.ListarVagasAntigasValidacaoAPIView.as_view(),
+        name="validar_edital",
+    ),
 ]

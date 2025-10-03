@@ -147,6 +147,42 @@ DOCS_LISTAR_EDITAIS_VALIDACAO_APIVIEW = {
     "auth": [{"type": "bearer"}],
 }
 
+DOCS_LISTAR_EDITAIS_ANTIGOS_APIVIEW = {
+    "summary": "Listar editais antigos",
+    "description": (
+        "Retorna os editais que já estão encerrados/validados, ou seja, "
+        "aqueles cuja data de validade já passou."
+    ),
+    "tags": ["Editais - Validação"],
+    "responses": {
+        200: OpenApiResponse(
+            response=ListarEditaisValidacaoSerializer,
+            description="Lista de editais antigos.",
+            examples=[
+                OpenApiExample(
+                    "Exemplo de resposta",
+                    value=[
+                        {
+                            "id": 12,
+                            "numero": "05",
+                            "ano": 2022,
+                            "descricao": "Seleção de tutores para Letras",
+                            "data_validade": "2023-01-10T00:00:00Z",
+                        },
+                        {
+                            "id": 15,
+                            "numero": "08",
+                            "ano": 2023,
+                            "descricao": "Seleção de coordenadores de polo",
+                            "data_validade": "2024-03-01T00:00:00Z",
+                        },
+                    ],
+                )
+            ],
+        )
+    },
+}
+
 DOCS_LISTAR_EDITAL_JUSTIFICATIVA_APIVIEW = {
     "summary": "Lista editais disponíveis para visualização de justificativa",
     "description": (
@@ -229,6 +265,37 @@ DOCS_LISTAR_VAGAS_VALIDACAO_APIVIEW = {
         "Retorna todas as vagas do edital identificado pelo ano e número, "
         "permitindo que o usuário autenticado faça o processo de validação das inscrições nestas vagas."
         "\n\n- Exige permissão de validador de editais."
+    ),
+    "tags": ["Editais - Validação"],
+    "parameters": [
+        OpenApiParameter(
+            name="ano",
+            type=int,
+            location=OpenApiParameter.PATH,
+            description="Ano do edital.",
+        ),
+        OpenApiParameter(
+            name="numero",
+            type=int,
+            location=OpenApiParameter.PATH,
+            description="Número do edital.",
+        ),
+    ],
+    "responses": {
+        200: OpenApiResponse(
+            response=ListarVagasValidacaoSerializer(many=True),
+            description="Lista de vagas do edital para validação.",
+        ),
+        404: OpenApiResponse(description=ERRO_GET_EDITAL),
+        500: OpenApiResponse(description=ERRO_GET_VAGAS),
+    },
+    "auth": [{"type": "bearer"}],
+}
+
+DOCS_LISTAR_VAGAS_ANTIGAS_VALIDACAO_APIVIEW = {
+    "summary": "Listar vagas de editais antigos",
+    "description": (
+        "Retorna as vagas vinculadas a um edital já encerrado (data de validade passada)."
     ),
     "tags": ["Editais - Validação"],
     "parameters": [
