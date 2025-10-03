@@ -358,7 +358,7 @@ class ListarEditaisAntigosValidacaoAPIView(APIView):
                 id__in=EdEditalPessoa.objects.filter(
                     cm_pessoa=CmPessoa.objects.get(cpf=request.user.username)
                 ).values_list("ed_edital_id", flat=True),
-                data_validade__lt=agora,
+                data_fim_validacao__lte=agora,
             )
 
         return Response(ListarEditaisValidacaoSerializer(editais, many=True).data)
