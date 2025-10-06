@@ -168,20 +168,26 @@ class LancaFrequenciaAPIView(APIView):
         request.datafrequencia_mes_atual = datafrequencia_mes_atual
 
     def get(self, request):
+        hoje = timezone.now().date()
         cursos_do_coordenador = []
 
         for curso_do_coordenador in request.cursos_do_coordenador:
-            # Pega a última ficha da pessoa e organiza por nome (ordem alfabética)
+            # Pega a última ficha "válida" da pessoa e organiza por nome (ordem alfabética)
             ultima_ficha = (
-                FiPessoaFicha.objects.filter(cm_pessoa=OuterRef("cm_pessoa"))
+                FiPessoaFicha.objects.filter(
+                    cm_pessoa=OuterRef("cm_pessoa"),
+                    data_inicio_vinculacao__lte=hoje,
+                )
+                .filter(
+                    Q(data_fim_vinculacao__isnull=True)
+                    | Q(data_fim_vinculacao__gte=hoje)
+                )
                 .order_by("-id")
                 .values("id")[:1]
             )
 
             bolsistas = FiPessoaFicha.objects.filter(
-                Q(ac_curso_oferta__ac_curso=curso_do_coordenador),
-                Q(data_fim_vinculacao__isnull=True)
-                | Q(data_fim_vinculacao__gte=timezone.now()),
+                ac_curso_oferta__ac_curso=curso_do_coordenador,
                 id=Subquery(ultima_ficha),
             ).order_by("fi_funcao_bolsista__funcao", "cm_pessoa__nome")
 
