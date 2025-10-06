@@ -4,6 +4,7 @@ from cead.models import (
     AcCurso,
     AcDisciplina,
     FiDatafrequencia,
+    FiFrequencia,
     FiFrequenciaDisciplina,
     FiFuncaoBolsista,
     FiPessoaFicha,
@@ -83,12 +84,50 @@ class FiPessoaFichaFuncaoDisciplinaMesAnteriorSerializer(serializers.ModelSerial
         return obj.cm_pessoa.cpf_com_pontos_e_traco()
 
     def get_disciplinas(self, obj):
-        frequencias_disciplinas = FiFrequenciaDisciplina.objects.filter(
-            fi_frequencia__fi_datafrequencia=get_datafrequencia_mes_anterior(),
+        datafrequencia_ref = get_datafrequencia_mes_anterior()
+        if not datafrequencia_ref:
+            return []
+
+        ref_id = datafrequencia_ref.id
+
+        # Verifica nos ultimos 4 meses se há frequência lançada
+        datafrequencias_candidatas = FiDatafrequencia.objects.filter(
+            id__lte=ref_id,
+            id__gte=ref_id - 3
+        ).order_by("-id")
+
+        ultimo_datafrequencia_valido = None
+
+        # Percorre do mais recente ao mais antigo e acha o último lançamento válido
+        for datafrequencia in datafrequencias_candidatas:
+            if FiFrequencia.objects.filter(
+                fi_datafrequencia=datafrequencia,
+                cm_pessoa=obj.cm_pessoa,
+            ).exists():
+                ultimo_datafrequencia_valido = datafrequencia
+                break
+
+        if not ultimo_datafrequencia_valido:
+            return []
+
+        # Busca disciplinas lançadas naquele mês
+        disciplinas_ids = FiFrequenciaDisciplina.objects.filter(
+            fi_frequencia__fi_datafrequencia=ultimo_datafrequencia_valido,
             fi_frequencia__cm_pessoa=obj.cm_pessoa,
         ).values_list("ac_disciplina_id", flat=True)
 
-        return list(frequencias_disciplinas)
+        # Filtra disciplinas ativas e do curso em questão
+        curso = getattr(getattr(obj, "ac_curso_oferta", None), "ac_curso", None)
+        if not curso:
+            return list(disciplinas_ids)
+
+        disciplinas_filtradas = AcDisciplina.objects.filter(
+            id__in=disciplinas_ids,
+            ativa=True,
+            ac_curso=curso,
+        ).values_list("id", flat=True)
+
+        return list(disciplinas_filtradas)
 
 
 class FrequenciaMesAnteriorSerializer(serializers.Serializer):
