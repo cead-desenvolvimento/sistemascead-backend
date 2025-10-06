@@ -188,9 +188,8 @@ class LancaFrequenciaAPIView(APIView):
             )
 
             # Agora o filtro, para evitar n + 1 subqueries, como era antes
-            bolsistas = (
-                FiPessoaFicha.objects.filter(id__in=ultimas_ids)
-                .order_by("fi_funcao_bolsista__funcao", "cm_pessoa__nome")
+            bolsistas = FiPessoaFicha.objects.filter(id__in=ultimas_ids).order_by(
+                "fi_funcao_bolsista__funcao", "cm_pessoa__nome"
             )
 
             dados_do_curso = {

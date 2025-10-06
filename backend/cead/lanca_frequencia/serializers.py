@@ -92,8 +92,7 @@ class FiPessoaFichaFuncaoDisciplinaMesAnteriorSerializer(serializers.ModelSerial
 
         # Verifica nos ultimos 4 meses se há frequência lançada
         datafrequencias_candidatas = FiDatafrequencia.objects.filter(
-            id__lte=ref_id,
-            id__gte=ref_id - 3
+            id__lte=ref_id, id__gte=ref_id - 3
         ).order_by("-id")
 
         ultimo_datafrequencia_valido = None
