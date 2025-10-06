@@ -183,7 +183,7 @@ class LancaFrequenciaAPIView(APIView):
                 Q(data_fim_vinculacao__isnull=True)
                 | Q(data_fim_vinculacao__gte=timezone.now()),
                 id=Subquery(ultima_ficha),
-            ).order_by("cm_pessoa__nome")
+            ).order_by("fi_funcao_bolsista__funcao", "cm_pessoa__nome")
 
             dados_do_curso = {
                 "coordenador": request.cm_pessoa_coordenador,
