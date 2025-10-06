@@ -50,15 +50,15 @@
 
               <div class="mb-3">
                 <label for="id_username" class="form-label fw-bold">
-                  <i class="bi bi-person me-1"></i>Usuário
+                  <i class="bi bi-person me-1"></i>CPF
                 </label>
                 <div class="input-group">
                   <span class="input-group-text" id="user-addon">
                     <i class="bi bi-person-fill"></i>
                   </span>
                   <input type="text" class="form-control" name="username" id="id_username" autofocus inputmode="numeric"
-                    pattern="\d*" oninput="this.value = this.value.replace(/\D/g, '')" autocapitalize="none"
-                    autocomplete="username" maxlength="150" aria-describedby="user-addon" required />
+                    pattern="\d{11}" maxlength="11" oninput="this.value = this.value.replace(/\D/g, '')"
+                    autocapitalize="none" autocomplete="username" aria-describedby="user-addon" required />
                 </div>
               </div>
 
