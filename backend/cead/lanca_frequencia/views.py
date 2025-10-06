@@ -1,4 +1,4 @@
-from django.db.models import Exists, OuterRef, Q, Subquery
+from django.db.models import Exists, OuterRef, Max, Q
 from django.utils import timezone
 from drf_spectacular.utils import extend_schema
 from rest_framework import status
@@ -172,24 +172,26 @@ class LancaFrequenciaAPIView(APIView):
         cursos_do_coordenador = []
 
         for curso_do_coordenador in request.cursos_do_coordenador:
-            # Pega a última ficha "válida" da pessoa e organiza por nome (ordem alfabética)
-            ultima_ficha = (
-                FiPessoaFicha.objects.filter(
-                    cm_pessoa=OuterRef("cm_pessoa"),
-                    data_inicio_vinculacao__lte=hoje,
-                )
-                .filter(
-                    Q(data_fim_vinculacao__isnull=True)
-                    | Q(data_fim_vinculacao__gte=hoje)
-                )
-                .order_by("-id")
-                .values("id")[:1]
+            # Fichas ativas do curso_do_coordenador
+            fichas_validas = FiPessoaFicha.objects.filter(
+                ac_curso_oferta__ac_curso=curso_do_coordenador,
+                data_inicio_vinculacao__lte=hoje,
+            ).filter(
+                Q(data_fim_vinculacao__isnull=True) | Q(data_fim_vinculacao__gte=hoje)
             )
 
-            bolsistas = FiPessoaFicha.objects.filter(
-                ac_curso_oferta__ac_curso=curso_do_coordenador,
-                id=Subquery(ultima_ficha),
-            ).order_by("fi_funcao_bolsista__funcao", "cm_pessoa__nome")
+            # Agrupa por pessoa e pega a última ficha
+            ultimas_ids = (
+                fichas_validas.values("cm_pessoa")
+                .annotate(ultima_id=Max("id"))
+                .values_list("ultima_id", flat=True)
+            )
+
+            # Agora o filtro, para evitar n + 1 subqueries, como era antes
+            bolsistas = (
+                FiPessoaFicha.objects.filter(id__in=ultimas_ids)
+                .order_by("fi_funcao_bolsista__funcao", "cm_pessoa__nome")
+            )
 
             dados_do_curso = {
                 "coordenador": request.cm_pessoa_coordenador,
