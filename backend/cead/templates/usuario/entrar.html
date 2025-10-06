@@ -7,7 +7,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Acesso ao Sistema</title>
 
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" />
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css" />
   <link rel="stylesheet" href="{% static 'css/usuario/principal.css' %}" />
   <link rel="stylesheet" href="{% static 'css/usuario/usuario.css' %}" />
@@ -56,16 +56,10 @@
                   <span class="input-group-text" id="user-addon">
                     <i class="bi bi-person-fill"></i>
                   </span>
-                  <input type="text" class="form-control" name="username" id="id_username" autofocus
-                    autocapitalize="none" autocomplete="username" maxlength="150" aria-describedby="user-addon"
-                    required />
+                  <input type="text" class="form-control" name="username" id="id_username" autofocus inputmode="numeric"
+                    pattern="\d*" oninput="this.value = this.value.replace(/\D/g, '')" autocapitalize="none"
+                    autocomplete="username" maxlength="150" aria-describedby="user-addon" required />
                 </div>
-                {# erros de campo (se o form for um AuthenticationForm padrão) #}
-                {% if form.username.errors %}
-                <div class="text-danger small mt-1">
-                  {% for e in form.username.errors %}{{ e }}{% if not forloop.last %}<br>{% endif %}{% endfor %}
-                </div>
-                {% endif %}
               </div>
 
               <div class="mb-3">
