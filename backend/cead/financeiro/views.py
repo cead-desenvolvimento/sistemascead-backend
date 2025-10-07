@@ -332,9 +332,9 @@ class AssociarEditalFuncaoFichaOfertaAPIView(APIView):
     permission_classes = [IsAuthenticated, IsAssociadorEditalFuncaoFichaOferta]
 
     def get(self, request):
-        associacoes = FiEditalFuncaoOferta.objects.select_related(
+        associacoes = FiEditalFuncaoOferta.objects.with_edital_order().select_related(
             "ed_edital", "fi_funcao_bolsista", "ac_curso_oferta"
-        ).order_by("-ed_edital__id")
+        )
         serializer = FiGetEditalFuncaoOfertaSerializer(associacoes, many=True)
         return Response(serializer.data)
 

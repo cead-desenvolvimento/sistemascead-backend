@@ -1368,6 +1368,11 @@ class FiFrequenciaMoodle(models.Model):
         db_table = "fi_frequencia_moodle"
 
 
+class FiEditalFuncaoOfertaQuerySet(models.QuerySet):
+    def with_edital_order(self):
+        return self.order_by("-ed_edital__ano", "-ed_edital__numero")
+
+
 class FiEditalFuncaoOferta(models.Model):
     # O sistema antigo nao refletia a realidade da bolsa: todos os bolsistas
     # possuiam relacao com oferta, o que nao e' realidade dos fatos
@@ -1393,6 +1398,8 @@ class FiEditalFuncaoOferta(models.Model):
     ac_curso_oferta = models.ForeignKey(
         AcCursoOferta, models.DO_NOTHING, null=True, blank=True, verbose_name="Oferta"
     )
+
+    objects = FiEditalFuncaoOfertaQuerySet.as_manager()
 
     class Meta:
         verbose_name = (
