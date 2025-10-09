@@ -1,9 +1,12 @@
+from axes.helpers import get_lockout_response
+from axes.models import AccessAttempt
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth.views import LoginView
+from django.http import HttpResponseForbidden
 from django.shortcuts import redirect, render
 
 from drf_spectacular.utils import extend_schema
@@ -39,6 +42,20 @@ class CustomLoginView(LoginView):
                 "next_url": self.get_success_url() or "index.html",
             },
         )
+
+    def form_invalid(self, form):
+        if hasattr(self.request, "axes_locked_out") and self.request.axes_locked_out:
+            return HttpResponseForbidden(
+                render(
+                    self.request,
+                    "usuario/entrar.html",
+                    {
+                        "form": form,
+                        "locked_out": True,
+                    },
+                )
+            )
+        return super().form_invalid(form)
 
     # Usa o redirect em settings.LOGIN_REDIRECT_URLS
     def get_success_url(self):
