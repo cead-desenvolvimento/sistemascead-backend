@@ -1,5 +1,6 @@
 from typing import Optional
 
+from django.db import transaction
 from django.contrib.auth.models import User
 from django.utils import timezone
 from rest_framework import serializers
@@ -335,50 +336,69 @@ class ValidarVagaPostSerializer(serializers.Serializer):
         if not pontuacoes_documentos:
             return
 
-        for full_id, pontuacao in pontuacoes_documentos.items():
-            try:
-                tipo, id_str = full_id.split("-")
-                id = int(id_str)
-                pontuacao = None if float(pontuacao) == 0.0 else pontuacao
+        # Mapeamento: tipo -> (modelo_upload, modelo_pontuacao, campo_relacionado, vaga)
+        modelos = {
+            "checkbox": (
+                EdPessoaVagaCampoCheckboxUpload,
+                EdPessoaVagaCampoCheckboxPontuacao,
+                "ed_pessoa_vaga_campo_checkbox",
+                "ed_vaga_campo_checkbox__ed_vaga",
+            ),
+            "combobox": (
+                EdPessoaVagaCampoComboboxUpload,
+                EdPessoaVagaCampoComboboxPontuacao,
+                "ed_pessoa_vaga_campo_combobox",
+                "ed_vaga_campo_combobox__ed_vaga",
+            ),
+            "datebox": (
+                EdPessoaVagaCampoDateboxUpload,
+                EdPessoaVagaCampoDateboxPontuacao,
+                "ed_pessoa_vaga_campo_datebox",
+                "ed_vaga_campo_datebox__ed_vaga",
+            ),
+        }
 
-                if tipo == "checkbox":
-                    checkbox_upload = EdPessoaVagaCampoCheckboxUpload.objects.filter(
-                        id=id,
-                        ed_pessoa_vaga_campo_checkbox__cm_pessoa=inscricao.cm_pessoa,
-                        ed_pessoa_vaga_campo_checkbox__ed_vaga_campo_checkbox__ed_vaga=inscricao.ed_vaga,
-                    ).first()
-                    if checkbox_upload:
-                        EdPessoaVagaCampoCheckboxPontuacao.objects.update_or_create(
-                            ed_pessoa_vaga_campo_checkbox=checkbox_upload.ed_pessoa_vaga_campo_checkbox,
-                            defaults={"pontuacao": pontuacao},
-                        )
+        with transaction.atomic():
+            # Exemplo de full_id -> checkbox-70
+            for full_id, pontuacao in pontuacoes_documentos.items():
+                try:
+                    tipo, id_str = full_id.split("-")
+                    upload_id = int(id_str)
+                    pontuacao = None if float(pontuacao) == 0.0 else float(pontuacao)
+                except (ValueError, TypeError):
+                    continue
 
-                elif tipo == "combobox":
-                    combobox_upload = EdPessoaVagaCampoComboboxUpload.objects.filter(
-                        id=id,
-                        ed_pessoa_vaga_campo_combobox__cm_pessoa=inscricao.cm_pessoa,
-                        ed_pessoa_vaga_campo_combobox__ed_vaga_campo_combobox__ed_vaga=inscricao.ed_vaga,
-                    ).first()
-                    if combobox_upload:
-                        EdPessoaVagaCampoComboboxPontuacao.objects.update_or_create(
-                            ed_pessoa_vaga_campo_combobox=combobox_upload.ed_pessoa_vaga_campo_combobox,
-                            defaults={"pontuacao": pontuacao},
-                        )
+                # Segurança: limpar lixo do post
+                if tipo not in modelos:
+                    continue
 
-                elif tipo == "datebox":
-                    datebox_upload = EdPessoaVagaCampoDateboxUpload.objects.filter(
-                        id=id,
-                        ed_pessoa_vaga_campo_datebox__cm_pessoa=inscricao.cm_pessoa,
-                        ed_pessoa_vaga_campo_datebox__ed_vaga_campo_datebox__ed_vaga=inscricao.ed_vaga,
-                    ).first()
-                    if datebox_upload:
-                        EdPessoaVagaCampoDateboxPontuacao.objects.update_or_create(
-                            ed_pessoa_vaga_campo_datebox=datebox_upload.ed_pessoa_vaga_campo_datebox,
-                            defaults={"pontuacao": pontuacao},
-                        )
+                # Associa o item do laço com o modelo que se pretende salvar
+                modelo_upload, modelo_pontuacao, campo_relacionado, campo_vaga = (
+                    modelos[tipo]
+                )
 
-            except (ValueError, TypeError):
-                continue
+                # Filtro para buscar se há upload da pessoa/vaga/campo
+                filtro = {
+                    "id": upload_id,
+                    f"{campo_relacionado}__cm_pessoa": inscricao.cm_pessoa,
+                    f"{campo_relacionado}__{campo_vaga}": inscricao.ed_vaga,
+                }
+
+                upload = (
+                    modelo_upload.objects.filter(**filtro)
+                    .select_related(campo_relacionado)
+                    .first()
+                )
+                # Se não tem upload, não faz sentido salvar a pontuação
+                if not upload:
+                    continue
+
+                objeto_relacionado = getattr(upload, campo_relacionado)
+
+                modelo_pontuacao.objects.update_or_create(
+                    **{campo_relacionado: objeto_relacionado},
+                    defaults={"pontuacao": pontuacao},
+                )
 
     def save(self):
         inscricao = self.validated_data["inscricao"]
