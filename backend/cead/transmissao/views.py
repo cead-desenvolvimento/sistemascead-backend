@@ -282,35 +282,51 @@ class DatasDisponiveisAPIView(APIView):
         ).values_list("data", flat=True)
         datas_ocupadas.update(indisponiveis)
 
-        # Mapeia contagem de transmissões por mês já feitas (usando horarios válidos, sem recusadas)
-        horarios_validos = (
-            TrTransmissaoHorario.objects.exclude(tr_transmissao_id__in=recusadas_ids)
-            .filter(
-                inicio__date__gte=hoje,
-                inicio__date__lte=limite_agenda,
-            )
-            .values_list("inicio", flat=True)
-        )
+        # Contagem global (todas transmissões, sem filtrar por espaço)
         contagem_mes = Counter()
-        for dt in horarios_validos:
-            data = dt.date()
-            key = (data.year, data.month)
-            contagem_mes[key] += 1
+        for ano, mes in get_meses_no_intervalo(hoje, limite_agenda):
+            qtd = (
+                TrTransmissaoHorario.objects.exclude(
+                    tr_transmissao_id__in=recusadas_ids
+                )
+                .filter(inicio__date__year=ano, inicio__date__month=mes)
+                .count()
+            )
+            contagem_mes[(ano, mes)] = qtd
 
-        # Monta lista de datas disponíveis
+        contagem_semana = Counter()
+        for ano, semana in get_semanas_no_intervalo(hoje, limite_agenda):
+            qtd = (
+                TrTransmissaoHorario.objects.exclude(
+                    tr_transmissao_id__in=recusadas_ids
+                )
+                .filter(inicio__date__year=ano, inicio__date__week=semana)
+                .count()
+            )
+            contagem_semana[(ano, semana)] = qtd
+
         datas_validas = []
         data_atual = data_inicial
         while data_atual <= limite_agenda:
-            isodow = str(data_atual.isoweekday())  # '1' = segunda, ..., '7' = domingo
+            isodow = str(data_atual.isoweekday())
+            ano, mes = data_atual.year, data_atual.month
+            ano_semana, semana = (
+                data_atual.isocalendar()[0],
+                data_atual.isocalendar()[1],
+            )
 
-            # Testa todas as condições do dia
-            if (
-                isodow in dias_permitidos
-                and data_atual not in datas_ocupadas
-                and contagem_mes[(data_atual.year, data_atual.month)]
-                < limites.maximo_por_mes
-            ):
+            # Regras globais: mês/semana já saturados
+            if contagem_mes[(ano, mes)] >= limites.maximo_por_mes:
+                data_atual += timedelta(days=1)
+                continue
+            if contagem_semana[(ano_semana, semana)] >= limites.maximo_por_semana:
+                data_atual += timedelta(days=1)
+                continue
+
+            # Regras do espaço e disponibilidade
+            if isodow in dias_permitidos and data_atual not in datas_ocupadas:
                 datas_validas.append(data_atual.isoformat())
+
             data_atual += timedelta(days=1)
 
         return Response(
@@ -529,24 +545,27 @@ class DatasFimValidasAPIView(APIView):
         datas_fim_validas = []
         data_fim = inicio
         while data_fim <= fim_agenda:
-            isodow = str(data_fim.isoweekday())
-
+            # Verifica se todos os dias do intervalo estão disponíveis e são permitidos
             if any(
                 dt in datas_indisponiveis or str(dt.isoweekday()) not in dias_permitidos
                 for dt in self._intervalo(inicio, data_fim)
             ):
                 data_fim += timedelta(days=1)
-                continue
+                continue  # pula esta data_fim, mas testa a próxima
 
             dias_semana = dias_por_semana(inicio, data_fim)
+
             if any(qtd > limites.maximo_dias_na_semana for qtd in dias_semana.values()):
-                break
+                data_fim += timedelta(days=1)
+                continue
 
             if not limites.evento_passando_de_semana and len(dias_semana) > 1:
-                break
+                data_fim += timedelta(days=1)
+                continue
 
             if not self._verificar_limites(inicio, data_fim, limites, recusadas_ids):
-                break
+                data_fim += timedelta(days=1)
+                continue
 
             datas_fim_validas.append(data_fim.isoformat())
             data_fim += timedelta(days=1)
@@ -967,7 +986,11 @@ class ConfirmacaoTransmissaoAPIView(APIView):
             f"Assinatura digital: {confirmacao['assinatura']}\n\n"
             f"{EMAIL_ENDERECO_NAO_MONITORADO}\n"
             f"{EMAIL_DUVIDAS_PARA_O_SUPORTE} {INFO_ENTRE_CONTATO_SUPORTE}\n"
-            f"{EMAIL_ASSINATURA}"
+            f"{EMAIL_ASSINATURA}\n\n"
+            f"============================\n"
+            f"TERMO DE TRANSMISSÃO\n"
+            f"============================\n"
+            f"{request.transmissao.tr_termo.termo}\n\n"
         )
 
         emails_to = []
